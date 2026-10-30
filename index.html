@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MangaStats Hub - Thống Kê & Khám Phá Truyện Tranh Theo Số Chap & Thể Loại</title>
+  <meta name="description" content="Ứng dụng web thống kê truyện tranh, sắp xếp số chapter từ cao xuống thấp, bộ lọc đa thể loại, phân tích dữ liệu và theo dõi tiến độ đọc cá nhân.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Site Header & Navigation -->
+  <header class="site-header" id="siteHeader">
+    <div class="nav-container">
+      <div class="logo-group" id="logoBrand">
+        <div class="logo-badge">📚</div>
+        <div class="logo-text">
+          <h1>MangaStats</h1>
+          <span>Khám phá & Thống kê truyện tranh</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" aria-label="Điều hướng chính">
+        <button class="nav-tab-btn active" data-tab="explore" id="tabExploreBtn">
+          🔍 Khám phá & Lọc chap
+        </button>
+        <button class="nav-tab-btn" data-tab="analytics" id="tabAnalyticsBtn">
+          📊 Phân tích số liệu
+        </button>
+        <button class="nav-tab-btn" data-tab="library" id="tabLibraryBtn">
+          📖 Tủ truyện cá nhân
+          <span class="badge" id="libraryCountBadge" style="display: none;">0</span>
+        </button>
+      </nav>
+
+      <!-- Quick Action / Status -->
+      <div class="header-actions">
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn-icon" title="Mã nguồn dự án" aria-label="Mã nguồn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Highlight Stats Banner -->
+  <section class="hero-section" id="heroBannerSection">
+    <div class="hero-banner">
+      <div class="hero-content">
+        <div>
+          <h2 class="hero-title">
+            Thống kê truyện tranh <br>
+            <span class="highlight">Sắp xếp theo số chương & Thể loại</span>
+          </h2>
+          <p class="hero-subtitle">
+            Khám phá hàng chục nghìn bộ Manga, Manhwa, Manhua. Tra cứu chính xác số chap từ kỷ lục hàng ngàn chương đến các bộ đoản thiên, lọc thể loại tức thì theo thời gian thực.
+          </p>
+        </div>
+
+        <!-- Quick Summary Stats -->
+        <div class="hero-stats-grid">
+          <div class="stat-chip">
+            <div class="chip-label">
+              <span>📚</span> Tổng tác phẩm
+            </div>
+            <div class="chip-value" id="heroTotalCount">---</div>
+            <div class="chip-sub">AniList Global DB</div>
+          </div>
+          <div class="stat-chip">
+            <div class="chip-label">
+              <span>🏆</span> Kỷ lục số chap
+            </div>
+            <div class="chip-value" id="heroTopChapters">---</div>
+            <div class="chip-sub">Bộ nhiều chap nhất</div>
+          </div>
+          <div class="stat-chip">
+            <div class="chip-label">
+              <span>📈</span> Chap trung bình
+            </div>
+            <div class="chip-value" id="heroAvgChapters">---</div>
+            <div class="chip-sub">Theo danh sách lọc</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <main class="main-layout">
+
+    <!-- View 1: Explore & Filter View -->
+    <div id="exploreView">
+      
+      <!-- Filter & Controls Panel -->
+      <section class="controls-card" id="filterControlsCard" aria-label="Bộ lọc và tìm kiếm">
+        
+        <!-- Primary Search & Sort Bar -->
+        <div class="search-and-sort-row">
+          
+          <!-- Search input -->
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input 
+              type="text" 
+              class="search-input" 
+              id="searchInput" 
+              placeholder="Nhập tên truyện cần tìm (VD: One Piece, Naruto, Denma... - bấm '/' để gõ)" 
+              autocomplete="off"
+            />
+            <button class="clear-search-btn" id="clearSearchBtn" title="Xóa tìm kiếm">✕</button>
+          </div>
+
+          <!-- Sort Select (KEY USER REQUIREMENT) -->
+          <div class="select-group">
+            <label for="sortSelect" class="select-label">Sắp xếp:</label>
+            <select id="sortSelect" class="custom-select">
+              <option value="CHAPTERS_DESC">🔽 Số chap: Cao nhất -> Thấp nhất</option>
+              <option value="CHAPTERS">🔼 Số chap: Ít nhất -> Nhiều nhất</option>
+              <option value="SCORE_DESC">⭐ Điểm đánh giá cao nhất</option>
+              <option value="POPULARITY_DESC">🔥 Độ phổ biến cao nhất</option>
+              <option value="TRENDING_DESC">⚡ Thịnh hành nhất</option>
+              <option value="UPDATED_AT_DESC">🕒 Mới cập nhật</option>
+            </select>
+          </div>
+
+          <!-- Country / Origin Select -->
+          <div class="select-group">
+            <label for="countrySelect" class="select-label">Quốc gia:</label>
+            <select id="countrySelect" class="custom-select">
+              <option value="ALL">🌐 Tất cả (Manga/Manhwa/Manhua)</option>
+              <option value="JP">🇯🇵 Manga (Nhật Bản)</option>
+              <option value="KR">🇰🇷 Manhwa (Hàn Quốc)</option>
+              <option value="CN">🇨🇳 Manhua (Trung Quốc)</option>
+            </select>
+          </div>
+
+          <!-- Status Select -->
+          <div class="select-group">
+            <label for="statusSelect" class="select-label">Trạng thái:</label>
+            <select id="statusSelect" class="custom-select">
+              <option value="ALL">Tất cả trạng thái</option>
+              <option value="FINISHED">Đã hoàn thành</option>
+              <option value="RELEASING">Đang phát hành</option>
+              <option value="HIATUS">Tạm dừng (Hiatus)</option>
+            </select>
+          </div>
+
+          <!-- View Mode Toggle (Grid vs Table) -->
+          <div class="view-mode-toggle" aria-label="Chế độ hiển thị">
+            <button class="view-btn active" data-view="grid" id="viewGridBtn" title="Xem dạng lưới ảnh">
+              ▦ Lưới
+            </button>
+            <button class="view-btn" data-view="table" id="viewTableBtn" title="Xem dạng bảng thống kê">
+              ☰ Bảng số liệu
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Quick Chapter Tier Filters -->
+        <div class="filter-row-secondary">
+          <div class="quick-filter-pills" id="tierFilterGroup">
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Lọc theo độ dài chap:</span>
+            <button class="filter-pill tier-pill active" data-tier="ALL">Tất cả</button>
+            <button class="filter-pill tier-pill" data-tier="EPIC_1000">🔥 Siêu dài (≥ 1.000 chap)</button>
+            <button class="filter-pill tier-pill" data-tier="LONG_500">📘 Dài (500 - 999 chap)</button>
+            <button class="filter-pill tier-pill" data-tier="MED_100">📗 Vừa (100 - 499 chap)</button>
+            <button class="filter-pill tier-pill" data-tier="SHORT">📙 Đoản thiên (< 100 chap)</button>
+          </div>
+        </div>
+
+        <!-- Genre Pills Multi-select Filter (KEY USER REQUIREMENT) -->
+        <div class="genre-filter-section">
+          <div class="genre-header">
+            <div class="genre-title">
+              <span>🏷️</span> Lọc theo thể loại (chọn nhiều thể loại cùng lúc):
+            </div>
+            <div class="genre-actions">
+              <button class="btn-text-link" id="clearGenresBtn">Bỏ chọn thể loại</button>
+            </div>
+          </div>
+          <div class="genres-pill-container" id="genresContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Active Filters & Result Header -->
+      <div class="results-header-bar">
+        <div class="results-count" id="resultsCount">
+          Đang tải dữ liệu truyện tranh...
+        </div>
+        <div class="active-filters-badges" id="activeFiltersList">
+          <!-- Active filter pills will appear here -->
+        </div>
+      </div>
+
+      <!-- Manga Results (Grid / Table injected here) -->
+      <div id="resultsContainer" class="manga-grid">
+        <!-- Rendered items or skeleton cards -->
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container" id="paginationContainer"></div>
+
+    </div>
+
+    <!-- View 2: Analytics & Stats Dashboard -->
+    <div id="analyticsView" style="display: none;" class="analytics-view">
+      
+      <div class="analytics-cards-grid">
+        <div class="analytics-card">
+          <div class="analytics-card-header">
+            <h3 class="analytics-card-title">📖 Phân bổ theo số chương</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Tỷ lệ theo bộ lọc</span>
+          </div>
+          <div class="tier-bar-list" id="tierDistributionBars">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <div class="analytics-card">
+          <div class="analytics-card-header">
+            <h3 class="analytics-card-title">🔄 Tỷ lệ trạng thái phát hành</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Hoàn thành vs Đang ra</span>
+          </div>
+          <div class="tier-bar-list" id="statusDistributionBars">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <div class="analytics-card">
+          <div class="analytics-card-header">
+            <h3 class="analytics-card-title">💡 Chỉ số nổi bật</h3>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem;">
+            <div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">TỔNG SỐ TRUYỆN TRONG TRANG</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: var(--text-main);" id="analyticsTotalManga">0</div>
+            </div>
+            <div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">BỘ TRUYỆN DÀI NHẤT TRANG HIỆN TẠI</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #f472b6;" id="analyticsMaxChap">0 chap</div>
+            </div>
+            <div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">SỐ CHƯƠNG TRUNG BÌNH MỖI BỘ</div>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #38bdf8;" id="analyticsAvgChap">0 chap</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- View 3: Personal Library / Reading Tracker -->
+    <div id="libraryView" style="display: none;">
+      
+      <!-- Library Top Summary -->
+      <div class="library-stats-header">
+        <div class="lib-stat-box">
+          <h4>Truyện đang theo dõi</h4>
+          <p id="libStatTotal">0</p>
+        </div>
+        <div class="lib-stat-box">
+          <h4>Tổng số chap bạn đã đọc</h4>
+          <p id="libStatRead">0 chap</p>
+        </div>
+        <div class="lib-stat-box">
+          <h4>Thời gian đọc ước tính</h4>
+          <p id="libStatHours">~0 giờ</p>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;">
+          <button class="btn-outline" id="exportLibBtn" title="Sao lưu danh sách ra file JSON">
+            📤 Xuất dữ liệu
+          </button>
+          <input type="file" id="importLibInput" accept=".json" style="display: none;" />
+          <button class="btn-outline" id="importLibBtn" title="Nhập danh sách từ file JSON">
+            📥 Nhập dữ liệu
+          </button>
+        </div>
+      </div>
+
+      <!-- Library Grid -->
+      <div id="libraryGrid" class="manga-grid">
+        <!-- Rendered items -->
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Manga Detail Modal -->
+  <div class="modal-overlay" id="mangaModal" aria-hidden="true" role="dialog">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Đóng modal">✕</button>
+      
+      <div class="modal-banner">
+        <img class="modal-banner-img" id="modalBannerImg" src="" alt="Banner" />
+        <div class="modal-banner-gradient"></div>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-header-section">
+          <img class="modal-cover-img" id="modalCoverImg" src="" alt="Cover" />
+          <div class="modal-header-meta">
+            <h2 id="modalTitle">Tiêu đề truyện</h2>
+            <p id="modalSubtitle">Phụ đề</p>
+            <div class="modal-stats-strip" id="modalStatsStrip">
+              <!-- Badges injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-desc-box">
+          <div style="font-weight: 700; color: white; margin-bottom: 0.4rem;">Tóm tắt nội dung:</div>
+          <div id="modalDescription" style="white-space: pre-line;"></div>
+        </div>
+
+        <div class="modal-actions-bar">
+          <button class="btn-primary" id="modalActionFavBtn">
+            🤍 Lưu vào Tủ truyện
+          </button>
+          <div style="display: flex; gap: 0.75rem;">
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn-outline" id="modalAniListLink">
+              🌐 Xem trên AniList
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn-outline" id="modalMangaDexLink">
+              🔍 Tìm trên MangaDex
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container">
+    <div class="toast" id="toastNotification">Thông báo</div>
+  </div>
+
+  <!-- Application Logic -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
