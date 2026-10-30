@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="50%" stop-color="#a855f7" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#6366f1" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Dark Background Plate -->
+  <rect width="64" height="64" rx="16" fill="#0b0f19" />
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#brandGrad)" fill-opacity="0.12" stroke="url(#brandGrad)" stroke-width="2" />
+
+  <!-- Open Manga Book -->
+  <g filter="url(#glow)">
+    <!-- Left Page -->
+    <path d="M14 43.5V23c0-2.2 1.8-4 4-4h11c1.5 0 2.5 1 3 2.5v22c-3.5-1.5-7.5-1.5-14 0z" fill="url(#brandGrad)" />
+    <!-- Right Page -->
+    <path d="M50 43.5V23c0-2.2-1.8-4-4-4H35c-1.5 0-2.5 1-3 2.5v22c3.5-1.5 7.5-1.5 14 0z" fill="url(#brandGrad)" opacity="0.9" />
+    <!-- Book Center Seam -->
+    <path d="M32 21.5v22" stroke="#0b0f19" stroke-width="1.8" stroke-linecap="round" />
+    <!-- Page reading lines -->
+    <path d="M19 25h7M19 29h6M19 33h4M38 25h7M39 29h6M41 33h4" stroke="rgba(255, 255, 255, 0.45)" stroke-width="1.5" stroke-linecap="round" />
+  </g>
+
+  <!-- Sparkle Manga Star -->
+  <path d="M47 13.5l1.3 3.2 3.2 1.3-3.2 1.3-1.3 3.2-1.3-3.2-3.2-1.3 3.2-1.3z" fill="url(#starGrad)" />
+  <circle cx="16" cy="16" r="1.5" fill="#38bdf8" />
+</svg>
