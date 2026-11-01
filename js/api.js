@@ -43,12 +43,32 @@ export const VIETNAMESE_TITLE_MAP = {
   'nghich thien ta than': 'Against the Gods',
   'linh vu thien ha': 'Spirit Realm',
   'co chan nhan': 'Reverend Insanity',
+  'yi huang chongsheng': 'Yi Huang Chongsheng',
+  'di hoang trong sinh': 'Yi Huang Chongsheng',
+  'toan cau cao vo': 'Quanqiu Gao Wu',
+  'cao vo': 'Quanqiu Gao Wu',
+  'tien hoa khong ngung': 'Swallowed Star',
+  'nuot chung tinh khong': 'Swallowed Star',
+  'thon phe tinh khong': 'Swallowed Star',
+  'tu dai thu bat dau tien hoa': 'Cong Da Shu Kaishi De Jinhua',
+  'tu dai thu bat dau cua tien hoa': 'Cong Da Shu Kaishi De Jinhua',
+  'cao vo ha canh mot van nam sau': 'Gao Wu: Denglu Weilai Yi Wan Nian',
+  'ha canh mot van nam sau': 'Gao Wu: Denglu Weilai Yi Wan Nian',
+  'sieu than sung thu diem': 'Chao Shen Chong Shou Dian',
+  'than cap sung thu diem': 'Chao Shen Chong Shou Dian',
 
   // Manhwa (Hàn Quốc)
   'toan tri doc gia': 'Omniscient Reader',
   'doc gia toan tri': 'Omniscient Reader',
   'toi thang cap mot minh': 'Solo Leveling',
   'hoi quy phat tai': 'Solo Leveling',
+  'leviathan': 'Simhaesu',
+  'thuy quai sau': 'Simhaesu',
+  'an cang nhieu cang manh': 'Meogeulsurok Ganghaejim',
+  'nuot chung quai vat de tien hoa': 'Meogeulsurok Ganghaejim',
+  'druid ga seoul': 'Seoul-yeok Druid',
+  'ta nuoi duong toan bo tho san': 'Naega Kiun S-Geupdeul',
+  'tho san cap s': 'Naega Kiun S-Geupdeul',
   'bac thay thiet ke dien trang': 'The Greatest Estate Developer',
   'su tro lai cua phap su cap tham hoa': 'The Return of the Disaster-Class Hero',
   'su tro lai cua anh hung cap tham hoa': 'The Return of the Disaster-Class Hero',
@@ -93,6 +113,7 @@ export const VIETNAMESE_TITLE_MAP = {
   'cao thu bong ro': 'Slam Dunk',
   'khoa blue': 'Blue Lock',
   'quai vat so 8': 'Kaiju No. 8',
+  'toriko': 'Toriko',
   'phap su tien tri frieren': 'Sousou no Frieren'
 };
 
@@ -122,6 +143,10 @@ export const ONGOING_CHAPTERS_MAP = {
   138676: 155,  // Return of the Mount Hua Sect
   122264: 200,  // Murim Login
   108345: 195,  // The Beginning After the End
+  119486: 310,  // Quanqiu Gao Wu (Toàn Cầu Cao Võ)
+  130624: 220,  // Swallowed Star (Nuốt Chửng Tinh Không)
+  162199: 280,  // Cong Da Shu Kaishi De Jinhua (Từ Đại Thụ Bắt Đầu Tiến Hóa)
+  160980: 190,  // Gao Wu: Denglu Weilai Yi Wan Nian (Cao Võ: Hạ Cánh Một Vạn Năm Sau)
 };
 
 export function removeVietnameseTones(str) {
