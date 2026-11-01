@@ -14,7 +14,8 @@ import {
   getOfficialSourceMeta,
   formatChapters,
   getOriginMeta,
-  getStatusMeta
+  getStatusMeta,
+  removeVietnameseTones
 } from './api.js';
 
 import {
@@ -48,7 +49,9 @@ const state = {
   isLoading: false,
   detailCache: new Map(),
   naverData: null,
-  naverCurrentDay: 'MON'
+  naverCurrentDay: 'MON',
+  currentGenreSuggestions: [],
+  activeSuggestionIndex: -1
 };
 
 // DOM Elements
@@ -70,6 +73,7 @@ const elements = {
   viewBtns: document.querySelectorAll('.view-btn'),
   genreCatNav: document.getElementById('genreCatNav'),
   genreSearchInput: document.getElementById('genreSearchInput'),
+  genreSuggestionsDropdown: document.getElementById('genreSuggestionsDropdown'),
   selectedGenresCountBadge: document.getElementById('selectedGenresCountBadge'),
   genresContainer: document.getElementById('genresContainer'),
   clearGenresBtn: document.getElementById('clearGenresBtn'),
@@ -138,6 +142,292 @@ export function initApp() {
 }
 
 /**
+ * Helper to escape HTML characters in dynamic strings
+ */
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
+ * Biểu tượng cảm xúc trực quan cho từng thể loại & tag
+ */
+const GENRE_ICONS = {
+  Action: '⚔️',
+  Adventure: '🧭',
+  Fantasy: '🔮',
+  Isekai: '🌀',
+  Reincarnation: '⏳',
+  Cultivation: '🧘‍♂️',
+  'Martial Arts': '🥋',
+  Wuxia: '🗡️',
+  Magic: '✨',
+  Dungeon: '🏰',
+  Gods: '⚡',
+  Demons: '😈',
+  'Monster Girls': '🐾',
+  'Mahou Shoujo': '🪄',
+  'Super Power': '💥',
+  Survival: '⛺',
+  Revenge: '🔥',
+  'Time Manipulation': '⏰',
+  Military: '🪖',
+  Crime: '🕶️',
+  Thriller: '😱',
+  Gore: '🩸',
+  'Anti-Hero': '🦇',
+  Romance: '❤️',
+  School: '🏫',
+  Harem: '👑',
+  Ecchi: '🔞',
+  Villainess: '👸',
+  'Otome Game': '🎮',
+  'Family Life': '🏡',
+  Cooking: '🍳',
+  Comedy: '🤣',
+  Tragedy: '🥀',
+  Shounen: '👦',
+  Seinen: '🧑',
+  Shoujo: '👧',
+  Josei: '👩',
+  Historical: '📜',
+  'Sci-Fi': '🚀',
+  Mecha: '🤖',
+  'Virtual World': '🌐',
+  'Video Games': '👾',
+  Cyberpunk: '🏙️',
+  'Post-Apocalyptic': '☢️',
+  Zombies: '🧟',
+  Vampire: '🧛',
+  Space: '🪐',
+  Drama: '🎭',
+  'Slice of Life': '☕',
+  Supernatural: '👻',
+  Mystery: '🕵️',
+  Horror: '🩸',
+  Psychological: '🧠',
+  Sports: '⚽'
+};
+
+function getGenreIcon(id) {
+  return GENRE_ICONS[id] || '🏷️';
+}
+
+/**
+ * Bảng từ khóa tiếng Việt tìm kiếm nhanh cho thể loại
+ */
+const GENRE_KEYWORDS = {
+  Cultivation: ['tu tien', 'tu chan', 'dao gia', 'phi thang', 'tien hiep', 'dan ton', 'chan nhan', 'tien ton', 'kiem tien', 'luyen khi', 'truc co', 'kim dan', 'nguyen anh'],
+  Isekai: ['chuyen sinh', 'xuyen khong', 'di gioi', 'the gioi khac', 'tai sinh di gioi'],
+  Reincarnation: ['trong sinh', 'tai sinh', 'song lai', 'hoi quy', 'tro ve qua khu'],
+  'Martial Arts': ['vo thuat', 'dau khi', 'vo hiep', 'kiem hiep', 'quyen cuoc', 'chan khi', 'noi cong', 'kungfu'],
+  Wuxia: ['vo hiep', 'giang ho', 'kiem hiep', 'co phong', 'kiem khach'],
+  Dungeon: ['ham nguc', 'pho ban', 'thap', 'tower', 'boss', 'nguoi thuc tinh', 'gate'],
+  'Video Games': ['he thong', 'game thu', 'tro choi', 'level', 'thang cap', 'chi so', 'rpg', 'mmo'],
+  'Virtual World': ['the gioi ao', 'vr', 'game online', 'thuc te ao'],
+  Magic: ['ma phap', 'phep thuat', 'phap su', 'ma thuat', 'nguyen to', 'phu thuy'],
+  Villainess: ['nu phu', 'phan dien', 'ac nu', 'nhan vat phan dien'],
+  Harem: ['nhieu nu', 'hau cung', 'da the', 'nhieu vo'],
+  School: ['hoc duong', 'truong hoc', 'hoc sinh', 'lop hoc', 'cap ba', 'dai hoc'],
+  Romance: ['tinh cam', 'lang man', 'ngon tinh', 'yeu duong', 'hen ho'],
+  Action: ['hanh dong', 'danh nhau', 'chien dau', 'danh dam', 'vo luc'],
+  Adventure: ['phieu luu', 'kham pha', 'hanh trinh'],
+  Fantasy: ['ky ao', 'huyen ao', 'ma ao'],
+  Comedy: ['hai huoc', 'hai bua', 'vui nhon', 'cuoi'],
+  Drama: ['kich tinh', 'tam ly', 'xuc dong'],
+  'Slice of Life': ['doi thuong', 'hang ngay', 'binh yen', 'nhe nhang'],
+  Supernatural: ['sieu nhien', 'huyen bi', 'tam linh'],
+  Mystery: ['bi an', 'pha an', 'trinh tham', 'dieu tra'],
+  Horror: ['kinh di', 'ma', 'rung ron', 'am anh', 'ma quy'],
+  Psychological: ['tam ly', 'xoan nao', 'dau tri'],
+  Sports: ['the thao', 'bong da', 'bong ro', 'cau long', 'dien kinh'],
+  'Super Power': ['sieu nang luc', 'nang luc dac biet', 'dps'],
+  Survival: ['sinh ton', 'song con', 'hoang dao'],
+  Revenge: ['bao thu', 'tra thu', 'phuc thu'],
+  'Time Manipulation': ['thoi gian', 'du hanh thoi gian', 'quay nguoc thoi gian', 'ngung dong thoi gian'],
+  Military: ['quan su', 'chien tranh', 'quan doi', 'vu khi'],
+  Crime: ['toi pham', 'yakuza', 'xa hoi den', 'mafia'],
+  Thriller: ['giat gan', 'hoi hop', 'nghet tho'],
+  Gore: ['mau me', 'tan khoc', 'kinh di mau'],
+  'Anti-Hero': ['phan anh hung', 'chinh ta'],
+  Ecchi: ['goi cam', 'ecchi', 'nong bong', '16+'],
+  'Otome Game': ['game hen ho', 'game otome'],
+  'Family Life': ['gia dinh', 'nuoi con', 'cha con', 'me con'],
+  Cooking: ['nau an', 'am thuc', 'dau bep', 'mon an'],
+  Tragedy: ['bi kich', 'nuoc mat', 'dau thuong'],
+  Shounen: ['thieu nien', 'nam', 'shonen'],
+  Seinen: ['thanh nien', 'truong thanh', '18+'],
+  Shoujo: ['thieu nu', 'nu', 'shojo'],
+  Josei: ['phu nu', 'quy co'],
+  Historical: ['lich su', 'co dai', 'trieu dinh', 'hoang gia', 'xuyen ve co dai'],
+  'Sci-Fi': ['khoa hoc', 'vien tuong', 'tuong lai', 'sci-fi'],
+  Mecha: ['nguoi may', 'robot', 'co giap', 'gundam'],
+  Cyberpunk: ['cong nghe cao', 'tuong lai tam toi', 'cyberpunk'],
+  'Post-Apocalyptic': ['hau tan the', 'tan the', 'ngay tan the'],
+  Zombies: ['xac song', 'zombie', 'tang thi', 'xac song biet di'],
+  Vampire: ['ma ca rong', 'hut mau', 'huyet toc'],
+  Space: ['vu tru', 'khong gian', 'hanh tinh', 'phi thuyen']
+};
+
+/**
+ * Tìm kiếm các thể loại phù hợp nhất dựa trên từ khóa người dùng nhập
+ */
+function filterGenreSuggestions(query) {
+  if (!query || !query.trim()) return [];
+  const rawQ = query.trim().toLowerCase();
+  const cleanQ = removeVietnameseTones(rawQ);
+
+  const scored = [];
+
+  for (const item of ALL_GENRES_AND_TAGS) {
+    const rawName = (item.name || '').toLowerCase();
+    const cleanName = removeVietnameseTones(rawName);
+    const rawId = (item.id || '').toLowerCase();
+    const cleanId = removeVietnameseTones(rawId);
+
+    let score = 0;
+
+    // So khớp trực tiếp tên & ID
+    if (rawId === rawQ || cleanId === cleanQ) score = 100;
+    else if (rawName.startsWith(rawQ) || cleanName.startsWith(cleanQ)) score = 85;
+    else if (rawId.startsWith(rawQ) || cleanId.startsWith(cleanQ)) score = 75;
+    else if (rawName.includes(rawQ) || cleanName.includes(cleanQ)) score = 55;
+    else if (rawId.includes(rawQ) || cleanId.includes(cleanQ)) score = 45;
+
+    // So khớp từ khóa đồng nghĩa tiếng Việt
+    const aliases = GENRE_KEYWORDS[item.id] || [];
+    for (const alias of aliases) {
+      const cleanAlias = removeVietnameseTones(alias).toLowerCase();
+      if (cleanAlias === cleanQ) {
+        score = Math.max(score, 95);
+      } else if (cleanAlias.startsWith(cleanQ)) {
+        score = Math.max(score, 80);
+      } else if (cleanAlias.includes(cleanQ) || cleanQ.includes(cleanAlias)) {
+        score = Math.max(score, 65);
+      }
+    }
+
+    if (score > 0) {
+      scored.push({ item, score });
+    }
+  }
+
+  scored.sort((a, b) => b.score - a.score || a.item.name.localeCompare(b.item.name));
+  return scored.slice(0, 10).map(s => s.item);
+}
+
+/**
+ * Hiển thị danh sách gợi ý thể loại trong dropdown thả xuống
+ */
+function renderGenreSuggestions(suggestions, query) {
+  if (!elements.genreSuggestionsDropdown) return;
+
+  if (!query) {
+    hideGenreSuggestions();
+    return;
+  }
+
+  if (suggestions.length === 0) {
+    elements.genreSuggestionsDropdown.innerHTML = `
+      <div class="genre-suggestion-empty">
+        <div>🔍 Không tìm thấy thể loại khớp với "<strong>${escapeHtml(query)}</strong>"</div>
+        <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.35rem;">
+          Thử tìm: <em>tu tiên, isekai, trọng sinh, võ thuật, hầm ngục, học đường...</em>
+        </div>
+      </div>
+    `;
+    elements.genreSuggestionsDropdown.style.display = 'block';
+    state.currentGenreSuggestions = [];
+    state.activeSuggestionIndex = -1;
+    return;
+  }
+
+  state.currentGenreSuggestions = suggestions;
+  state.activeSuggestionIndex = -1;
+
+  elements.genreSuggestionsDropdown.innerHTML = suggestions.map((item, idx) => {
+    const isSelected = state.genres.has(item.id);
+    const icon = getGenreIcon(item.id);
+    return `
+      <div class="genre-suggestion-item ${isSelected ? 'is-selected' : ''}" data-genre-id="${item.id}" data-index="${idx}">
+        <div class="genre-suggestion-left">
+          <span class="genre-suggestion-icon">${icon}</span>
+          <span class="genre-suggestion-name">${escapeHtml(item.name)}</span>
+        </div>
+        <div class="genre-suggestion-right" style="display: flex; align-items: center; gap: 0.45rem;">
+          ${isSelected ? '<span class="genre-suggestion-badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); font-weight: 700;">Đang lọc ✓</span>' : ''}
+          <span class="genre-suggestion-badge">${item.type === 'genre' ? 'Thể loại' : 'Tag'}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  elements.genreSuggestionsDropdown.style.display = 'block';
+}
+
+/**
+ * Cập nhật đường viền/màu nền của mục đang được chọn bằng bàn phím (Arrow Up/Down)
+ */
+function updateSuggestionHighlight() {
+  if (!elements.genreSuggestionsDropdown) return;
+  const items = elements.genreSuggestionsDropdown.querySelectorAll('.genre-suggestion-item');
+  items.forEach((item, idx) => {
+    if (idx === state.activeSuggestionIndex) {
+      item.classList.add('active-item');
+      item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } else {
+      item.classList.remove('active-item');
+    }
+  });
+}
+
+/**
+ * Khi người dùng chọn một thể loại từ dropdown hoặc bấm Enter
+ * -> Thêm thể loại vào bộ lọc và gọi ngay loadMangaData để lọc danh sách truyện
+ */
+function selectGenreSuggestion(genreId) {
+  const item = ALL_GENRES_AND_TAGS.find(t => t.id === genreId);
+  if (!item) return;
+
+  // Thêm thể loại vào bộ lọc active
+  state.genres.add(genreId);
+
+  // Xóa trắng thanh tìm kiếm và ẩn dropdown gợi ý
+  if (elements.genreSearchInput) {
+    elements.genreSearchInput.value = '';
+  }
+  state.genreSearchQuery = '';
+  hideGenreSuggestions();
+
+  // Cập nhật giao diện huy hiệu và pills
+  renderGenrePills();
+  updateActiveFilterBadges();
+
+  // Reset trang và nạp dữ liệu truyện theo thể loại vừa chọn
+  state.page = 1;
+  loadMangaData();
+
+  // Thông báo phản hồi cho người dùng
+  showToast(`🏷️ Đã lọc theo thể loại: ${item.name}`);
+}
+
+/**
+ * Ẩn dropdown gợi ý
+ */
+function hideGenreSuggestions() {
+  if (elements.genreSuggestionsDropdown) {
+    elements.genreSuggestionsDropdown.style.display = 'none';
+  }
+  state.currentGenreSuggestions = [];
+  state.activeSuggestionIndex = -1;
+}
+
+/**
  * Render Genre & Tag Filter Badges with Category Navigation and Live Search
  */
 function renderGenrePills() {
@@ -150,22 +440,37 @@ function renderGenrePills() {
     list = GENRE_CATEGORIES.POPULAR.items;
   }
 
-  // Filter by local genre search query
+  // Đảm bảo các thể loại đang được chọn luôn xuất hiện ở đầu để người dùng dễ nhìn thấy
+  const listIds = new Set(list.map(i => i.id));
+  const activeExtra = [];
+  state.genres.forEach(gId => {
+    if (!listIds.has(gId)) {
+      const match = ALL_GENRES_AND_TAGS.find(i => i.id === gId);
+      if (match) activeExtra.push(match);
+    }
+  });
+  list = [...activeExtra, ...list];
+
+  // Lọc theo từ khóa tìm kiếm thể loại (nếu có)
   if (state.genreSearchQuery) {
     const q = state.genreSearchQuery.toLowerCase();
-    list = ALL_GENRES_AND_TAGS.filter(item => 
-      item.name.toLowerCase().includes(q) || item.id.toLowerCase().includes(q)
-    );
+    const cleanQ = removeVietnameseTones(q);
+    list = ALL_GENRES_AND_TAGS.filter(item => {
+      const n = item.name.toLowerCase();
+      const cn = removeVietnameseTones(n);
+      const id = item.id.toLowerCase();
+      return n.includes(q) || cn.includes(cleanQ) || id.includes(q);
+    });
   }
 
   if (list.length === 0) {
-    elements.genresContainer.innerHTML = `<span style="font-size: 0.8rem; color: var(--text-muted); padding: 0.5rem;">Không tìm thấy thể loại khớp với "${state.genreSearchQuery}"</span>`;
+    elements.genresContainer.innerHTML = `<span style="font-size: 0.8rem; color: var(--text-muted); padding: 0.5rem;">Không tìm thấy thể loại khớp với "${escapeHtml(state.genreSearchQuery)}"</span>`;
     return;
   }
 
   elements.genresContainer.innerHTML = list.map(item => `
     <button class="genre-tag ${state.genres.has(item.id) ? 'active' : ''}" data-genre="${item.id}" title="${item.name}">
-      ${item.name}
+      ${getGenreIcon(item.id)} ${item.name}
     </button>
   `).join('');
 
@@ -250,19 +555,74 @@ function bindEvents() {
       state.currentGenreCategory = btn.dataset.cat;
       state.genreSearchQuery = '';
       if (elements.genreSearchInput) elements.genreSearchInput.value = '';
+      hideGenreSuggestions();
       renderGenrePills();
     });
   }
 
-  // Genre Live Search Input
-  if (elements.genreSearchInput) {
-    let genreSearchTimeout = null;
+  // Genre Autocomplete & Live Search Input with Suggestion Dropdown
+  if (elements.genreSearchInput && elements.genreSuggestionsDropdown) {
     elements.genreSearchInput.addEventListener('input', (e) => {
-      clearTimeout(genreSearchTimeout);
-      genreSearchTimeout = setTimeout(() => {
-        state.genreSearchQuery = e.target.value.trim();
-        renderGenrePills();
-      }, 200);
+      const val = e.target.value.trim();
+      state.genreSearchQuery = val;
+      const suggestions = filterGenreSuggestions(val);
+      renderGenreSuggestions(suggestions, val);
+      renderGenrePills();
+    });
+
+    elements.genreSearchInput.addEventListener('keydown', (e) => {
+      const dropdownOpen = elements.genreSuggestionsDropdown.style.display === 'block';
+
+      if (e.key === 'ArrowDown') {
+        if (dropdownOpen && state.currentGenreSuggestions.length > 0) {
+          e.preventDefault();
+          state.activeSuggestionIndex = (state.activeSuggestionIndex + 1) % state.currentGenreSuggestions.length;
+          updateSuggestionHighlight();
+        }
+      } else if (e.key === 'ArrowUp') {
+        if (dropdownOpen && state.currentGenreSuggestions.length > 0) {
+          e.preventDefault();
+          state.activeSuggestionIndex = (state.activeSuggestionIndex - 1 + state.currentGenreSuggestions.length) % state.currentGenreSuggestions.length;
+          updateSuggestionHighlight();
+        }
+      } else if (e.key === 'Enter') {
+        if (dropdownOpen) {
+          e.preventDefault();
+          if (state.activeSuggestionIndex >= 0 && state.activeSuggestionIndex < state.currentGenreSuggestions.length) {
+            selectGenreSuggestion(state.currentGenreSuggestions[state.activeSuggestionIndex].id);
+          } else if (state.currentGenreSuggestions.length > 0) {
+            selectGenreSuggestion(state.currentGenreSuggestions[0].id);
+          }
+        }
+      } else if (e.key === 'Escape') {
+        hideGenreSuggestions();
+      }
+    });
+
+    elements.genreSearchInput.addEventListener('focus', (e) => {
+      const val = e.target.value.trim();
+      if (val) {
+        const suggestions = filterGenreSuggestions(val);
+        renderGenreSuggestions(suggestions, val);
+      }
+    });
+
+    // Delegate click on suggestions dropdown item
+    elements.genreSuggestionsDropdown.addEventListener('click', (e) => {
+      const itemEl = e.target.closest('.genre-suggestion-item');
+      if (!itemEl) return;
+      const genreId = itemEl.dataset.genreId;
+      if (genreId) {
+        selectGenreSuggestion(genreId);
+      }
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+      const wrapper = document.getElementById('genreSearchWrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        hideGenreSuggestions();
+      }
     });
   }
 

@@ -620,6 +620,78 @@ body {
   color: var(--text-muted);
 }
 
+.genre-suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #111827;
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.25);
+  z-index: 120;
+  max-height: 280px;
+  overflow-y: auto;
+  backdrop-filter: blur(16px);
+}
+
+.genre-suggestion-item {
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.genre-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.genre-suggestion-item:hover,
+.genre-suggestion-item.active-item {
+  background: rgba(99, 102, 241, 0.2);
+  color: white;
+}
+
+.genre-suggestion-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.genre-suggestion-icon {
+  font-size: 0.95rem;
+}
+
+.genre-suggestion-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.genre-suggestion-item:hover .genre-suggestion-name,
+.genre-suggestion-item.active-item .genre-suggestion-name {
+  color: #a5b4fc;
+}
+
+.genre-suggestion-badge {
+  font-size: 0.68rem;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+}
+
+.genre-suggestion-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
 .genres-pill-container {
   display: flex;
   flex-wrap: wrap;

@@ -238,16 +238,17 @@
             <button class="genre-cat-btn" data-cat="ALL_TAGS">✨ Tất cả thể loại</button>
           </div>
 
-          <!-- Mini search for genres -->
-          <div class="genre-search-wrapper">
+          <!-- Mini search for genres with floating suggestions dropdown -->
+          <div class="genre-search-wrapper" id="genreSearchWrapper">
             <span class="genre-search-icon">🔍</span>
             <input 
               type="text" 
               class="genre-search-input" 
               id="genreSearchInput" 
-              placeholder="Gõ nhanh thể loại cần tìm (VD: isekai, tu tiên, trọng sinh, harem, võ thuật, hầm ngục...)" 
+              placeholder="Gõ thể loại để hiện gợi ý chọn nhanh (VD: tu tiên, isekai, trọng sinh, harem, võ thuật...)" 
               autocomplete="off"
             />
+            <div class="genre-suggestions-dropdown" id="genreSuggestionsDropdown" style="display: none;"></div>
           </div>
 
           <!-- Genre Pill Badges -->
