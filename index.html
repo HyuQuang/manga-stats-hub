@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MangaStats Hub - Thống Kê & Khám Phá Truyện Tranh Theo Số Chap & Thể Loại</title>
-  <meta name="description" content="Ứng dụng web thống kê truyện tranh, sắp xếp số chapter từ cao xuống thấp, bộ lọc đa thể loại, phân tích dữ liệu và theo dõi tiến độ đọc cá nhân.">
+  <title>MangaStats Hub - Thống Kê & Khám Phá Nguồn Truyện Gốc (Nhật • Hàn • Trung)</title>
+  <meta name="description" content="Thống kê truyện tranh từ các nền tảng gốc Nhật Bản (Shonen Jump+, Kodansha), Hàn Quốc (Naver Webtoon, KakaoPage), Trung Quốc (Kuaikan). Xem số chap raw, sắp xếp và lọc đa thể loại.">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,27 +27,33 @@
         <div class="logo-badge">📚</div>
         <div class="logo-text">
           <h1>MangaStats</h1>
-          <span>Khám phá & Thống kê truyện tranh</span>
+          <span>Khám phá nguồn gốc xuất bản truyện tranh</span>
         </div>
       </div>
 
       <!-- Navigation Tabs -->
       <nav class="nav-tabs" aria-label="Điều hướng chính">
         <button class="nav-tab-btn active" data-tab="explore" id="tabExploreBtn">
-          🔍 Khám phá & Lọc chap
+          🔍 Khám phá & Web Gốc
+        </button>
+        <button class="nav-tab-btn" data-tab="naverLive" id="tabNaverBtn">
+          🇰🇷 Naver Webtoon Live
+        </button>
+        <button class="nav-tab-btn" data-tab="directory" id="tabDirectoryBtn">
+          🏢 Danh bạ NXB Gốc
         </button>
         <button class="nav-tab-btn" data-tab="analytics" id="tabAnalyticsBtn">
           📊 Phân tích số liệu
         </button>
         <button class="nav-tab-btn" data-tab="library" id="tabLibraryBtn">
-          📖 Tủ truyện cá nhân
+          📖 Tủ truyện
           <span class="badge" id="libraryCountBadge" style="display: none;">0</span>
         </button>
       </nav>
 
       <!-- Quick Action / Status -->
       <div class="header-actions">
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn-icon" title="Mã nguồn dự án" aria-label="Mã nguồn">
+        <a href="https://github.com/HyuQuang/manga-stats-hub" target="_blank" rel="noopener noreferrer" class="btn-icon" title="Mã nguồn dự án trên GitHub" aria-label="Mã nguồn">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
           </svg>
@@ -62,11 +68,11 @@
       <div class="hero-content">
         <div>
           <h2 class="hero-title">
-            Thống kê truyện tranh <br>
-            <span class="highlight">Sắp xếp theo số chương & Thể loại</span>
+            Thống kê từ <span class="highlight">Nguồn Truyện Gốc</span> <br>
+            Nhật Bản 🇯🇵 • Hàn Quốc 🇰🇷 • Trung Quốc 🇨🇳
           </h2>
           <p class="hero-subtitle">
-            Khám phá hàng chục nghìn bộ Manga, Manhwa, Manhua. Tra cứu chính xác số chap từ kỷ lục hàng ngàn chương đến các bộ đoản thiên, lọc thể loại tức thì theo thời gian thực.
+            Truy cập trực tiếp tới dữ liệu chuẩn từ các nhà xuất bản và nền tảng gốc: <strong>Shonen Jump+, Kodansha, Naver Webtoon, KakaoPage, Kuaikan Manhua</strong>. Xem chính xác số chap raw, tên bản địa gốc và đường dẫn về web mẹ.
           </p>
         </div>
 
@@ -74,10 +80,10 @@
         <div class="hero-stats-grid">
           <div class="stat-chip">
             <div class="chip-label">
-              <span>📚</span> Tổng tác phẩm
+              <span>📚</span> Tác phẩm theo dõi
             </div>
             <div class="chip-value" id="heroTotalCount">---</div>
-            <div class="chip-sub">AniList Global DB</div>
+            <div class="chip-sub">Cơ sở dữ liệu toàn cầu</div>
           </div>
           <div class="stat-chip">
             <div class="chip-label">
@@ -88,10 +94,10 @@
           </div>
           <div class="stat-chip">
             <div class="chip-label">
-              <span>📈</span> Chap trung bình
+              <span>🏢</span> Nền tảng gốc
             </div>
-            <div class="chip-value" id="heroAvgChapters">---</div>
-            <div class="chip-sub">Theo danh sách lọc</div>
+            <div class="chip-value" id="heroAvgChapters">10+ NXB</div>
+            <div class="chip-sub">Jump, Naver, Kakao...</div>
           </div>
         </div>
       </div>
@@ -120,7 +126,7 @@
               type="text" 
               class="search-input" 
               id="searchInput" 
-              placeholder="Nhập tên truyện cần tìm (VD: One Piece, Naruto, Denma... - bấm '/' để gõ)" 
+              placeholder="Nhập tên truyện cần tìm (Tên gốc, Romaji hoặc Tiếng Anh - bấm '/' để gõ)" 
               autocomplete="off"
             />
             <button class="clear-search-btn" id="clearSearchBtn" title="Xóa tìm kiếm">✕</button>
@@ -139,14 +145,38 @@
             </select>
           </div>
 
+          <!-- Official Origin Platform Select -->
+          <div class="select-group">
+            <label for="platformSelect" class="select-label">Nền tảng gốc:</label>
+            <select id="platformSelect" class="custom-select">
+              <option value="ALL">🌐 Tất cả nền tảng gốc</option>
+              <optgroup label="Nhật Bản 🇯🇵">
+                <option value="SHUEISHA_JUMP">Shueisha / Shonen Jump+ (集英社)</option>
+                <option value="KODANSHA">Kodansha / Magazine Pocket (講談社)</option>
+                <option value="SHOGAKUKAN">Shogakukan / Sunday Webry (小学館)</option>
+                <option value="KADOKAWA">Kadokawa / ComicWalker (角川)</option>
+              </optgroup>
+              <optgroup label="Hàn Quốc 🇰🇷">
+                <option value="NAVER_WEBTOON">Naver Webtoon (네이버 웹툰)</option>
+                <option value="KAKAO_PAGE">KakaoPage / Webtoon (카카오)</option>
+                <option value="LEZHIN">Lezhin Comics (레진)</option>
+              </optgroup>
+              <optgroup label="Trung Quốc 🇨🇳">
+                <option value="KUAIKAN">Kuaikan Manhua (快看漫画)</option>
+                <option value="BILIBILI_MANHUA">Bilibili Manhua (哔哩哔哩)</option>
+                <option value="TENCENT_DONGMAN">Tencent Dongman (腾讯动漫)</option>
+              </optgroup>
+            </select>
+          </div>
+
           <!-- Country / Origin Select -->
           <div class="select-group">
             <label for="countrySelect" class="select-label">Quốc gia:</label>
             <select id="countrySelect" class="custom-select">
-              <option value="ALL">🌐 Tất cả (Manga/Manhwa/Manhua)</option>
-              <option value="JP">🇯🇵 Manga (Nhật Bản)</option>
-              <option value="KR">🇰🇷 Manhwa (Hàn Quốc)</option>
-              <option value="CN">🇨🇳 Manhua (Trung Quốc)</option>
+              <option value="ALL">Tất cả quốc gia</option>
+              <option value="JP">🇯🇵 Nhật Bản (Manga)</option>
+              <option value="KR">🇰🇷 Hàn Quốc (Manhwa)</option>
+              <option value="CN">🇨🇳 Trung Quốc (Manhua)</option>
             </select>
           </div>
 
@@ -155,8 +185,8 @@
             <label for="statusSelect" class="select-label">Trạng thái:</label>
             <select id="statusSelect" class="custom-select">
               <option value="ALL">Tất cả trạng thái</option>
-              <option value="FINISHED">Đã hoàn thành</option>
-              <option value="RELEASING">Đang phát hành</option>
+              <option value="FINISHED">Đã hoàn thành (Full)</option>
+              <option value="RELEASING">Đang phát hành (Ongoing)</option>
               <option value="HIATUS">Tạm dừng (Hiatus)</option>
             </select>
           </div>
@@ -189,7 +219,7 @@
         <div class="genre-filter-section">
           <div class="genre-header">
             <div class="genre-title">
-              <span>🏷️</span> Lọc theo thể loại (chọn nhiều thể loại cùng lúc):
+              <span>🏷️</span> Lọc theo thể loại:
             </div>
             <div class="genre-actions">
               <button class="btn-text-link" id="clearGenresBtn">Bỏ chọn thể loại</button>
@@ -222,7 +252,56 @@
 
     </div>
 
-    <!-- View 2: Analytics & Stats Dashboard -->
+    <!-- View 2: Naver Webtoon Live (Hàn Quốc) -->
+    <div id="naverLiveView" style="display: none;">
+      <div class="controls-card" style="margin-bottom: 1.5rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-size: 1.4rem; font-weight: 800; color: #22c55e; display: flex; align-items: center; gap: 0.5rem;">
+              <span>🇰🇷</span> Naver Webtoon (네이버 웹툰) - Trực tiếp từ Hàn Quốc
+            </h2>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem;">
+              Dữ liệu phát hành thời gian thực từ máy chủ Naver Webtoon tại Seoul. Chọn ngày trong tuần để xem bảng xếp hạng chap mới ra lò:
+            </p>
+          </div>
+          <a href="https://comic.naver.com" target="_blank" rel="noopener noreferrer" class="btn-outline" style="border-color: #22c55e; color: #22c55e;">
+            🌐 Truy cập comic.naver.com ↗
+          </a>
+        </div>
+
+        <div class="weekday-nav" id="naverWeekdayNav" style="margin-top: 1.25rem;">
+          <button class="weekday-btn active" data-day="MON">Thứ Hai (월)</button>
+          <button class="weekday-btn" data-day="TUE">Thứ Ba (화)</button>
+          <button class="weekday-btn" data-day="WED">Thứ Tư (수)</button>
+          <button class="weekday-btn" data-day="THU">Thứ Năm (목)</button>
+          <button class="weekday-btn" data-day="FRI">Thứ Sáu (금)</button>
+          <button class="weekday-btn" data-day="SAT">Thứ Bảy (토)</button>
+          <button class="weekday-btn" data-day="SUN">Chủ Nhật (일)</button>
+        </div>
+      </div>
+
+      <div id="naverResultsContainer" class="manga-grid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- View 3: Official Publishers Directory -->
+    <div id="directoryView" style="display: none;">
+      <div class="controls-card" style="margin-bottom: 2rem;">
+        <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem;">
+          🏢 Danh Bạ Các Nền Tảng & Nhà Xuất Bản Gốc Hàng Đầu
+        </h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          Đây là các trang web gốc nguyên bản từ từng quốc gia — nơi tác giả trực tiếp phát hành các chương truyện (Raw) trước khi các trang trung gian lấy lại.
+        </p>
+      </div>
+
+      <div class="platform-grid" id="platformGridContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- View 4: Analytics & Stats Dashboard -->
     <div id="analyticsView" style="display: none;" class="analytics-view">
       
       <div class="analytics-cards-grid">
@@ -269,7 +348,7 @@
 
     </div>
 
-    <!-- View 3: Personal Library / Reading Tracker -->
+    <!-- View 5: Personal Library / Reading Tracker -->
     <div id="libraryView" style="display: none;">
       
       <!-- Library Top Summary -->
@@ -322,6 +401,7 @@
           <div class="modal-header-meta">
             <h2 id="modalTitle">Tiêu đề truyện</h2>
             <p id="modalSubtitle">Phụ đề</p>
+            <div id="modalOfficialSourceBadge" style="margin-bottom: 0.75rem;"></div>
             <div class="modal-stats-strip" id="modalStatsStrip">
               <!-- Badges injected by JS -->
             </div>
@@ -337,12 +417,12 @@
           <button class="btn-primary" id="modalActionFavBtn">
             🤍 Lưu vào Tủ truyện
           </button>
-          <div style="display: flex; gap: 0.75rem;">
-            <a href="#" target="_blank" rel="noopener noreferrer" class="btn-outline" id="modalAniListLink">
-              🌐 Xem trên AniList
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn-outline" id="modalRawLink" style="border-color: #22c55e; color: #86efac; font-weight: 700;">
+              📖 Đọc tại Web Gốc (Raw) ↗
             </a>
-            <a href="#" target="_blank" rel="noopener noreferrer" class="btn-outline" id="modalMangaDexLink">
-              🔍 Tìm trên MangaDex
+            <a href="#" target="_blank" rel="noopener noreferrer" class="btn-outline" id="modalAniListLink">
+              🌐 Thông tin AniList
             </a>
           </div>
         </div>

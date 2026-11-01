@@ -1,12 +1,16 @@
 /**
- * MangaStats Hub - Main Application Controller
+ * MangaStats Hub - Main Application Controller with Official Multi-Country Origins
  */
 
 import {
   fetchMangaList,
+  fetchNaverOfficialWebtoons,
+  OFFICIAL_PLATFORMS,
   POPULAR_GENRES,
   getMangaTitle,
+  getMangaNativeTitle,
   getMangaSubtitle,
+  getOfficialSourceMeta,
   formatChapters,
   getOriginMeta,
   getStatusMeta
@@ -27,18 +31,21 @@ import {
 const state = {
   page: 1,
   perPage: 24,
-  sort: 'CHAPTERS_DESC', // Default: Cao xuống thấp
+  sort: 'CHAPTERS_DESC',
   genres: new Set(),
   search: '',
   country: 'ALL',
   status: 'ALL',
+  platform: 'ALL',
   chapterTier: 'ALL',
   viewMode: 'grid', // 'grid' | 'table'
-  activeTab: 'explore', // 'explore' | 'analytics' | 'library'
+  activeTab: 'explore', // 'explore' | 'naverLive' | 'directory' | 'analytics' | 'library'
   items: [],
   pageInfo: null,
   isLoading: false,
-  detailCache: new Map()
+  detailCache: new Map(),
+  naverData: null,
+  naverCurrentDay: 'MON'
 };
 
 // DOM Elements
@@ -46,12 +53,15 @@ const elements = {
   navTabs: document.querySelectorAll('.nav-tab-btn'),
   tabViews: {
     explore: document.getElementById('exploreView'),
+    naverLive: document.getElementById('naverLiveView'),
+    directory: document.getElementById('directoryView'),
     analytics: document.getElementById('analyticsView'),
     library: document.getElementById('libraryView')
   },
   searchInput: document.getElementById('searchInput'),
   clearSearchBtn: document.getElementById('clearSearchBtn'),
   sortSelect: document.getElementById('sortSelect'),
+  platformSelect: document.getElementById('platformSelect'),
   countrySelect: document.getElementById('countrySelect'),
   statusSelect: document.getElementById('statusSelect'),
   viewBtns: document.querySelectorAll('.view-btn'),
@@ -76,11 +86,19 @@ const elements = {
   modalCoverImg: document.getElementById('modalCoverImg'),
   modalTitle: document.getElementById('modalTitle'),
   modalSubtitle: document.getElementById('modalSubtitle'),
+  modalOfficialSourceBadge: document.getElementById('modalOfficialSourceBadge'),
   modalStatsStrip: document.getElementById('modalStatsStrip'),
   modalDescription: document.getElementById('modalDescription'),
   modalActionFavBtn: document.getElementById('modalActionFavBtn'),
+  modalRawLink: document.getElementById('modalRawLink'),
   modalAniListLink: document.getElementById('modalAniListLink'),
-  modalMangaDexLink: document.getElementById('modalMangaDexLink'),
+
+  // Naver Live View Elements
+  naverWeekdayNav: document.getElementById('naverWeekdayNav'),
+  naverResultsContainer: document.getElementById('naverResultsContainer'),
+
+  // Directory View
+  platformGridContainer: document.getElementById('platformGridContainer'),
 
   // Analytics View Elements
   analyticsTotalManga: document.getElementById('analyticsTotalManga'),
@@ -107,6 +125,7 @@ const elements = {
  */
 export function initApp() {
   renderGenrePills();
+  renderDirectory();
   bindEvents();
   updateLibraryBadge();
   loadMangaData();
@@ -159,6 +178,13 @@ function bindEvents() {
   // Sort Selection
   elements.sortSelect.addEventListener('change', (e) => {
     state.sort = e.target.value;
+    state.page = 1;
+    loadMangaData();
+  });
+
+  // Platform / Publisher Selection (KEY USER REQUIREMENT)
+  elements.platformSelect.addEventListener('change', (e) => {
+    state.platform = e.target.value;
     state.page = 1;
     loadMangaData();
   });
@@ -235,6 +261,18 @@ function bindEvents() {
     }
   });
 
+  // Naver Live Weekday Nav
+  if (elements.naverWeekdayNav) {
+    elements.naverWeekdayNav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.weekday-btn');
+      if (!btn) return;
+      elements.naverWeekdayNav.querySelectorAll('.weekday-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.naverCurrentDay = btn.dataset.day;
+      renderNaverLiveView();
+    });
+  }
+
   // Library export & import
   elements.exportLibBtn.addEventListener('click', () => {
     exportLibraryAsFile();
@@ -276,7 +314,9 @@ function switchTab(tabId) {
     }
   });
 
-  if (tabId === 'analytics') {
+  if (tabId === 'naverLive') {
+    loadNaverData();
+  } else if (tabId === 'analytics') {
     renderAnalyticsView();
   } else if (tabId === 'library') {
     renderLibraryView();
@@ -284,7 +324,7 @@ function switchTab(tabId) {
 }
 
 /**
- * Fetch and Load Manga Data from AniList
+ * Fetch and Load Manga Data from AniList with Raw Publisher Data
  */
 async function loadMangaData() {
   if (state.isLoading) return;
@@ -299,7 +339,8 @@ async function loadMangaData() {
       genres: Array.from(state.genres),
       search: state.search,
       country: state.country,
-      status: state.status
+      status: state.status,
+      platform: state.platform
     });
 
     state.items = data.media || [];
@@ -316,7 +357,7 @@ async function loadMangaData() {
     elements.resultsContainer.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-xl);">
         <p style="color: var(--accent-rose); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">
-          ⚠️ Không thể tải dữ liệu từ máy chủ AniList
+          ⚠️ Không thể tải dữ liệu truyện
         </p>
         <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
           ${error.message || 'Vui lòng kiểm tra lại kết nối mạng hoặc thử lại.'}
@@ -359,14 +400,14 @@ function getFilteredItems() {
  */
 function renderCurrentView() {
   const filtered = getFilteredItems();
-  elements.resultsCount.innerHTML = `Hiển thị <strong>${filtered.length}</strong> / ${state.pageInfo ? state.pageInfo.total.toLocaleString('vi-VN') : filtered.length} bộ truyện`;
+  elements.resultsCount.innerHTML = `Hiển thị <strong>${filtered.length}</strong> / ${state.pageInfo ? state.pageInfo.total.toLocaleString('vi-VN') : filtered.length} tác phẩm`;
 
   if (filtered.length === 0) {
     elements.resultsContainer.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1.5rem; background: var(--bg-card); border-radius: var(--radius-xl);">
         <p style="font-size: 1.5rem; margin-bottom: 0.5rem;">🔍</p>
         <h3 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 0.25rem;">Không tìm thấy truyện phù hợp</h3>
-        <p style="color: var(--text-muted); font-size: 0.88rem;">Hãy thử nới lỏng bộ lọc thể loại hoặc khoảng số chap nhé.</p>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">Hãy thử nới lỏng bộ lọc nền tảng gốc hoặc khoảng số chap nhé.</p>
       </div>
     `;
     return;
@@ -380,16 +421,17 @@ function renderCurrentView() {
 }
 
 /**
- * Render Manga Cards Grid View
+ * Render Manga Cards Grid View with Official Origin Badges
  */
 function renderGrid(items) {
   elements.resultsContainer.className = 'manga-grid';
   elements.resultsContainer.innerHTML = items.map(manga => {
     const title = getMangaTitle(manga);
-    const subtitle = getMangaSubtitle(manga);
+    const nativeTitle = getMangaNativeTitle(manga);
     const chaps = manga.chapters;
     const origin = getOriginMeta(manga.countryOfOrigin);
     const status = getStatusMeta(manga.status);
+    const sourceMeta = getOfficialSourceMeta(manga);
     const isSaved = isInLibrary(manga.id);
 
     let chapBadgeClass = 'badge-chapters';
@@ -414,7 +456,14 @@ function renderGrid(items) {
         </div>
         <div class="card-body">
           <h3 class="card-title" title="${title}">${title}</h3>
-          ${subtitle ? `<div class="card-subtitle">${subtitle}</div>` : ''}
+          ${nativeTitle ? `<div class="card-native-title" title="Tên gốc: ${nativeTitle}">📌 ${nativeTitle}</div>` : ''}
+          
+          <div style="margin-bottom: 0.65rem;">
+            <a href="${sourceMeta.rawUrl || sourceMeta.searchUrl}" target="_blank" rel="noopener noreferrer" class="badge-official-source ${sourceMeta.badgeClass}" title="Nền tảng xuất bản gốc: ${sourceMeta.name}">
+              🏢 ${sourceMeta.name} ↗
+            </a>
+          </div>
+
           <div class="card-genres">
             ${(manga.genres || []).slice(0, 3).map(g => `<span class="card-genre-pill">${g}</span>`).join('')}
           </div>
@@ -448,25 +497,25 @@ function renderTable(items) {
       <thead>
         <tr>
           <th>#</th>
-          <th>Truyện tranh</th>
-          <th>Loại</th>
+          <th>Tác phẩm & Tên gốc</th>
+          <th>Nền tảng xuất bản gốc</th>
           <th class="sortable ${isSortedByChapDesc || isSortedByChapAsc ? 'sorted' : ''}" id="tableSortChapBtn" title="Bấm để đảo chiều sắp xếp số chap">
             Số chương ${isSortedByChapDesc ? '▼ (Cao -> Thấp)' : isSortedByChapAsc ? '▲ (Thấp -> Cao)' : '↕'}
           </th>
-          <th>Số tập (Vol)</th>
+          <th>Số tập</th>
           <th>Đánh giá</th>
           <th>Trạng thái</th>
-          <th>Tủ truyện</th>
+          <th>Web Gốc</th>
         </tr>
       </thead>
       <tbody>
         ${items.map((manga, index) => {
           const rank = (state.page - 1) * state.perPage + index + 1;
           const title = getMangaTitle(manga);
+          const nativeTitle = getMangaNativeTitle(manga);
           const chaps = manga.chapters;
-          const origin = getOriginMeta(manga.countryOfOrigin);
           const status = getStatusMeta(manga.status);
-          const isSaved = isInLibrary(manga.id);
+          const sourceMeta = getOfficialSourceMeta(manga);
 
           return `
             <tr data-id="${manga.id}" style="cursor: pointer;">
@@ -478,11 +527,16 @@ function renderTable(items) {
                   <img class="table-manga-thumb" src="${manga.coverImage?.large || ''}" alt="${title}" loading="lazy" />
                   <div class="table-manga-info">
                     <h4>${title}</h4>
+                    ${nativeTitle ? `<p style="color: #a5b4fc; font-weight: 600;">${nativeTitle}</p>` : ''}
                     <p>${(manga.genres || []).slice(0, 3).join(', ')}</p>
                   </div>
                 </div>
               </td>
-              <td><span style="font-weight: 600;">${origin.flag} ${origin.label}</span></td>
+              <td>
+                <a href="${sourceMeta.rawUrl || sourceMeta.searchUrl}" target="_blank" rel="noopener noreferrer" class="badge-official-source ${sourceMeta.badgeClass}">
+                  ${sourceMeta.flag} ${sourceMeta.name}
+                </a>
+              </td>
               <td>
                 <span class="table-chapters-badge ${chaps >= 500 ? 'high' : ''}">
                   ${chaps !== null && chaps !== undefined ? chaps.toLocaleString('vi-VN') + ' chap' : 'Đang cập nhật'}
@@ -503,9 +557,9 @@ function renderTable(items) {
                 </span>
               </td>
               <td>
-                <button class="card-action-btn ${isSaved ? 'saved' : ''}" data-action="fav" data-id="${manga.id}" title="${isSaved ? 'Xóa khỏi tủ' : 'Lưu vào tủ'}">
-                  ${isSaved ? '❤️' : '🤍'}
-                </button>
+                <a href="${sourceMeta.rawUrl || sourceMeta.searchUrl}" target="_blank" rel="noopener noreferrer" class="btn-text-link" style="color: #22c55e; font-weight: 700;">
+                  Đọc Raw ↗
+                </a>
               </td>
             </tr>
           `;
@@ -537,18 +591,15 @@ function renderTable(items) {
  * Attach Card & Table Click Events
  */
 function attachCardEvents() {
-  // Click on cards or rows to open modal
   const clickTargets = elements.resultsContainer.querySelectorAll('.manga-card, .stats-table tbody tr');
   clickTargets.forEach(el => {
     el.addEventListener('click', (e) => {
-      // Ignore if clicking the fav button directly
-      if (e.target.closest('[data-action="fav"]')) return;
+      if (e.target.closest('[data-action="fav"]') || e.target.closest('a')) return;
       const id = parseInt(el.dataset.id, 10);
       if (id) openModal(id);
     });
   });
 
-  // Favorite toggle buttons
   const favBtns = elements.resultsContainer.querySelectorAll('[data-action="fav"]');
   favBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -584,16 +635,12 @@ function updateHeroStats() {
 
   const validChaps = state.items.map(it => it.chapters || 0).filter(c => c > 0);
   const maxChap = validChaps.length ? Math.max(...validChaps) : 0;
-  const avgChap = validChaps.length ? Math.round(validChaps.reduce((a, b) => a + b, 0) / validChaps.length) : 0;
 
   if (state.pageInfo && elements.heroTotalCount) {
     elements.heroTotalCount.textContent = state.pageInfo.total.toLocaleString('vi-VN');
   }
   if (elements.heroTopChapters) {
     elements.heroTopChapters.textContent = `${maxChap.toLocaleString('vi-VN')} chap`;
-  }
-  if (elements.heroAvgChapters) {
-    elements.heroAvgChapters.textContent = `${avgChap.toLocaleString('vi-VN')} chap`;
   }
 }
 
@@ -605,6 +652,10 @@ function updateActiveFilterBadges() {
 
   if (state.search) {
     badges.push(`Tìm: "${state.search}"`);
+  }
+  if (state.platform !== 'ALL') {
+    const plat = OFFICIAL_PLATFORMS.find(p => p.id === state.platform);
+    if (plat) badges.push(`NXB: ${plat.name}`);
   }
   if (state.country !== 'ALL') {
     const meta = getOriginMeta(state.country);
@@ -671,22 +722,29 @@ function renderPagination() {
 }
 
 /**
- * Open Manga Detail Modal
+ * Open Manga Detail Modal with Official Links
  */
 function openModal(mangaId) {
   const manga = state.detailCache.get(mangaId);
   if (!manga) return;
 
   const title = getMangaTitle(manga);
-  const subtitle = getMangaSubtitle(manga);
+  const nativeTitle = getMangaNativeTitle(manga);
   const origin = getOriginMeta(manga.countryOfOrigin);
   const status = getStatusMeta(manga.status);
+  const sourceMeta = getOfficialSourceMeta(manga);
   const isSaved = isInLibrary(manga.id);
 
   elements.modalBannerImg.src = manga.bannerImage || manga.coverImage?.extraLarge || manga.coverImage?.large || '';
   elements.modalCoverImg.src = manga.coverImage?.large || manga.coverImage?.extraLarge || '';
   elements.modalTitle.textContent = title;
-  elements.modalSubtitle.textContent = subtitle || `${origin.full} • Bắt đầu: ${manga.startDate?.year || 'Chưa rõ'}`;
+  elements.modalSubtitle.textContent = nativeTitle ? `Tên gốc bản địa: ${nativeTitle}` : `${origin.full} • Bắt đầu: ${manga.startDate?.year || 'Chưa rõ'}`;
+
+  elements.modalOfficialSourceBadge.innerHTML = `
+    <a href="${sourceMeta.rawUrl || sourceMeta.searchUrl}" target="_blank" rel="noopener noreferrer" class="badge-official-source ${sourceMeta.badgeClass}" style="font-size: 0.88rem; padding: 0.35rem 0.8rem;">
+      🏢 Nền tảng gốc: ${sourceMeta.name} ↗
+    </a>
+  `;
 
   elements.modalStatsStrip.innerHTML = `
     <div class="modal-stat-badge">
@@ -713,13 +771,11 @@ function openModal(mangaId) {
     ` : ''}
   `;
 
-  // Strip raw HTML tags from AniList description
   const cleanDesc = (manga.description || 'Chưa có thông tin tóm tắt nội dung.')
     .replace(/<br\s*[\/]?>/gi, '\n')
     .replace(/<[^>]+>/gi, '');
   elements.modalDescription.textContent = cleanDesc;
 
-  // Favorite button in modal
   elements.modalActionFavBtn.innerHTML = isSaved ? '❤️ Đã lưu trong Tủ truyện' : '🤍 Lưu vào Tủ truyện';
   elements.modalActionFavBtn.onclick = () => {
     const added = toggleFavorite(manga);
@@ -729,9 +785,11 @@ function openModal(mangaId) {
     renderCurrentView();
   };
 
-  // External Links
+  // Direct Raw link button
+  elements.modalRawLink.href = sourceMeta.rawUrl || sourceMeta.searchUrl;
+  elements.modalRawLink.innerHTML = `📖 Đọc tại ${sourceMeta.publisher || 'Web Gốc'} ↗`;
+
   elements.modalAniListLink.href = `https://anilist.co/manga/${manga.id}`;
-  elements.modalMangaDexLink.href = `https://mangadex.org/search?q=${encodeURIComponent(title)}`;
 
   elements.modalOverlay.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -740,6 +798,124 @@ function openModal(mangaId) {
 function closeModal() {
   elements.modalOverlay.classList.remove('open');
   document.body.style.overflow = '';
+}
+
+/**
+ * Load & Render Naver Webtoon Live Korean Data
+ */
+async function loadNaverData() {
+  if (state.naverData) {
+    renderNaverLiveView();
+    return;
+  }
+
+  elements.naverResultsContainer.innerHTML = `
+    <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+      <p style="color: #22c55e; font-size: 1.1rem; font-weight: 700;">
+        🔄 Đang kết nối trực tiếp đến máy chủ Naver Webtoon tại Seoul...
+      </p>
+    </div>
+  `;
+
+  const data = await fetchNaverOfficialWebtoons();
+  if (data) {
+    state.naverData = data;
+    renderNaverLiveView();
+  } else {
+    elements.naverResultsContainer.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-xl);">
+        <p style="color: var(--accent-rose); font-weight: 700;">⚠️ Tạm thời không thể kết nối tới Naver API qua proxy.</p>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Bạn có thể bấm vào nút "Truy cập comic.naver.com" ở góc trên để xem trực tiếp!</p>
+      </div>
+    `;
+  }
+}
+
+function renderNaverLiveView() {
+  if (!state.naverData) return;
+
+  const dayMap = {
+    MON: 'MONDAY',
+    TUE: 'TUESDAY',
+    WED: 'WEDNESDAY',
+    THU: 'THURSDAY',
+    FRI: 'FRIDAY',
+    SAT: 'SATURDAY',
+    SUN: 'SUNDAY'
+  };
+
+  const list = state.naverData[dayMap[state.naverCurrentDay]] || [];
+  if (!list.length) {
+    elements.naverResultsContainer.innerHTML = `<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Không có dữ liệu cho ngày này.</p>`;
+    return;
+  }
+
+  elements.naverResultsContainer.innerHTML = list.map(item => `
+    <div class="manga-card" style="border-color: rgba(3, 199, 90, 0.25);">
+      <div class="card-poster-wrap">
+        <img class="card-poster" src="${item.thumbnailUrl}" alt="${item.titleName}" loading="lazy" />
+        <div class="badge-chapters" style="background: rgba(3, 199, 90, 0.9); color: black;">
+          ★ ${item.starScore ? item.starScore.toFixed(2) : '9.8'}
+        </div>
+        <div class="badge-origin" style="background: #03c75a; color: black;">
+          🇰🇷 Naver Raw
+        </div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title" title="${item.titleName}">${item.titleName}</h3>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">✍️ Tác giả: ${item.author || 'Chưa rõ'}</p>
+        <div class="card-footer">
+          <a href="https://comic.naver.com/webtoon/list?titleId=${item.titleId}" target="_blank" rel="noopener noreferrer" class="btn-text-link" style="color: #22c55e; font-weight: 700;">
+            Đọc trên Naver ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/**
+ * Render Official Publishers Directory
+ */
+function renderDirectory() {
+  if (!elements.platformGridContainer) return;
+
+  const platforms = OFFICIAL_PLATFORMS.filter(p => p.id !== 'ALL');
+  elements.platformGridContainer.innerHTML = platforms.map(plat => `
+    <div class="platform-card">
+      <div class="platform-card-header">
+        <div class="platform-icon-box" style="background: ${plat.color}22; border: 1px solid ${plat.color}66; color: ${plat.color};">
+          ${plat.flag}
+        </div>
+        <div>
+          <h3 style="font-size: 1.1rem; color: var(--text-main); font-weight: 800;">${plat.name}</h3>
+          <span style="font-size: 0.78rem; color: var(--text-muted);">${plat.publisher}</span>
+        </div>
+      </div>
+      <div class="platform-card-body">
+        <p>${plat.desc}</p>
+      </div>
+      <div class="platform-card-footer">
+        <button class="btn-primary" data-filter-platform="${plat.id}" style="font-size: 0.82rem; padding: 0.45rem 1rem;">
+          🔍 Lọc truyện NXB này
+        </button>
+        <a href="${plat.siteUrl}" target="_blank" rel="noopener noreferrer" class="btn-outline" style="font-size: 0.82rem; padding: 0.45rem 0.9rem;">
+          Web Gốc ↗
+        </a>
+      </div>
+    </div>
+  `).join('');
+
+  elements.platformGridContainer.querySelectorAll('[data-filter-platform]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const platId = btn.dataset.filterPlatform;
+      state.platform = platId;
+      elements.platformSelect.value = platId;
+      switchTab('explore');
+      state.page = 1;
+      loadMangaData();
+    });
+  });
 }
 
 /**
@@ -757,7 +933,6 @@ function renderAnalyticsView() {
   if (elements.analyticsMaxChap) elements.analyticsMaxChap.textContent = `${maxChap.toLocaleString('vi-VN')} chap`;
   if (elements.analyticsAvgChap) elements.analyticsAvgChap.textContent = `${avgChap.toLocaleString('vi-VN')} chap`;
 
-  // Chapter tier distribution
   const tiers = {
     epic: { label: '🔥 Siêu trường thiên (≥ 1.000 chap)', count: 0, class: 'fill-purple' },
     long: { label: '📘 Truyện dài (500 - 999 chap)', count: 0, class: 'fill-cyan' },
@@ -789,7 +964,6 @@ function renderAnalyticsView() {
     `;
   }).join('');
 
-  // Status breakdown
   const finishedCount = items.filter(it => it.status === 'FINISHED').length;
   const releasingCount = items.filter(it => it.status === 'RELEASING').length;
   const hiatusCount = items.length - finishedCount - releasingCount;
@@ -887,7 +1061,6 @@ function renderLibraryView() {
     `;
   }).join('');
 
-  // Progress change listener
   elements.libraryGrid.querySelectorAll('[data-lib-input]').forEach(input => {
     input.addEventListener('change', (e) => {
       const id = parseInt(input.dataset.libInput, 10);
@@ -898,7 +1071,6 @@ function renderLibraryView() {
     });
   });
 
-  // Remove from library
   elements.libraryGrid.querySelectorAll('[data-lib-remove]').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = parseInt(btn.dataset.libRemove, 10);

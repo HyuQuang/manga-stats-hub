@@ -1,67 +1,47 @@
 # MangaStats Hub 📚
 
-Ứng dụng web tra cứu, lọc và thống kê truyện tranh toàn cầu (Manga, Manhwa, Manhua) theo số chương (chapters), thể loại và trạng thái phát hành.
+Ứng dụng web tra cứu, lọc và thống kê truyện tranh **từ các Nền Tảng & Nhà Xuất Bản Gốc** của Nhật Bản 🇯🇵, Hàn Quốc 🇰🇷 và Trung Quốc 🇨🇳.
 
-Dữ liệu được kết nối trực tiếp theo thời gian thực (Real-time) từ **AniList GraphQL API**.
+Không chỉ lấy lại từ các web trung gian, **MangaStats Hub** định tuyến trực tiếp về nơi tác giả phát hành bản gốc (Raw) với số chương chuẩn xác nhất.
+
+---
+
+## 🏢 Các Nền Tảng & Nhà Xuất Bản Gốc Tích Hợp
+
+| Quốc Gia | Nền Tảng / NXB Gốc | Tác Phẩm Tiêu Biểu | Link Gốc |
+| :--- | :--- | :--- | :--- |
+| **Nhật Bản 🇯🇵** | **Shueisha / Shonen Jump+** | One Piece, Chainsaw Man, Jujutsu Kaisen, Spy x Family | [shonenjumpplus.com](https://shonenjumpplus.com/) |
+| **Nhật Bản 🇯🇵** | **Kodansha / Magazine Pocket** | Attack on Titan, Blue Lock, Fairy Tail, Tokyo Revengers | [pocket.shonenmagazine.com](https://pocket.shonenmagazine.com/) |
+| **Nhật Bản 🇯🇵** | **Shogakukan / Sunday Webry** | Thám Tử Conan, Frieren, Inuyasha, Komi-san | [sunday-webry.com](https://www.sunday-webry.com/) |
+| **Nhật Bản 🇯🇵** | **Kadokawa / ComicWalker** | Re:Zero, Sword Art Online, Mushoku Tensei | [comic-walker.com](https://comic-walker.com/) |
+| **Hàn Quốc 🇰🇷** | **Naver Webtoon (네이버 웹툰)** | Tower of God, Lookism, Nano Machine, True Beauty | [comic.naver.com](https://comic.naver.com/) |
+| **Hàn Quốc 🇰🇷** | **KakaoPage (카카오페이지)** | Solo Leveling, Overgeared, SSS-Class Revival Hunter | [page.kakao.com](https://page.kakao.com/) |
+| **Hàn Quốc 🇰🇷** | **Lezhin Comics (레진코믹스)** | Nền tảng Webtoon tâm lý & 18+ số 1 Hàn Quốc | [lezhin.com](https://www.lezhin.com/) |
+| **Trung Quốc 🇨🇳** | **Kuaikan Manhua (快看漫画)** | App truyện số 1 Trung Quốc, kho tu tiên & đô thị | [kuaikanmanhua.com](https://www.kuaikanmanhua.com/) |
+| **Trung Quốc 🇨🇳** | **Bilibili Manhua (哔哩哔哩漫画)** | Cổng truyện chính thức của đế chế Bilibili | [manga.bilibili.com](https://manga.bilibili.com/) |
+| **Trung Quốc 🇨🇳** | **Tencent Dongman (腾讯动漫)** | Đại Quản Gia Là Ma Hoàng, Toàn Chức Pháp Sư | [ac.qq.com](https://ac.qq.com/) |
 
 ---
 
 ## ✨ Tính Năng Nổi Bật
 
-1. **Sắp xếp theo số chương (Chapter Sorting)**:
-   - 🔽 Số chap: Cao nhất -> Thấp nhất (Khám phá các bộ kỷ lục hàng nghìn chap)
+1. **Bộ lọc theo Nền Tảng Gốc (Publisher Filter)**:
+   - Dễ dàng chọn lọc riêng truyện của *Shueisha (Jump+)*, *Naver Webtoon*, *KakaoPage*, *Kuaikan*, v.v.
+2. **Nút Đọc Raw Trực Tiếp (Direct Raw Source Link)**:
+   - Mỗi bộ truyện đều có huy hiệu nền tảng gốc và nút bấm bay thẳng về web mẹ của bộ truyện đó (ví dụ: `comic.naver.com`, `shonenjumpplus.com`, `page.kakao.com`).
+3. **Tab Naver Webtoon Live (Hàn Quốc)**:
+   - Kết nối trực tiếp máy chủ Naver Webtoon tại Seoul, duyệt lịch ra chap mới theo các ngày trong tuần (Thứ 2 đến Chủ Nhật) với bảng xếp hạng sao thực tế.
+4. **Hiển thị Tên Gốc Bản Địa (Native Titles)**:
+   - Hiển thị chữ Kanji/Katakana (Nhật), Hangul (Hàn), Hán tự giản thể (Trung) để dễ dàng tra cứu bản raw.
+5. **Sắp xếp theo số chương (Chapter Sorting)**:
+   - 🔽 Số chap: Cao nhất -> Thấp nhất (tìm các bộ siêu trường thiên)
    - 🔼 Số chap: Ít nhất -> Nhiều nhất
-   - ⭐ Điểm đánh giá cao nhất
-   - 🔥 Độ phổ biến & Thịnh hành
-
-2. **Bộ lọc đa thể loại (Multi-genre Filtering)**:
-   - Chọn đồng thời nhiều thể loại: *Action, Adventure, Comedy, Fantasy, Romance, Sci-Fi, Slice of Life, Mystery, Thriller...*
-   - Lọc nhanh theo các phân khúc độ dài: *Siêu dài (≥1.000 chap), Dài (500-999 chap), Vừa (100-499 chap), Đoản thiên (<100 chap)*.
-   - Lọc theo quốc gia: *Nhật Bản (Manga), Hàn Quốc (Manhwa), Trung Quốc (Manhua)*.
-
-3. **Chế độ hiển thị kép**:
-   - **Lưới thẻ (Grid View)**: Poster sắc nét, huy hiệu số chap nổi bật.
-   - **Bảng số liệu (Data Table)**: So sánh thứ hạng, số tập (volumes), điểm số, click tiêu đề cột để đảo chiều sort.
-
-4. **Tủ truyện & Theo dõi tiến độ đọc cá nhân**:
-   - Lưu trữ truyện vào LocalStorage trình duyệt.
-   - Đánh dấu số chap đã đọc, tự động tính `% tiến độ` và hiển thị thanh tiến trình.
-   - Hỗ trợ **Xuất / Nhập file JSON** để sao lưu dữ liệu cá nhân.
-
-5. **Phân tích số liệu (Analytics Dashboard)**:
-   - Biểu đồ phân bổ tỷ lệ các khoảng số chương và trạng thái phát hành.
+   - Điểm đánh giá ⭐, Phổ biến 🔥, Thịnh hành ⚡.
+6. **Tủ truyện cá nhân & Theo dõi tiến độ đọc**:
+   - Lưu trữ, tính % tiến độ, xuất/nhập file sao lưu JSON.
 
 ---
 
-## 🚀 Hướng Dẫn Chạy Cục Bộ (Local)
+## 🚀 Xem Trực Tiếp
 
-Chỉ cần Python 3:
-
-```bash
-chmod +x start.sh
-./start.sh 8080
-```
-
-Mở trình duyệt tại: `http://localhost:8080`
-
----
-
-## 🌐 Triển Khai Lên GitHub Pages Tự Động
-
-Dự án đã tích hợp sẵn GitHub Actions tại `.github/workflows/deploy.yml`.
-
-Khi bạn đẩy (push) code lên GitHub:
-1. Vào **Settings** của repository trên GitHub.
-2. Chọn mục **Pages** (ở menu bên trái).
-3. Tại phần **Source**, chọn **GitHub Actions**.
-4. GitHub sẽ tự động build và cung cấp link trang web công khai miễn phí trọn đời dạng:
-   `https://<tên-user>.github.io/<tên-repo>/`
-
----
-
-## 🛠️ Công Nghệ Sử Dụng
-
-- **Frontend**: HTML5 Semantic, Modern CSS3 (Variables, Glassmorphism, Responsive Grid), Vanilla JavaScript (ES6+ Modules).
-- **Typography**: Google Fonts (*Outfit*, *Plus Jakarta Sans*).
-- **API**: AniList GraphQL API (Direct Client-side Fetch with Cache).
-- **Storage**: Browser LocalStorage & JSON Export/Import.
+- **GitHub Pages:** [https://hyuquang.github.io/manga-stats-hub/](https://hyuquang.github.io/manga-stats-hub/)
