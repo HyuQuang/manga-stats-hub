@@ -21,9 +21,16 @@ import {
 } from './api.js';
 
 import {
+  DEFAULT_CATEGORIES,
+  getCustomCategories,
+  getAllCategories,
+  addCustomCategory,
+  deleteCustomCategory,
   getLibrary,
   isInLibrary,
+  getLibraryItem,
   toggleFavorite,
+  updateItemCategory,
   updateProgress,
   removeFavorite,
   getLibraryStats,
@@ -62,7 +69,12 @@ const state = {
   secondsLeft: 30,
   lastSyncTime: Date.now(),
   countdownInterval: null,
-  directoryCategory: 'ALL'
+  directoryCategory: 'ALL',
+
+  // Personal Library & Category State
+  libraryCategory: 'ALL',
+  librarySearch: '',
+  selectedNewCategoryIcon: '📁'
 };
 
 // DOM Elements
@@ -152,6 +164,17 @@ const elements = {
   exportLibBtn: document.getElementById('exportLibBtn'),
   importLibInput: document.getElementById('importLibInput'),
   importLibBtn: document.getElementById('importLibBtn'),
+  libraryCategoryNav: document.getElementById('libraryCategoryNav'),
+  librarySearchInput: document.getElementById('librarySearchInput'),
+  btnOpenCreateCategory: document.getElementById('btnOpenCreateCategory'),
+  createCategoryModal: document.getElementById('createCategoryModal'),
+  closeCreateCategoryModalBtn: document.getElementById('closeCreateCategoryModalBtn'),
+  cancelCreateCategoryBtn: document.getElementById('cancelCreateCategoryBtn'),
+  confirmCreateCategoryBtn: document.getElementById('confirmCreateCategoryBtn'),
+  newCategoryNameInput: document.getElementById('newCategoryNameInput'),
+  categoryIconPicker: document.getElementById('categoryIconPicker'),
+  modalCategoryWrap: document.getElementById('modalCategoryWrap'),
+  modalCategorySelect: document.getElementById('modalCategorySelect'),
 
   // Toast
   toast: document.getElementById('toastNotification')
@@ -741,6 +764,89 @@ function bindEvents() {
       });
     }
   });
+
+  // Modal tạo mục lưu trữ mới
+  if (elements.btnOpenCreateCategory) {
+    elements.btnOpenCreateCategory.addEventListener('click', () => {
+      elements.newCategoryNameInput.value = '';
+      state.selectedNewCategoryIcon = '📁';
+      if (elements.categoryIconPicker) {
+        elements.categoryIconPicker.querySelectorAll('.icon-pick-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.icon === '📁');
+        });
+      }
+      elements.createCategoryModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => elements.newCategoryNameInput.focus(), 100);
+    });
+  }
+
+  const closeCreateCategoryModal = () => {
+    if (elements.createCategoryModal) {
+      elements.createCategoryModal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  };
+
+  if (elements.closeCreateCategoryModalBtn) {
+    elements.closeCreateCategoryModalBtn.addEventListener('click', closeCreateCategoryModal);
+  }
+  if (elements.cancelCreateCategoryBtn) {
+    elements.cancelCreateCategoryBtn.addEventListener('click', closeCreateCategoryModal);
+  }
+  if (elements.createCategoryModal) {
+    elements.createCategoryModal.addEventListener('click', (e) => {
+      if (e.target === elements.createCategoryModal) closeCreateCategoryModal();
+    });
+  }
+
+  // Chọn icon cho danh mục mới
+  if (elements.categoryIconPicker) {
+    elements.categoryIconPicker.addEventListener('click', (e) => {
+      const btn = e.target.closest('.icon-pick-btn');
+      if (!btn) return;
+      elements.categoryIconPicker.querySelectorAll('.icon-pick-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.selectedNewCategoryIcon = btn.dataset.icon || '📁';
+    });
+  }
+
+  // Xác nhận tạo mục mới
+  if (elements.confirmCreateCategoryBtn) {
+    elements.confirmCreateCategoryBtn.addEventListener('click', () => {
+      const name = (elements.newCategoryNameInput.value || '').trim();
+      if (!name) {
+        showToast('⚠️ Vui lòng nhập tên mục lưu trữ!', true);
+        elements.newCategoryNameInput.focus();
+        return;
+      }
+      try {
+        const newCat = addCustomCategory(name, state.selectedNewCategoryIcon);
+        closeCreateCategoryModal();
+        state.libraryCategory = newCat.id;
+        showToast(`📁 Đã tạo mục "${newCat.name}" thành công!`);
+        renderLibraryView();
+      } catch (err) {
+        showToast(`⚠️ ${err.message}`, true);
+      }
+    });
+  }
+
+  if (elements.newCategoryNameInput) {
+    elements.newCategoryNameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        elements.confirmCreateCategoryBtn.click();
+      }
+    });
+  }
+
+  // Tìm kiếm nhanh trong tủ truyện
+  if (elements.librarySearchInput) {
+    elements.librarySearchInput.addEventListener('input', (e) => {
+      state.librarySearch = (e.target.value || '').toLowerCase().trim();
+      renderLibraryView(false);
+    });
+  }
 }
 
 /**
@@ -1329,7 +1435,34 @@ function renderPagination() {
  * Open Manga Detail Modal with Official Links
  */
 function openModal(mangaId) {
-  const manga = state.detailCache.get(mangaId);
+  let manga = state.detailCache.get(mangaId);
+  const libItem = getLibraryItem(mangaId);
+
+  // Fallback nếu mở từ tủ truyện sau khi tải lại trang
+  if (!manga && libItem) {
+    manga = {
+      id: libItem.id,
+      title: {
+        english: libItem.title,
+        romaji: libItem.title,
+        native: libItem.nativeTitle || ''
+      },
+      coverImage: {
+        large: libItem.cover,
+        extraLarge: libItem.cover
+      },
+      bannerImage: '',
+      chapters: libItem.totalChapters,
+      countryOfOrigin: libItem.countryOfOrigin || 'JP',
+      format: libItem.format || 'MANGA',
+      status: libItem.status || 'RELEASING',
+      genres: libItem.genres || [],
+      isAdult: libItem.isAdult || false,
+      description: 'Bộ truyện đã được lưu trong Tủ truyện cá nhân của bạn.'
+    };
+    state.detailCache.set(manga.id, manga);
+  }
+
   if (!manga) return;
 
   const title = getMangaTitle(manga);
@@ -1339,6 +1472,7 @@ function openModal(mangaId) {
   const sourceMeta = getOfficialSourceMeta(manga, state.platform);
   const isSaved = isInLibrary(manga.id);
   const isNovel = manga.format === 'NOVEL';
+  const allCategories = getAllCategories();
 
   elements.modalBannerImg.src = manga.bannerImage || manga.coverImage?.extraLarge || manga.coverImage?.large || '';
   elements.modalCoverImg.src = manga.coverImage?.large || manga.coverImage?.extraLarge || '';
@@ -1381,13 +1515,60 @@ function openModal(mangaId) {
     .replace(/<[^>]+>/gi, '');
   elements.modalDescription.textContent = cleanDesc;
 
+  // Cập nhật mục lưu trữ trong Modal
+  const currentSavedItem = getLibraryItem(manga.id);
+  if (currentSavedItem && elements.modalCategoryWrap && elements.modalCategorySelect) {
+    elements.modalCategoryWrap.style.display = 'flex';
+    elements.modalCategorySelect.innerHTML = allCategories.map(cat => 
+      `<option value="${cat.id}" ${currentSavedItem.category === cat.id ? 'selected' : ''}>${cat.icon} ${escapeHtml(cat.name)}</option>`
+    ).join('');
+    elements.modalCategorySelect.onchange = (e) => {
+      updateItemCategory(manga.id, e.target.value);
+      const catObj = allCategories.find(c => c.id === e.target.value);
+      showToast(`📁 Đã chuyển truyện vào mục: ${catObj ? catObj.name : ''}`);
+      if (state.activeTab === 'library') {
+        renderLibraryView();
+      }
+    };
+  } else if (elements.modalCategoryWrap) {
+    elements.modalCategoryWrap.style.display = 'none';
+  }
+
   elements.modalActionFavBtn.innerHTML = isSaved ? '❤️ Đã lưu trong Tủ truyện' : '🤍 Lưu vào Tủ truyện';
   elements.modalActionFavBtn.onclick = () => {
-    const added = toggleFavorite(manga);
-    elements.modalActionFavBtn.innerHTML = added ? '❤️ Đã lưu trong Tủ truyện' : '🤍 Lưu vào Tủ truyện';
-    updateLibraryBadge();
-    showToast(added ? `❤️ Đã lưu "${title}" vào Tủ truyện` : `Đã bỏ lưu "${title}"`);
-    renderCurrentView();
+    const currentlyIn = isInLibrary(manga.id);
+    if (currentlyIn) {
+      removeFavorite(manga.id);
+      elements.modalActionFavBtn.innerHTML = '🤍 Lưu vào Tủ truyện';
+      if (elements.modalCategoryWrap) elements.modalCategoryWrap.style.display = 'none';
+      updateLibraryBadge();
+      showToast(`Đã bỏ lưu "${title}"`);
+    } else {
+      toggleFavorite(manga, 'reading');
+      elements.modalActionFavBtn.innerHTML = '❤️ Đã lưu trong Tủ truyện';
+      if (elements.modalCategoryWrap && elements.modalCategorySelect) {
+        elements.modalCategoryWrap.style.display = 'flex';
+        elements.modalCategorySelect.innerHTML = allCategories.map(cat => 
+          `<option value="${cat.id}" ${cat.id === 'reading' ? 'selected' : ''}>${cat.icon} ${escapeHtml(cat.name)}</option>`
+        ).join('');
+        elements.modalCategorySelect.onchange = (e) => {
+          updateItemCategory(manga.id, e.target.value);
+          const catObj = allCategories.find(c => c.id === e.target.value);
+          showToast(`📁 Đã chuyển truyện vào mục: ${catObj ? catObj.name : ''}`);
+          if (state.activeTab === 'library') {
+            renderLibraryView();
+          }
+        };
+      }
+      updateLibraryBadge();
+      showToast(`❤️ Đã lưu "${title}" vào mục Đang đọc!`);
+    }
+
+    if (state.activeTab === 'library') {
+      renderLibraryView();
+    } else {
+      renderCurrentView();
+    }
   };
 
   // Direct Raw link button
@@ -1623,55 +1804,173 @@ function renderAnalyticsView() {
 /**
  * Render Library / Reading Tracker View
  */
-function renderLibraryView() {
-  const library = getLibrary();
-  const stats = getLibraryStats();
+/**
+ * Render Library / Reading Tracker View with Categories, Folders & Quick Actions
+ */
+function renderLibraryView(rebuildNav = true) {
+  const allList = getLibrary();
+  const allCategories = getAllCategories();
+  const stats = getLibraryStats(state.libraryCategory);
 
   elements.libStatTotal.textContent = stats.totalManga;
   elements.libStatRead.textContent = `${stats.totalReadChapters.toLocaleString('vi-VN')} chap`;
   elements.libStatHours.textContent = `~${stats.estimatedHours} giờ`;
 
-  if (!library.length) {
+  // Render thanh mục phân loại (Categories Toolbar)
+  if (rebuildNav && elements.libraryCategoryNav) {
+    let navHtml = `
+      <button type="button" class="lib-cat-btn ${state.libraryCategory === 'ALL' ? 'active' : ''}" data-cat-id="ALL">
+        <span>🌟 Tất cả</span>
+        <span class="lib-cat-count">${stats.categoryCounts.ALL || 0}</span>
+      </button>
+    `;
+
+    allCategories.forEach(cat => {
+      const count = stats.categoryCounts[cat.id] || 0;
+      const isActive = state.libraryCategory === cat.id;
+      navHtml += `
+        <button type="button" class="lib-cat-btn ${isActive ? 'active' : ''}" data-cat-id="${cat.id}">
+          <span>${cat.icon} ${escapeHtml(cat.name)}</span>
+          <span class="lib-cat-count">${count}</span>
+          ${!cat.isDefault ? `<span class="lib-cat-del" data-delete-cat="${cat.id}" title="Xóa mục tùy chỉnh này">✕</span>` : ''}
+        </button>
+      `;
+    });
+
+    elements.libraryCategoryNav.innerHTML = navHtml;
+
+    // Gắn sự kiện chuyển tab danh mục
+    elements.libraryCategoryNav.querySelectorAll('.lib-cat-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const delBtn = e.target.closest('.lib-cat-del');
+        if (delBtn) {
+          e.stopPropagation();
+          const delCatId = delBtn.dataset.deleteCat;
+          const targetCat = allCategories.find(c => c.id === delCatId);
+          const catName = targetCat ? targetCat.name : 'này';
+          if (confirm(`Bạn có chắc muốn xóa mục "${catName}"? Các truyện trong mục này sẽ được tự động chuyển về mục "Đang đọc".`)) {
+            deleteCustomCategory(delCatId);
+            if (state.libraryCategory === delCatId) {
+              state.libraryCategory = 'ALL';
+            }
+            showToast(`🗑️ Đã xóa mục "${catName}"!`);
+            renderLibraryView();
+          }
+          return;
+        }
+
+        const catId = btn.dataset.catId;
+        if (catId && state.libraryCategory !== catId) {
+          state.libraryCategory = catId;
+          renderLibraryView();
+        }
+      });
+    });
+  }
+
+  // Lọc truyện theo danh mục và từ khóa tìm kiếm
+  let displayList = allList;
+  if (state.libraryCategory !== 'ALL') {
+    displayList = displayList.filter(item => item.category === state.libraryCategory);
+  }
+  if (state.librarySearch) {
+    const q = state.librarySearch;
+    displayList = displayList.filter(item => {
+      const titleMatch = (item.title || '').toLowerCase().includes(q);
+      const nativeMatch = (item.nativeTitle || '').toLowerCase().includes(q);
+      return titleMatch || nativeMatch;
+    });
+  }
+
+  if (!allList.length) {
     elements.libraryGrid.innerHTML = `
       <div class="library-empty-state" style="grid-column: 1/-1;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
         <h3>Tủ truyện cá nhân đang trống</h3>
-        <p>Bấm vào biểu tượng trái tim 🤍 ở bất kỳ bộ truyện nào để thêm vào theo dõi tiến độ đọc!</p>
+        <p>Bấm vào biểu tượng trái tim 🤍 ở bất kỳ bộ truyện nào để thêm vào theo dõi tiến độ đọc và phân loại!</p>
+      </div>
+    `;
+    return;
+  }
+
+  if (!displayList.length) {
+    const activeCatObj = allCategories.find(c => c.id === state.libraryCategory);
+    const catTitle = activeCatObj ? `${activeCatObj.icon} ${activeCatObj.name}` : 'mục này';
+    elements.libraryGrid.innerHTML = `
+      <div class="library-empty-state" style="grid-column: 1/-1;">
+        <span style="font-size: 2.5rem; display: block; margin-bottom: 0.75rem;">📂</span>
+        <h3>Không có truyện nào trong ${escapeHtml(catTitle)}</h3>
+        <p>${state.librarySearch ? 'Không tìm thấy truyện khớp với từ khóa tìm kiếm.' : 'Chọn mục khác trên thanh điều hướng hoặc đổi mục của truyện để hiển thị tại đây!'}</p>
       </div>
     `;
     return;
   }
 
   elements.libraryGrid.className = 'manga-grid';
-  elements.libraryGrid.innerHTML = library.map(item => {
-    const total = item.totalChapters || 1;
+  elements.libraryGrid.innerHTML = displayList.map(item => {
+    const total = item.totalChapters || 0;
     const read = item.readChapters || 0;
-    const pct = Math.min(100, Math.round((read / total) * 100));
+    const pct = total > 0 ? Math.min(100, Math.round((read / total) * 100)) : (read > 0 ? 100 : 0);
+    const catMeta = allCategories.find(c => c.id === item.category) || DEFAULT_CATEGORIES[0];
 
     return `
       <div class="manga-card" data-lib-id="${item.id}">
-        <div class="card-poster-wrap">
-          <img class="card-poster" src="${item.cover}" alt="${item.title}" />
+        <div class="card-poster-wrap" style="cursor: pointer;" data-open-modal="${item.id}">
+          <img class="card-poster" src="${item.cover || 'https://via.placeholder.com/300x420?text=No+Cover'}" alt="${escapeHtml(item.title)}" loading="lazy" />
           <div class="badge-chapters">
-            ${read}/${total} chap (${pct}%)
+            ${read}/${total > 0 ? total : '?'} chap ${total > 0 ? `(${pct}%)` : ''}
+          </div>
+          <div style="position: absolute; top: 8px; left: 8px; z-index: 2;">
+            <span style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); border: 1px solid var(--border-color); font-size: 0.72rem; padding: 0.2rem 0.55rem; border-radius: 9999px; color: ${catMeta.color}; font-weight: 700;">
+              ${catMeta.icon} ${escapeHtml(catMeta.name)}
+            </span>
           </div>
         </div>
         <div class="card-body">
-          <h3 class="card-title">${item.title}</h3>
-          <div class="reading-progress-wrap">
+          <h3 class="card-title" title="${escapeHtml(item.title)}" style="cursor: pointer;" data-open-modal="${item.id}">
+            ${escapeHtml(item.title)}
+          </h3>
+          ${item.nativeTitle ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(item.nativeTitle)}</div>` : ''}
+
+          <!-- Chuyển mục lưu trữ trực tiếp -->
+          <div class="library-item-category-select">
+            <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">Mục:</label>
+            <select class="custom-select-sm" data-lib-cat-select="${item.id}">
+              ${allCategories.map(c => `
+                <option value="${c.id}" ${item.category === c.id ? 'selected' : ''}>
+                  ${c.icon} ${escapeHtml(c.name)}
+                </option>
+              `).join('')}
+            </select>
+          </div>
+
+          <!-- Thanh tiến độ đọc & nhập số chương -->
+          <div class="reading-progress-wrap" style="margin-top: 0.5rem;">
             <div class="reading-progress-bar">
               <div class="reading-progress-fill" style="width: ${pct}%"></div>
             </div>
             <div class="reading-inputs">
               <span style="font-size: 0.75rem; color: var(--text-muted);">Đã đọc:</span>
-              <input type="number" min="0" max="${total}" value="${read}" data-lib-input="${item.id}" />
-              <span style="font-size: 0.75rem; color: var(--text-muted);">/ ${total}</span>
+              <input type="number" min="0" max="${total > 0 ? total : 99999}" value="${read}" data-lib-input="${item.id}" />
+              <span style="font-size: 0.75rem; color: var(--text-muted);">/ ${total > 0 ? total : '?'} chap</span>
             </div>
           </div>
-          <div class="card-footer" style="margin-top: 1rem;">
-            <button class="btn-text-link" data-lib-remove="${item.id}" style="color: var(--accent-rose); font-size: 0.75rem;">
+
+          <!-- Các nút tăng nhanh tiến độ đọc -->
+          <div class="quick-step-wrap">
+            <button type="button" class="quick-step-btn" data-step-id="${item.id}" data-step-val="1" title="Đã đọc thêm 1 chương">+1 chap</button>
+            <button type="button" class="quick-step-btn" data-step-id="${item.id}" data-step-val="10" title="Đã đọc thêm 10 chương">+10 chap</button>
+            <button type="button" class="quick-step-btn" data-step-id="${item.id}" data-step-val="full" title="Đánh dấu đã đọc toàn bộ">Full (Xong)</button>
+          </div>
+
+          <!-- Tác vụ thẻ -->
+          <div class="card-footer" style="margin-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn-text-link" data-open-modal="${item.id}" style="color: var(--accent-primary); font-size: 0.78rem; font-weight: 600;">
+              🔍 Chi tiết
+            </button>
+            <button class="btn-text-link" data-lib-remove="${item.id}" style="color: var(--accent-rose); font-size: 0.78rem;">
               🗑️ Xóa
             </button>
           </div>
@@ -1680,6 +1979,47 @@ function renderLibraryView() {
     `;
   }).join('');
 
+  // Gắn sự kiện chuyển mục cho từng thẻ
+  elements.libraryGrid.querySelectorAll('[data-lib-cat-select]').forEach(select => {
+    select.addEventListener('change', (e) => {
+      const id = parseInt(select.dataset.libCatSelect, 10);
+      const newCatId = e.target.value;
+      updateItemCategory(id, newCatId);
+      const newCat = allCategories.find(c => c.id === newCatId);
+      showToast(`📁 Đã chuyển truyện vào mục: ${newCat ? newCat.name : ''}`);
+      renderLibraryView();
+    });
+  });
+
+  // Gắn sự kiện nút tăng nhanh tiến độ (+1, +10, Full)
+  elements.libraryGrid.querySelectorAll('[data-step-id]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = parseInt(btn.dataset.stepId, 10);
+      const stepVal = btn.dataset.stepVal;
+      const item = allList.find(it => it.id === id);
+      if (!item) return;
+
+      let newChap = item.readChapters || 0;
+      if (stepVal === '1') {
+        newChap += 1;
+      } else if (stepVal === '10') {
+        newChap += 10;
+      } else if (stepVal === 'full') {
+        newChap = item.totalChapters > 0 ? item.totalChapters : (newChap + 1);
+      }
+
+      if (item.totalChapters > 0 && newChap > item.totalChapters) {
+        newChap = item.totalChapters;
+      }
+
+      updateProgress(id, newChap);
+      showToast(`📖 Đã cập nhật: ${newChap} chap!`);
+      renderLibraryView();
+    });
+  });
+
+  // Gắn sự kiện nhập số chương thủ công
   elements.libraryGrid.querySelectorAll('[data-lib-input]').forEach(input => {
     input.addEventListener('change', (e) => {
       const id = parseInt(input.dataset.libInput, 10);
@@ -1690,13 +2030,27 @@ function renderLibraryView() {
     });
   });
 
+  // Gắn sự kiện nút xóa
   elements.libraryGrid.querySelectorAll('[data-lib-remove]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const id = parseInt(btn.dataset.libRemove, 10);
-      removeFavorite(id);
-      updateLibraryBadge();
-      renderLibraryView();
-      showToast('Đã xóa truyện khỏi tủ!');
+      const item = allList.find(it => it.id === id);
+      const title = item ? item.title : 'truyện';
+      if (confirm(`Bạn có chắc muốn xóa "${title}" khỏi Tủ truyện không?`)) {
+        removeFavorite(id);
+        updateLibraryBadge();
+        renderLibraryView();
+        showToast('Đã xóa truyện khỏi tủ!');
+      }
+    });
+  });
+
+  // Gắn sự kiện mở modal chi tiết từ thẻ
+  elements.libraryGrid.querySelectorAll('[data-open-modal]').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = parseInt(el.dataset.openModal, 10);
+      openModal(id);
     });
   });
 }

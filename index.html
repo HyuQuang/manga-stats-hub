@@ -472,18 +472,21 @@
       <!-- Library Top Summary -->
       <div class="library-stats-header">
         <div class="lib-stat-box">
-          <h4>Truyện đang theo dõi</h4>
+          <h4>Tổng số truyện lưu</h4>
           <p id="libStatTotal">0</p>
         </div>
         <div class="lib-stat-box">
-          <h4>Tổng số chap bạn đã đọc</h4>
+          <h4>Số chap đã đọc</h4>
           <p id="libStatRead">0 chap</p>
         </div>
         <div class="lib-stat-box">
           <h4>Thời gian đọc ước tính</h4>
           <p id="libStatHours">~0 giờ</p>
         </div>
-        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem; flex-wrap: wrap;">
+          <button class="btn-primary" id="btnOpenCreateCategory" title="Tạo mục lưu trữ mới theo ý bạn">
+            ➕ Tạo mục mới
+          </button>
           <button class="btn-outline" id="exportLibBtn" title="Sao lưu danh sách ra file JSON">
             📤 Xuất dữ liệu
           </button>
@@ -491,6 +494,25 @@
           <button class="btn-outline" id="importLibBtn" title="Nhập danh sách từ file JSON">
             📥 Nhập dữ liệu
           </button>
+        </div>
+      </div>
+
+      <!-- Categories & Folders Toolbar -->
+      <div class="library-toolbar-card">
+        <div class="library-toolbar-top">
+          <div class="library-categories-nav" id="libraryCategoryNav">
+            <!-- Injected by JS: default & custom category folder buttons -->
+          </div>
+          
+          <div class="library-search-box">
+            <input 
+              type="text" 
+              id="librarySearchInput" 
+              class="library-search-input" 
+              placeholder="🔍 Lọc truyện trong mục này..." 
+              autocomplete="off" 
+            />
+          </div>
         </div>
       </div>
 
@@ -532,9 +554,17 @@
         </div>
 
         <div class="modal-actions-bar">
-          <button class="btn-primary" id="modalActionFavBtn">
-            🤍 Lưu vào Tủ truyện
-          </button>
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn-primary" id="modalActionFavBtn">
+              🤍 Lưu vào Tủ truyện
+            </button>
+            <div id="modalCategoryWrap" style="display: none; align-items: center; gap: 0.4rem;">
+              <label for="modalCategorySelect" style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">Mục:</label>
+              <select id="modalCategorySelect" class="custom-select" style="padding: 0.4rem 0.75rem; font-size: 0.82rem; min-width: 140px;">
+                <!-- Populated by JS -->
+              </select>
+            </div>
+          </div>
           <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
             <a href="#" target="_blank" rel="noopener noreferrer" class="btn-outline" id="modalRawLink" style="border-color: #22c55e; color: #86efac; font-weight: 700;">
               📖 Đọc tại Web Gốc (Raw) ↗
@@ -543,6 +573,61 @@
               🌐 Thông tin AniList
             </a>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Category Modal Dialog -->
+  <div class="modal-overlay" id="createCategoryModal" aria-hidden="true" role="dialog">
+    <div class="modal-content" style="max-width: 480px; padding: 2rem;">
+      <button class="modal-close-btn" id="closeCreateCategoryModalBtn" aria-label="Đóng modal">✕</button>
+      <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-main);">
+        📁 Tạo Mục Lưu Trữ Mới
+      </h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5;">
+        Tạo danh mục riêng để quản lý truyện (Ví dụ: "Đang đọc", "Đã đọc", "Truyện đánh quái", "Tu tiên", "18+ Adult", "Chờ ra chap"...).
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div>
+          <label for="newCategoryNameInput" style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.45rem;">
+            Tên mục lưu trữ:
+          </label>
+          <input 
+            type="text" 
+            id="newCategoryNameInput" 
+            class="custom-input-search" 
+            style="width: 100%; padding: 0.65rem 1rem; border-radius: var(--radius-md); background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-color); color: white;" 
+            placeholder="Nhập tên mục (VD: Đánh quái dị thú, Tu tiên hay...)" 
+            maxlength="30" 
+            autocomplete="off"
+          />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.45rem;">
+            Chọn biểu tượng (Icon):
+          </label>
+          <div class="category-icon-picker" id="categoryIconPicker">
+            <button type="button" class="icon-pick-btn active" data-icon="📁">📁</button>
+            <button type="button" class="icon-pick-btn" data-icon="📖">📖</button>
+            <button type="button" class="icon-pick-btn" data-icon="✅">✅</button>
+            <button type="button" class="icon-pick-btn" data-icon="📌">📌</button>
+            <button type="button" class="icon-pick-btn" data-icon="🐉">🐉</button>
+            <button type="button" class="icon-pick-btn" data-icon="⚔️">⚔️</button>
+            <button type="button" class="icon-pick-btn" data-icon="🔥">🔥</button>
+            <button type="button" class="icon-pick-btn" data-icon="⚡">⚡</button>
+            <button type="button" class="icon-pick-btn" data-icon="🔞">🔞</button>
+            <button type="button" class="icon-pick-btn" data-icon="💎">💎</button>
+            <button type="button" class="icon-pick-btn" data-icon="🏆">🏆</button>
+            <button type="button" class="icon-pick-btn" data-icon="💖">💖</button>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+          <button type="button" class="btn-outline" id="cancelCreateCategoryBtn">Hủy</button>
+          <button type="button" class="btn-primary" id="confirmCreateCategoryBtn">✅ Tạo mục</button>
         </div>
       </div>
     </div>
