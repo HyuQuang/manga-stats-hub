@@ -96,8 +96,8 @@
             <div class="chip-label">
               <span>🏢</span> Nền tảng gốc
             </div>
-            <div class="chip-value" id="heroAvgChapters">25+ NXB</div>
-            <div class="chip-sub">Jump, Syosetu, Qidian, FAKKU...</div>
+            <div class="chip-value" id="heroAvgChapters">45+ NXB</div>
+            <div class="chip-sub">Jump, Syosetu, Toptoon, FAKKU, DLsite...</div>
           </div>
         </div>
       </div>
@@ -134,7 +134,7 @@
               type="text" 
               class="search-input" 
               id="searchInput" 
-              placeholder="Tìm theo tên tiếng Việt hoặc tên gốc (VD: Võ luyện đỉnh phong, One Piece, Mushoku Tensei, Solo Leveling, Metamorphosis...)" 
+              placeholder="Tìm theo tên tiếng Việt hoặc tên gốc (VD: Võ luyện đỉnh phong, One Piece, Mushoku Tensei, Solo Leveling, Metamorphosis, Stepmother's Friends...)" 
               autocomplete="off"
             />
             <button class="clear-search-btn" id="clearSearchBtn" title="Xóa tìm kiếm">✕</button>
@@ -183,12 +183,39 @@
                 <option value="ZONGHENG">Zongheng (纵横中文网) 🇨🇳</option>
                 <option value="JJWXC">Tấn Giang - Jinjiang (晋江文学城) 🇨🇳</option>
               </optgroup>
-              <optgroup label="🔞 Hentai & 18+ Adult Bản Quyền Gốc">
+              <optgroup label="🔞 NXB 18+ Manga & Doujinshi Nhật Bản 🇯🇵">
                 <option value="FAKKU">FAKKU Books (Bản quyền chính thức) 🇯🇵🇺🇸</option>
                 <option value="DLSITE">DLsite Official (18+ Gốc) 🇯🇵</option>
                 <option value="FANZA">FANZA / DMM Books (18+ Bản quyền) 🇯🇵</option>
+                <option value="WANI_MAGAZINE">Wani Magazine / Kairakuten (ワニマガジン) 🇯🇵</option>
+                <option value="CORE_MAGAZINE">Core Magazine / MegaStore (コアマガジン) 🇯🇵</option>
+                <option value="IRODORI_COMICS">Irodori Comics (Tokyo Doujinshi) 🇯🇵</option>
+                <option value="CMOA_ADULT">Comic Cmoa 18+ (コミックシーモア) 🇯🇵</option>
+                <option value="RENTA_ADULT">Renta! 18+ (パピレス) 🇯🇵</option>
+                <option value="BOOKLIVE_ADULT">BookLive 18+ (ブックライブ) 🇯🇵</option>
+              </optgroup>
+              <optgroup label="🔞 Nền Tảng Manhwa 18+ Hàn Quốc 🇰🇷">
                 <option value="TOPTOON_ADULT">Toptoon Adult (탑툰 성인 18+) 🇰🇷</option>
                 <option value="LEZHIN_ADULT">Lezhin Adult (레진 18+) 🇰🇷</option>
+                <option value="TOOMICS_ADULT">Toomics VIP / 18+ (투믹스 성인) 🇰🇷</option>
+                <option value="BOMTOON">Bomtoon Adult (봄툰 18+) 🇰🇷</option>
+                <option value="RIDIBOOKS_19">Ridibooks 19+ (리디 19금) 🇰🇷</option>
+                <option value="MRBLUE_ADULT">Mr. Blue 19+ (미스터블루) 🇰🇷</option>
+                <option value="ANYTOON_ADULT">Anytoon 19+ (애니툰 성인) 🇰🇷</option>
+                <option value="MOOTOON_ADULT">Mootoon 19+ (무툰 성인) 🇰🇷</option>
+              </optgroup>
+              <optgroup label="🔞 Nền Tảng 18+ Âu Mỹ & Quốc Tế 🇺🇸🌐🇫🇷">
+                <option value="GHOST_SHIP">Ghost Ship / Seven Seas 18+ (Mỹ) 🇺🇸</option>
+                <option value="PROJECT_H">Project-H Books / DokiDoki (Mỹ) 🇺🇸</option>
+                <option value="MANGAPLAZA_ADULT">MangaPlaza 18+ (NTT Solmare) 🇯🇵🇺🇸</option>
+                <option value="COOLMIC">Coolmic Mature (WWWave) 🌐</option>
+                <option value="TAPPYTOON_ADULT">Tappytoon Mature / 18+ 🌐</option>
+                <option value="DELITOON_ADULT">Delitoon 18+ (Pháp / Châu Âu) 🇫🇷🇪🇺</option>
+              </optgroup>
+              <optgroup label="🔞 Nền Tảng 18+ Đài Loan 🇹🇼">
+                <option value="BOOKWALKER_TW_18">Book☆Walker Taiwan 18+ (台灣角川) 🇹🇼</option>
+                <option value="PUBU_ADULT">Pubu 18+ (飽讀電子書 限制級) 🇹🇼</option>
+                <option value="TONGLI_18">Tong Li 18+ (東立出版社 限制級) 🇹🇼</option>
               </optgroup>
             </select>
           </div>
@@ -198,9 +225,11 @@
             <label for="countrySelect" class="select-label">Quốc gia:</label>
             <select id="countrySelect" class="custom-select">
               <option value="ALL">Tất cả quốc gia</option>
-              <option value="JP">🇯🇵 Nhật Bản (Manga / Novel)</option>
-              <option value="KR">🇰🇷 Hàn Quốc (Manhwa / Webnovel)</option>
+              <option value="JP">🇯🇵 Nhật Bản (Manga / Novel / Doujinshi)</option>
+              <option value="KR">🇰🇷 Hàn Quốc (Manhwa / Webnovel / 18+)</option>
               <option value="CN">🇨🇳 Trung Quốc (Manhua / Tu Tiên)</option>
+              <option value="TW">🇹🇼 Đài Loan (Manhua / 18+ Adult)</option>
+              <option value="US">🇺🇸 Âu Mỹ & Quốc Tế (English / Global)</option>
             </select>
           </div>
 
@@ -377,9 +406,8 @@
           Đây là các trang web gốc nguyên bản từ từng quốc gia — nơi tác giả trực tiếp phát hành tác phẩm (Manga, Tiểu thuyết chữ, 18+ Adult) trước khi các trang trung gian lấy lại.
         </p>
 
-        <!-- Directory Category Tabs -->
         <div class="directory-cat-nav" id="directoryCatNav" style="display: flex; gap: 0.5rem; margin-top: 1.2rem; flex-wrap: wrap;">
-          <button class="directory-cat-btn active" data-cat="ALL">🌐 Tất cả 25+ Nền tảng gốc</button>
+          <button class="directory-cat-btn active" data-cat="ALL">🌐 Tất cả 45+ Nền tảng gốc</button>
           <button class="directory-cat-btn" data-cat="MANGA">📖 NXB Manga & Webtoon</button>
           <button class="directory-cat-btn" data-cat="NOVEL">📝 Nền tảng Tiểu thuyết & Web Novel</button>
           <button class="directory-cat-btn" data-cat="HENTAI">🔞 Nền tảng 18+ Adult & Hentai Bản Quyền</button>

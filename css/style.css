@@ -1995,6 +1995,38 @@ body {
   border-color: rgba(244, 63, 94, 0.5);
   color: #fda4af;
 }
+.badge-wani {
+  background: rgba(244, 63, 94, 0.18);
+  border-color: rgba(244, 63, 94, 0.55);
+  color: #fb7185;
+}
+.badge-core {
+  background: rgba(236, 72, 153, 0.18);
+  border-color: rgba(236, 72, 153, 0.55);
+  color: #f472b6;
+}
+.badge-irodori {
+  background: rgba(251, 113, 133, 0.18);
+  border-color: rgba(251, 113, 133, 0.55);
+  color: #fda4af;
+}
+.badge-cmoa {
+  background: rgba(249, 115, 22, 0.18);
+  border-color: rgba(249, 115, 22, 0.55);
+  color: #fb923c;
+}
+.badge-renta {
+  background: rgba(234, 179, 8, 0.18);
+  border-color: rgba(234, 179, 8, 0.55);
+  color: #fde047;
+}
+.badge-booklive {
+  background: rgba(234, 88, 12, 0.18);
+  border-color: rgba(234, 88, 12, 0.55);
+  color: #fb923c;
+}
+
+/* Korea 18+ Badges */
 .badge-toptoon {
   background: rgba(244, 63, 94, 0.18);
   border-color: rgba(244, 63, 94, 0.5);
@@ -2005,7 +2037,102 @@ body {
   border-color: rgba(225, 29, 72, 0.55);
   color: #fb7185;
 }
+.badge-toomics {
+  background: rgba(234, 88, 12, 0.2);
+  border-color: rgba(234, 88, 12, 0.55);
+  color: #fb923c;
+}
+.badge-bomtoon {
+  background: rgba(219, 39, 119, 0.2);
+  border-color: rgba(219, 39, 119, 0.55);
+  color: #f472b6;
+}
+.badge-ridibooks {
+  background: rgba(29, 78, 216, 0.2);
+  border-color: rgba(29, 78, 216, 0.55);
+  color: #60a5fa;
+}
+.badge-mrblue {
+  background: rgba(2, 132, 199, 0.2);
+  border-color: rgba(2, 132, 199, 0.55);
+  color: #38bdf8;
+}
+.badge-anytoon {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.55);
+  color: #f87171;
+}
+.badge-mootoon {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.55);
+  color: #fbbf24;
+}
 
+/* Western & Global 18+ Badges */
+.badge-ghostship {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.55);
+  color: #c084fc;
+}
+.badge-projecth {
+  background: rgba(124, 58, 237, 0.2);
+  border-color: rgba(124, 58, 237, 0.55);
+  color: #a78bfa;
+}
+.badge-mangaplaza {
+  background: rgba(217, 119, 6, 0.2);
+  border-color: rgba(217, 119, 6, 0.55);
+  color: #fbbf24;
+}
+.badge-coolmic {
+  background: rgba(5, 150, 105, 0.2);
+  border-color: rgba(5, 150, 105, 0.55);
+  color: #34d399;
+}
+.badge-tappytoon {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.55);
+  color: #818cf8;
+}
+.badge-delitoon {
+  background: rgba(236, 72, 153, 0.2);
+  border-color: rgba(236, 72, 153, 0.55);
+  color: #f472b6;
+}
+
+/* Taiwan 18+ Badges */
+.badge-bookwalker-tw {
+  background: rgba(185, 28, 28, 0.2);
+  border-color: rgba(185, 28, 28, 0.55);
+  color: #f87171;
+}
+.badge-pubu {
+  background: rgba(147, 51, 234, 0.2);
+  border-color: rgba(147, 51, 234, 0.55);
+  color: #c084fc;
+}
+.badge-tongli {
+  background: rgba(220, 38, 38, 0.2);
+  border-color: rgba(220, 38, 38, 0.55);
+  color: #f87171;
+}
+
+/* Manga & Novel Badges */
+.badge-shogakukan {
+  background: rgba(229, 0, 18, 0.18);
+  border-color: rgba(229, 0, 18, 0.5);
+  color: #f87171;
+}
+.badge-square-enix {
+  background: rgba(168, 85, 247, 0.18);
+  border-color: rgba(168, 85, 247, 0.5);
+  color: #c084fc;
+}
+.badge-tencent {
+  background: rgba(18, 183, 245, 0.18);
+  border-color: rgba(18, 183, 245, 0.5);
+  color: #38bdf8;
+}
 .badge-syosetu {
   background: rgba(16, 185, 129, 0.18);
   border-color: rgba(16, 185, 129, 0.5);
@@ -2044,6 +2171,11 @@ body {
 .badge-qidian {
   background: rgba(220, 38, 38, 0.2);
   border-color: rgba(220, 38, 38, 0.5);
+  color: #f87171;
+}
+.badge-zongheng {
+  background: rgba(185, 28, 28, 0.2);
+  border-color: rgba(185, 28, 28, 0.5);
   color: #f87171;
 }
 .badge-jjwxc {

@@ -1003,7 +1003,7 @@ function renderGrid(items) {
     const isAdult = manga.isAdult || (manga.genres && manga.genres.includes('Hentai'));
     const origin = getOriginMeta(manga.countryOfOrigin, manga.format, manga.isAdult);
     const status = getStatusMeta(manga.status);
-    const sourceMeta = getOfficialSourceMeta(manga);
+    const sourceMeta = getOfficialSourceMeta(manga, state.platform);
     const isSaved = isInLibrary(manga.id);
 
     let chapBadgeClass = 'badge-chapters';
@@ -1093,7 +1093,7 @@ function renderTable(items) {
           const isAdult = manga.isAdult || (manga.genres && manga.genres.includes('Hentai'));
           const origin = getOriginMeta(manga.countryOfOrigin, manga.format, manga.isAdult);
           const status = getStatusMeta(manga.status);
-          const sourceMeta = getOfficialSourceMeta(manga);
+          const sourceMeta = getOfficialSourceMeta(manga, state.platform);
 
           return `
             <tr data-id="${manga.id}" style="cursor: pointer;">
@@ -1336,7 +1336,7 @@ function openModal(mangaId) {
   const nativeTitle = getMangaNativeTitle(manga);
   const origin = getOriginMeta(manga.countryOfOrigin, manga.format, manga.isAdult);
   const status = getStatusMeta(manga.status);
-  const sourceMeta = getOfficialSourceMeta(manga);
+  const sourceMeta = getOfficialSourceMeta(manga, state.platform);
   const isSaved = isInLibrary(manga.id);
   const isNovel = manga.format === 'NOVEL';
 

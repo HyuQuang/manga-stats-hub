@@ -411,7 +411,8 @@ export const OFFICIAL_PLATFORMS = [
     desc: 'Cái nôi tiểu thuyết ngôn tình, tình cảm, xuyên không & đam mỹ số 1 Trung Quốc (Ma Đạo Tổ Sư, Thiên Quan Tứ Phúc)'
   },
 
-  // --- Hentai & 18+ Adult (NXB & Nền tảng Bản quyền Gốc) ---
+  // --- Hentai & 18+ Adult (NXB & Nền tảng Bản quyền Gốc Đa Quốc Gia) ---
+  // [1] Nhật Bản 🇯🇵 (Manga 18+ & Doujinshi)
   {
     id: 'FAKKU',
     name: 'FAKKU Books (Bản quyền chính thức) 🇯🇵🇺🇸',
@@ -449,6 +450,80 @@ export const OFFICIAL_PLATFORMS = [
     desc: 'Đế chế truyện tranh, tạp chí & Doujinshi 18+ bản quyền số 1 Nhật Bản, phân phối trực tiếp từ các NXB truyện người lớn uy tín'
   },
   {
+    id: 'WANI_MAGAZINE',
+    name: 'Wani Magazine / Kairakuten (ワニマガジン) 🇯🇵',
+    country: 'JP',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Wani Magazine Co., Ltd.',
+    siteUrl: 'https://www.wani.com/',
+    color: '#f43f5e',
+    desc: 'Nhà xuất bản tạp chí Manga người lớn nghệ thuật đỉnh cao Nhật Bản (Comic Kairakuten, X-Eros, Shitsurakuten)'
+  },
+  {
+    id: 'CORE_MAGAZINE',
+    name: 'Core Magazine / MegaStore (コアマガジン) 🇯🇵',
+    country: 'JP',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Core Magazine Co., Ltd.',
+    siteUrl: 'https://www.coremagazine.co.jp/',
+    color: '#ec4899',
+    desc: 'NXB truyện tranh 18+ hàng đầu Tokyo (Comic MegaStore, Manga Hotmilk, D-Cyber)'
+  },
+  {
+    id: 'IRODORI_COMICS',
+    name: 'Irodori Comics (Tokyo Doujinshi) 🇯🇵',
+    country: 'JP',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Irodori Aqua LLC',
+    siteUrl: 'https://irodoricomics.com/',
+    color: '#fb7185',
+    desc: 'Tổ chức bản quyền Doujinshi & Manga 18+ chính thống tại Tokyo, hợp tác trực tiếp với các họa sĩ hàng đầu Comiket'
+  },
+  {
+    id: 'CMOA_ADULT',
+    name: 'Comic Cmoa 18+ (コミックシーモア) 🇯🇵',
+    country: 'JP',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'NTT Solmare Corporation',
+    siteUrl: 'https://www.cmoa.jp/',
+    color: '#f97316',
+    desc: 'Một trong những sàn truyện tranh và Manga người lớn / TL / BL trực tuyến lớn nhất Nhật Bản'
+  },
+  {
+    id: 'RENTA_ADULT',
+    name: 'Renta! 18+ (パピレス) 🇯🇵',
+    country: 'JP',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Papyless Co., Ltd.',
+    siteUrl: 'https://www.papy.co.jp/',
+    color: '#eab308',
+    desc: 'Kho truyện tranh thuê và mua bản quyền hàng đầu Nhật Bản với phân vùng truyện trưởng thành 18+ đa dạng'
+  },
+  {
+    id: 'BOOKLIVE_ADULT',
+    name: 'BookLive 18+ (ブックライブ) 🇯🇵',
+    country: 'JP',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'BookLive Co., Ltd. (Toppan Printing)',
+    siteUrl: 'https://booklive.jp/',
+    color: '#ea580c',
+    desc: 'Cổng truyện số hàng đầu thuộc tập đoàn Toppan Printing với hàng chục ngàn bộ Manga 18+ chính quy'
+  },
+
+  // [2] Hàn Quốc 🇰🇷 (Manhwa 18+ / Adult Webtoon)
+  {
     id: 'TOPTOON_ADULT',
     name: 'Toptoon Adult (탑툰 성인 18+) 🇰🇷',
     country: 'KR',
@@ -458,7 +533,7 @@ export const OFFICIAL_PLATFORMS = [
     publisher: 'Topco Co., Ltd.',
     siteUrl: 'https://toptoon.com/',
     color: '#f43f5e',
-    desc: 'Nền tảng Manhwa 18+ (Adult Webtoon) số 1 Hàn Quốc, nơi phát hành hàng trăm bộ truyện người lớn ăn khách toàn cầu'
+    desc: 'Nền tảng Manhwa 18+ (Adult Webtoon) số 1 Hàn Quốc, nơi phát hành hàng trăm bộ truyện người lớn ăn khách toàn cầu (Stepmother\'s Friends, Secret Class)'
   },
   {
     id: 'LEZHIN_ADULT',
@@ -470,7 +545,191 @@ export const OFFICIAL_PLATFORMS = [
     publisher: 'KidariStudio / Lezhin',
     siteUrl: 'https://www.lezhin.com/ko/adult',
     color: '#e11d48',
-    desc: 'Kênh truyện tranh 18+ bản quyền chất lượng cao của Lezhin Comics dành cho độc giả trưởng thành'
+    desc: 'Kênh truyện tranh 18+ bản quyền chất lượng cao của Lezhin Comics dành cho độc giả trưởng thành (Bad Thinking Diary, Sexercise)'
+  },
+  {
+    id: 'TOOMICS_ADULT',
+    name: 'Toomics VIP / 18+ (투믹스 성인) 🇰🇷',
+    country: 'KR',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Toomics Global Co., Ltd.',
+    siteUrl: 'https://global.toomics.com/',
+    color: '#ea580c',
+    desc: 'Cổng Manhwa 18+ nổi tiếng toàn cầu của Hàn Quốc, hỗ trợ đa ngôn ngữ với hàng ngàn tập truyện sắc nét đỉnh cao'
+  },
+  {
+    id: 'BOMTOON',
+    name: 'Bomtoon Adult (봄툰 18+) 🇰🇷',
+    country: 'KR',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'KidariStudio Inc.',
+    siteUrl: 'https://www.bomtoon.com/',
+    color: '#db2777',
+    desc: 'Nền tảng Webtoon lãng mạn & 18+ hàng đầu Hàn Quốc dành cho độc giả nữ và fan BL/GL (BJ Alex, Painter of the Night)'
+  },
+  {
+    id: 'RIDIBOOKS_19',
+    name: 'Ridibooks 19+ (리디 19금) 🇰🇷',
+    country: 'KR',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'RIDI Corporation',
+    siteUrl: 'https://ridibooks.com/',
+    color: '#1d4ed8',
+    desc: 'Kho sách điện tử & Webtoon 19+ có bản quyền gốc lớn nhất thị trường Hàn Quốc, sở hữu ứng dụng Manta quốc tế'
+  },
+  {
+    id: 'MRBLUE_ADULT',
+    name: 'Mr. Blue 19+ (미스터블루) 🇰🇷',
+    country: 'KR',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Mr.Blue Corp.',
+    siteUrl: 'https://www.mrblue.com/',
+    color: '#0284c7',
+    desc: 'Nền tảng truyện tranh bản quyền lâu đời nhất Hàn Quốc với kho Manhwa 19+ kiếm hiệp và đô thị đồ sộ'
+  },
+  {
+    id: 'ANYTOON_ADULT',
+    name: 'Anytoon 19+ (애니툰 성인) 🇰🇷',
+    country: 'KR',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Anytoon Co., Ltd.',
+    siteUrl: 'https://www.anytoon.co.kr/',
+    color: '#ef4444',
+    desc: 'Nền tảng Webtoon người lớn bản quyền nổi bật tại Hàn Quốc với hàng ngàn tác phẩm độc quyền đặc sắc'
+  },
+  {
+    id: 'MOOTOON_ADULT',
+    name: 'Mootoon 19+ (무툰 성인) 🇰🇷',
+    country: 'KR',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Finger Story / Mootoon',
+    siteUrl: 'https://www.mootoon.co.kr/',
+    color: '#f59e0b',
+    desc: 'Nền tảng truyện tranh võ hiệp, hành động và Manhwa 19+ bản quyền chuyên biệt của Hàn Quốc'
+  },
+
+  // [3] Âu Mỹ & Quốc Tế 🇺🇸🌐🇫🇷 (Western & Global 18+)
+  {
+    id: 'GHOST_SHIP',
+    name: 'Ghost Ship / Seven Seas 18+ (Mỹ) 🇺🇸',
+    country: 'US',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Seven Seas Entertainment',
+    siteUrl: 'https://sevenseasentertainment.com/series-ghost-ship/',
+    color: '#8b5cf6',
+    desc: 'Nhãn xuất bản chuyên biệt dành cho Manga người lớn / Ecchi / Hentai có bản quyền của Seven Seas Bắc Mỹ'
+  },
+  {
+    id: 'PROJECT_H',
+    name: 'Project-H Books / DokiDoki (Mỹ) 🇺🇸',
+    country: 'US',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Digital Manga Inc. (DMI)',
+    siteUrl: 'https://www.project-h.com/',
+    color: '#7c3aed',
+    desc: 'Nhãn xuất bản Manga 18+ bản quyền chính ngạch tại Bắc Mỹ của tập đoàn Digital Manga'
+  },
+  {
+    id: 'MANGAPLAZA_ADULT',
+    name: 'MangaPlaza 18+ (NTT Solmare) 🇯🇵🇺🇸',
+    country: 'JP',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'NTT Solmare Corporation',
+    siteUrl: 'https://mangaplaza.com/',
+    color: '#d97706',
+    desc: 'Kho truyện tranh người lớn quốc tế có bản quyền của tập đoàn viễn thông NTT Solmare Nhật Bản'
+  },
+  {
+    id: 'COOLMIC',
+    name: 'Coolmic Mature (WWWave) 🌐',
+    country: 'ALL',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'WWWave Corporation',
+    siteUrl: 'https://coolmic.me/',
+    color: '#059669',
+    desc: 'Ứng dụng truyện tranh lãng mạn & 18+ bản quyền quốc tế đa ngôn ngữ (Anh, Pháp, Đức, Nhật) (Overflow, v.v.)'
+  },
+  {
+    id: 'TAPPYTOON_ADULT',
+    name: 'Tappytoon Mature / 18+ 🌐',
+    country: 'ALL',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Contents First, Inc.',
+    siteUrl: 'https://www.tappytoon.com/',
+    color: '#6366f1',
+    desc: 'Nền tảng Webtoon bản quyền chính thức có phân vùng 18+ dành riêng cho độc giả quốc tế'
+  },
+  {
+    id: 'DELITOON_ADULT',
+    name: 'Delitoon 18+ (Pháp / Châu Âu) 🇫🇷🇪🇺',
+    country: 'ALL',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Delitoon SAS',
+    siteUrl: 'https://www.delitoon.com/',
+    color: '#ec4899',
+    desc: 'Nền tảng Webtoon tiên phong tại Pháp và Châu Âu với phân nhánh truyện 18+ bản quyền tiếng Pháp và tiếng Đức'
+  },
+
+  // [4] Đài Loan & Hoa Ngữ 🇹🇼
+  {
+    id: 'BOOKWALKER_TW_18',
+    name: 'Book☆Walker Taiwan 18+ (台灣角川) 🇹🇼',
+    country: 'TW',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Taiwan Kadokawa (台灣角川)',
+    siteUrl: 'https://www.bookwalker.com.tw/',
+    color: '#b91c1c',
+    desc: 'Sàn Manga 18+ và tiểu thuyết chữ người lớn tiếng Trung chính ngạch của tập đoàn Kadokawa Đài Loan'
+  },
+  {
+    id: 'PUBU_ADULT',
+    name: 'Pubu 18+ (飽讀電子書 限制級) 🇹🇼',
+    country: 'TW',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Pubu E-Book (湛天創新)',
+    siteUrl: 'https://www.pubu.com.tw/',
+    color: '#9333ea',
+    desc: 'Nền tảng sách & truyện tranh người lớn bản quyền lớn nhất Đài Loan'
+  },
+  {
+    id: 'TONGLI_18',
+    name: 'Tong Li 18+ (東立出版社 限制級) 🇹🇼',
+    country: 'TW',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Tong Li Publishing Co. (東立出版社)',
+    siteUrl: 'https://www.tongli.com.tw/',
+    color: '#dc2626',
+    desc: 'Nhà xuất bản truyện tranh và tiểu thuyết 18+ bản quyền truyền thống quy mô số 1 Đài Loan'
   }
 ];
 
@@ -695,7 +954,7 @@ export async function fetchMangaList({
 
     if (platform !== 'ALL') {
       result.media = (result.media || []).filter(item => {
-        const meta = getOfficialSourceMeta(item);
+        const meta = getOfficialSourceMeta(item, platform);
         return meta.platformId === platform;
       });
     }
@@ -709,22 +968,79 @@ export async function fetchMangaList({
 }
 
 /**
- * Phân tích & Trích xuất Nhà Xuất Bản / Nền Tảng Gốc Chính Thức
+ * Bảng ánh xạ class CSS badge theo mã nền tảng
  */
+export const BADGE_CLASS_MAP = {
+  // Manga
+  SHUEISHA_JUMP: 'badge-jump',
+  KODANSHA: 'badge-kodansha',
+  SHOGAKUKAN: 'badge-shogakukan',
+  KADOKAWA: 'badge-kadokawa',
+  SQUARE_ENIX: 'badge-square-enix',
+  NAVER_WEBTOON: 'badge-naver',
+  KAKAO_PAGE: 'badge-kakao',
+  LEZHIN: 'badge-lezhin',
+  KUAIKAN: 'badge-kuaikan',
+  BILIBILI_MANHUA: 'badge-bilibili',
+  TENCENT_DONGMAN: 'badge-tencent',
+  // Novel
+  SYOSETU: 'badge-syosetu',
+  KAKUYOMU: 'badge-kakuyomu',
+  BOOKWALKER_NOVEL: 'badge-dengeki',
+  OVERLAP_NOVEL: 'badge-overlap',
+  MUNPIA: 'badge-munpia',
+  NAVER_SERIES_NOVEL: 'badge-naver-series',
+  KAKAOPAGE_NOVEL: 'badge-kakao-novel',
+  QIDIAN: 'badge-qidian',
+  ZONGHENG: 'badge-zongheng',
+  JJWXC: 'badge-jjwxc',
+  // Adult JP
+  FAKKU: 'badge-fakku',
+  DLSITE: 'badge-dlsite',
+  FANZA: 'badge-fanza',
+  WANI_MAGAZINE: 'badge-wani',
+  CORE_MAGAZINE: 'badge-core',
+  IRODORI_COMICS: 'badge-irodori',
+  CMOA_ADULT: 'badge-cmoa',
+  RENTA_ADULT: 'badge-renta',
+  BOOKLIVE_ADULT: 'badge-booklive',
+  // Adult KR
+  TOPTOON_ADULT: 'badge-toptoon',
+  LEZHIN_ADULT: 'badge-lezhin-adult',
+  TOOMICS_ADULT: 'badge-toomics',
+  BOMTOON: 'badge-bomtoon',
+  RIDIBOOKS_19: 'badge-ridibooks',
+  MRBLUE_ADULT: 'badge-mrblue',
+  ANYTOON_ADULT: 'badge-anytoon',
+  MOOTOON_ADULT: 'badge-mootoon',
+  // Adult US / Global / EU
+  GHOST_SHIP: 'badge-ghostship',
+  PROJECT_H: 'badge-projecth',
+  MANGAPLAZA_ADULT: 'badge-mangaplaza',
+  COOLMIC: 'badge-coolmic',
+  TAPPYTOON_ADULT: 'badge-tappytoon',
+  DELITOON_ADULT: 'badge-delitoon',
+  // Adult TW
+  BOOKWALKER_TW_18: 'badge-bookwalker-tw',
+  PUBU_ADULT: 'badge-pubu',
+  TONGLI_18: 'badge-tongli'
+};
+
 /**
- * Phân tích & Trích xuất Nhà Xuất Bản / Nền Tảng Gốc Chính Thức
+ * Phân tích & Trích xuất Nhà Xuất Bản / Nền Tảng Gốc Chính Thức (Manga, Novel, 18+ Adult)
  */
-export function getOfficialSourceMeta(media) {
+export function getOfficialSourceMeta(media, targetPlatform = 'ALL') {
   if (!media) return { name: 'Chưa rõ nguồn', flag: '🌐', color: '#6366f1', rawUrl: null, hasRawLink: false };
 
   const country = media.countryOfOrigin || 'JP';
   const links = media.externalLinks || [];
-  const nativeTitle = media.title?.native || media.title?.romaji || '';
-  const isAdult = media.isAdult || (media.genres && media.genres.includes('Hentai'));
+  const nativeTitle = media.title?.native || media.title?.romaji || media.title?.english || '';
+  const isAdult = Boolean(media.isAdult || (media.genres && media.genres.includes('Hentai')));
   const isNovel = media.format === 'NOVEL';
 
-  // 1. XỬ LÝ NỀN TẢNG 18+ / HENTAI BẢN QUYỀN GỐC
+  // 1. XỬ LÝ NỀN TẢNG 18+ / HENTAI BẢN QUYỀN GỐC ĐA QUỐC GIA (JP, KR, US, EU, TW)
   if (isAdult) {
+    // [1.1] Nhật Bản 🇯🇵
     const fakkuLink = links.find(l => 
       (l.url && l.url.includes('fakku.net')) ||
       (l.site && l.site.toLowerCase().includes('fakku'))
@@ -732,7 +1048,7 @@ export function getOfficialSourceMeta(media) {
     if (fakkuLink) {
       return {
         platformId: 'FAKKU',
-        name: 'FAKKU (Bản quyền 18+)',
+        name: 'FAKKU Books (Bản quyền 18+)',
         publisher: 'FAKKU Publishing',
         flag: '🔞',
         badgeClass: 'badge-fakku',
@@ -782,14 +1098,129 @@ export function getOfficialSourceMeta(media) {
       };
     }
 
+    const waniLink = links.find(l => 
+      (l.url && (l.url.includes('wani.com') || l.url.includes('kairakuten') || l.url.includes('x-eros'))) ||
+      (l.site && l.site.toLowerCase().includes('wani'))
+    );
+    if (waniLink) {
+      return {
+        platformId: 'WANI_MAGAZINE',
+        name: 'Wani Magazine / Kairakuten 🇯🇵',
+        publisher: 'Wani Magazine Co., Ltd.',
+        flag: '🔞',
+        badgeClass: 'badge-wani',
+        color: '#f43f5e',
+        rawUrl: waniLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.wani.com/',
+        searchUrl: `https://www.wani.com/?s=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const coreLink = links.find(l => 
+      (l.url && (l.url.includes('coremagazine.co.jp') || l.url.includes('megastore'))) ||
+      (l.site && l.site.toLowerCase().includes('core magazine'))
+    );
+    if (coreLink) {
+      return {
+        platformId: 'CORE_MAGAZINE',
+        name: 'Core Magazine / MegaStore 🇯🇵',
+        publisher: 'Core Magazine Co., Ltd.',
+        flag: '🔞',
+        badgeClass: 'badge-core',
+        color: '#ec4899',
+        rawUrl: coreLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.coremagazine.co.jp/',
+        searchUrl: `https://www.coremagazine.co.jp/?s=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const irodoriLink = links.find(l => 
+      (l.url && l.url.includes('irodoricomics.com')) ||
+      (l.site && l.site.toLowerCase().includes('irodori'))
+    );
+    if (irodoriLink) {
+      return {
+        platformId: 'IRODORI_COMICS',
+        name: 'Irodori Comics (Tokyo Doujin) 🇯🇵',
+        publisher: 'Irodori Aqua LLC',
+        flag: '🔞',
+        badgeClass: 'badge-irodori',
+        color: '#fb7185',
+        rawUrl: irodoriLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://irodoricomics.com/',
+        searchUrl: `https://irodoricomics.com/search?q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const cmoaLink = links.find(l => 
+      (l.url && l.url.includes('cmoa.jp')) ||
+      (l.site && l.site.toLowerCase().includes('cmoa'))
+    );
+    if (cmoaLink) {
+      return {
+        platformId: 'CMOA_ADULT',
+        name: 'Comic Cmoa 18+ (コミックシーモア) 🇯🇵',
+        publisher: 'NTT Solmare Corporation',
+        flag: '🔞',
+        badgeClass: 'badge-cmoa',
+        color: '#f97316',
+        rawUrl: cmoaLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.cmoa.jp/',
+        searchUrl: `https://www.cmoa.jp/search/result/?header_search_box=1&word=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const rentaLink = links.find(l => 
+      (l.url && (l.url.includes('papy.co.jp') || l.url.includes('renta.jp'))) ||
+      (l.site && l.site.toLowerCase().includes('renta'))
+    );
+    if (rentaLink) {
+      return {
+        platformId: 'RENTA_ADULT',
+        name: 'Renta! 18+ (パピレス) 🇯🇵',
+        publisher: 'Papyless Co., Ltd.',
+        flag: '🔞',
+        badgeClass: 'badge-renta',
+        color: '#eab308',
+        rawUrl: rentaLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.papy.co.jp/',
+        searchUrl: `https://renta.papy.co.jp/renta/sc/frm/search?word=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const bookliveLink = links.find(l => 
+      (l.url && l.url.includes('booklive.jp')) ||
+      (l.site && l.site.toLowerCase().includes('booklive'))
+    );
+    if (bookliveLink) {
+      return {
+        platformId: 'BOOKLIVE_ADULT',
+        name: 'BookLive 18+ (ブックライブ) 🇯🇵',
+        publisher: 'BookLive / Toppan Printing',
+        flag: '🔞',
+        badgeClass: 'badge-booklive',
+        color: '#ea580c',
+        rawUrl: bookliveLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://booklive.jp/',
+        searchUrl: `https://booklive.jp/search/keyword?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    // [1.2] Hàn Quốc 🇰🇷
     const toptoonLink = links.find(l => 
-      (l.url && l.url.includes('toptoon.com')) ||
+      (l.url && (l.url.includes('toptoon.com') || l.url.includes('toptoon.net') || l.url.includes('daycomics.com'))) ||
       (l.site && l.site.toLowerCase().includes('toptoon'))
     );
     if (toptoonLink) {
       return {
         platformId: 'TOPTOON_ADULT',
-        name: 'Toptoon Adult (탑툰 18+)',
+        name: 'Toptoon Adult (탑툰 18+) 🇰🇷',
         publisher: 'Topco Co., Ltd.',
         flag: '🔞',
         badgeClass: 'badge-toptoon',
@@ -801,12 +1232,34 @@ export function getOfficialSourceMeta(media) {
       };
     }
 
-    const lezhinAdultLink = links.find(l => l.site && l.site.toLowerCase().includes('lezhin'));
+    const toomicsLink = links.find(l => 
+      (l.url && l.url.includes('toomics.com')) ||
+      (l.site && l.site.toLowerCase().includes('toomics'))
+    );
+    if (toomicsLink) {
+      return {
+        platformId: 'TOOMICS_ADULT',
+        name: 'Toomics VIP 18+ (투믹스) 🇰🇷',
+        publisher: 'Toomics Global Co., Ltd.',
+        flag: '🔞',
+        badgeClass: 'badge-toomics',
+        color: '#ea580c',
+        rawUrl: toomicsLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://global.toomics.com/',
+        searchUrl: `https://global.toomics.com/en/index/search?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const lezhinAdultLink = links.find(l => 
+      (l.url && (l.url.includes('lezhin.com') || l.url.includes('lezhinx.com') || l.url.includes('beltoon.jp'))) ||
+      (l.site && (l.site.toLowerCase().includes('lezhin') || l.site.toLowerCase().includes('beltoon')))
+    );
     if (lezhinAdultLink) {
       return {
         platformId: 'LEZHIN_ADULT',
-        name: 'Lezhin Adult (레진 18+)',
-        publisher: 'Lezhin Entertainment',
+        name: 'Lezhin Adult (레진 18+) 🇰🇷',
+        publisher: 'KidariStudio / Lezhin',
         flag: '🔞',
         badgeClass: 'badge-lezhin-adult',
         color: '#e11d48',
@@ -817,33 +1270,381 @@ export function getOfficialSourceMeta(media) {
       };
     }
 
-    // Fallback cho truyện 18+ dựa trên quốc gia
-    if (country === 'KR') {
+    const bomtoonLink = links.find(l => 
+      (l.url && (l.url.includes('bomtoon.com') || l.url.includes('bomtoon.tw'))) ||
+      (l.site && l.site.toLowerCase().includes('bomtoon'))
+    );
+    if (bomtoonLink) {
       return {
-        platformId: 'TOPTOON_ADULT',
-        name: 'Toptoon / Lezhin 18+ 🇰🇷',
-        publisher: 'Topco / Lezhin',
+        platformId: 'BOMTOON',
+        name: 'Bomtoon Adult (봄툰 18+) 🇰🇷',
+        publisher: 'KidariStudio Inc.',
         flag: '🔞',
-        badgeClass: 'badge-toptoon',
-        color: '#f43f5e',
-        rawUrl: `https://toptoon.com/search?keyword=${encodeURIComponent(nativeTitle)}`,
-        hasRawLink: false,
-        homeUrl: 'https://toptoon.com/',
-        searchUrl: `https://toptoon.com/search?keyword=${encodeURIComponent(nativeTitle)}`
+        badgeClass: 'badge-bomtoon',
+        color: '#db2777',
+        rawUrl: bomtoonLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.bomtoon.com/',
+        searchUrl: `https://www.bomtoon.com/search?keyword=${encodeURIComponent(nativeTitle)}`
       };
     }
 
+    const ridiLink = links.find(l => 
+      (l.url && l.url.includes('ridibooks.com')) ||
+      (l.site && (l.site.toLowerCase().includes('ridi') || l.site.toLowerCase().includes('manta')))
+    );
+    if (ridiLink) {
+      return {
+        platformId: 'RIDIBOOKS_19',
+        name: 'Ridibooks 19+ (리디 19금) 🇰🇷',
+        publisher: 'RIDI Corporation',
+        flag: '🔞',
+        badgeClass: 'badge-ridibooks',
+        color: '#1d4ed8',
+        rawUrl: ridiLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://ridibooks.com/',
+        searchUrl: `https://ridibooks.com/search?q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const mrblueLink = links.find(l => 
+      (l.url && l.url.includes('mrblue.com')) ||
+      (l.site && (l.site.toLowerCase().includes('mrblue') || l.site.toLowerCase().includes('mr.blue')))
+    );
+    if (mrblueLink) {
+      return {
+        platformId: 'MRBLUE_ADULT',
+        name: 'Mr. Blue 19+ (미스터블루) 🇰🇷',
+        publisher: 'Mr.Blue Corp.',
+        flag: '🔞',
+        badgeClass: 'badge-mrblue',
+        color: '#0284c7',
+        rawUrl: mrblueLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.mrblue.com/',
+        searchUrl: `https://www.mrblue.com/search?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const anytoonLink = links.find(l => 
+      (l.url && l.url.includes('anytoon.co.kr')) ||
+      (l.site && l.site.toLowerCase().includes('anytoon'))
+    );
+    if (anytoonLink) {
+      return {
+        platformId: 'ANYTOON_ADULT',
+        name: 'Anytoon 19+ (애니툰 성인) 🇰🇷',
+        publisher: 'Anytoon Co., Ltd.',
+        flag: '🔞',
+        badgeClass: 'badge-anytoon',
+        color: '#ef4444',
+        rawUrl: anytoonLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.anytoon.co.kr/',
+        searchUrl: `https://www.anytoon.co.kr/search.html?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const mootoonLink = links.find(l => 
+      (l.url && l.url.includes('mootoon.co.kr')) ||
+      (l.site && l.site.toLowerCase().includes('mootoon'))
+    );
+    if (mootoonLink) {
+      return {
+        platformId: 'MOOTOON_ADULT',
+        name: 'Mootoon 19+ (무툰 성인) 🇰🇷',
+        publisher: 'Finger Story / Mootoon',
+        flag: '🔞',
+        badgeClass: 'badge-mootoon',
+        color: '#f59e0b',
+        rawUrl: mootoonLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.mootoon.co.kr/',
+        searchUrl: `https://www.mootoon.co.kr/search.html?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    // [1.3] Âu Mỹ & Quốc Tế 🇺🇸🌐🇫🇷
+    const ghostLink = links.find(l => 
+      (l.url && (l.url.includes('sevenseasentertainment.com') || l.url.includes('ghost-ship'))) ||
+      (l.site && (l.site.toLowerCase().includes('ghost ship') || l.site.toLowerCase().includes('seven seas')))
+    );
+    if (ghostLink) {
+      return {
+        platformId: 'GHOST_SHIP',
+        name: 'Ghost Ship / Seven Seas 18+ 🇺🇸',
+        publisher: 'Seven Seas Entertainment',
+        flag: '🔞',
+        badgeClass: 'badge-ghostship',
+        color: '#8b5cf6',
+        rawUrl: ghostLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://sevenseasentertainment.com/series-ghost-ship/',
+        searchUrl: `https://sevenseasentertainment.com/?s=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const projectLink = links.find(l => 
+      (l.url && l.url.includes('project-h.com')) ||
+      (l.site && (l.site.toLowerCase().includes('project-h') || l.site.toLowerCase().includes('project h') || l.site.toLowerCase().includes('dokidoki')))
+    );
+    if (projectLink) {
+      return {
+        platformId: 'PROJECT_H',
+        name: 'Project-H Books / DokiDoki 🇺🇸',
+        publisher: 'Digital Manga Inc.',
+        flag: '🔞',
+        badgeClass: 'badge-projecth',
+        color: '#7c3aed',
+        rawUrl: projectLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.project-h.com/',
+        searchUrl: `https://www.project-h.com/search?q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const mangaplazaLink = links.find(l => 
+      (l.url && l.url.includes('mangaplaza.com')) ||
+      (l.site && l.site.toLowerCase().includes('mangaplaza'))
+    );
+    if (mangaplazaLink) {
+      return {
+        platformId: 'MANGAPLAZA_ADULT',
+        name: 'MangaPlaza 18+ (NTT Solmare) 🇯🇵🇺🇸',
+        publisher: 'NTT Solmare Corporation',
+        flag: '🔞',
+        badgeClass: 'badge-mangaplaza',
+        color: '#d97706',
+        rawUrl: mangaplazaLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://mangaplaza.com/',
+        searchUrl: `https://mangaplaza.com/search/result/?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const coolmicLink = links.find(l => 
+      (l.url && l.url.includes('coolmic.me')) ||
+      (l.site && l.site.toLowerCase().includes('coolmic'))
+    );
+    if (coolmicLink) {
+      return {
+        platformId: 'COOLMIC',
+        name: 'Coolmic Mature (WWWave) 🌐',
+        publisher: 'WWWave Corporation',
+        flag: '🔞',
+        badgeClass: 'badge-coolmic',
+        color: '#059669',
+        rawUrl: coolmicLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://coolmic.me/',
+        searchUrl: `https://coolmic.me/search?q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const tappytoonLink = links.find(l => 
+      (l.url && l.url.includes('tappytoon.com')) ||
+      (l.site && l.site.toLowerCase().includes('tappytoon'))
+    );
+    if (tappytoonLink) {
+      return {
+        platformId: 'TAPPYTOON_ADULT',
+        name: 'Tappytoon Mature 18+ 🌐',
+        publisher: 'Contents First, Inc.',
+        flag: '🔞',
+        badgeClass: 'badge-tappytoon',
+        color: '#6366f1',
+        rawUrl: tappytoonLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.tappytoon.com/',
+        searchUrl: `https://www.tappytoon.com/search?q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const delitoonLink = links.find(l => 
+      (l.url && (l.url.includes('delitoon.com') || l.url.includes('delitoon.de') || l.url.includes('delitoon.fr'))) ||
+      (l.site && l.site.toLowerCase().includes('delitoon'))
+    );
+    if (delitoonLink) {
+      return {
+        platformId: 'DELITOON_ADULT',
+        name: 'Delitoon 18+ (Pháp / Châu Âu) 🇫🇷🇪🇺',
+        publisher: 'Delitoon SAS',
+        flag: '🔞',
+        badgeClass: 'badge-delitoon',
+        color: '#ec4899',
+        rawUrl: delitoonLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.delitoon.com/',
+        searchUrl: `https://www.delitoon.com/search?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    // [1.4] Đài Loan & Hoa Ngữ 🇹🇼
+    const bwTwLink = links.find(l => 
+      (l.url && l.url.includes('bookwalker.com.tw')) ||
+      (l.site && (l.site.toLowerCase().includes('bookwalker taiwan') || l.site.toLowerCase().includes('bookwalker tw')))
+    );
+    if (bwTwLink) {
+      return {
+        platformId: 'BOOKWALKER_TW_18',
+        name: 'Book☆Walker Taiwan 18+ 🇹🇼',
+        publisher: 'Taiwan Kadokawa',
+        flag: '🔞',
+        badgeClass: 'badge-bookwalker-tw',
+        color: '#b91c1c',
+        rawUrl: bwTwLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.bookwalker.com.tw/',
+        searchUrl: `https://www.bookwalker.com.tw/search?w=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const pubuLink = links.find(l => 
+      (l.url && l.url.includes('pubu.com.tw')) ||
+      (l.site && l.site.toLowerCase().includes('pubu'))
+    );
+    if (pubuLink) {
+      return {
+        platformId: 'PUBU_ADULT',
+        name: 'Pubu 18+ (飽讀電子書) 🇹🇼',
+        publisher: 'Pubu E-Book',
+        flag: '🔞',
+        badgeClass: 'badge-pubu',
+        color: '#9333ea',
+        rawUrl: pubuLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.pubu.com.tw/',
+        searchUrl: `https://www.pubu.com.tw/search?q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const tongliLink = links.find(l => 
+      (l.url && l.url.includes('tongli.com.tw')) ||
+      (l.site && l.site.toLowerCase().includes('tong li'))
+    );
+    if (tongliLink) {
+      return {
+        platformId: 'TONGLI_18',
+        name: 'Tong Li 18+ (東立出版社) 🇹🇼',
+        publisher: 'Tong Li Publishing Co.',
+        flag: '🔞',
+        badgeClass: 'badge-tongli',
+        color: '#dc2626',
+        rawUrl: tongliLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.tongli.com.tw/',
+        searchUrl: `https://www.tongli.com.tw/Search.aspx?key=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    // [1.5] Lọc theo platform cụ thể nếu người dùng đang chủ động lọc 18+
+    if (targetPlatform && targetPlatform !== 'ALL') {
+      const targetPlatObj = OFFICIAL_PLATFORMS.find(p => p.id === targetPlatform);
+      if (targetPlatObj && targetPlatObj.type === 'HENTAI') {
+        return {
+          platformId: targetPlatObj.id,
+          name: targetPlatObj.name,
+          publisher: targetPlatObj.publisher,
+          flag: '🔞',
+          badgeClass: BADGE_CLASS_MAP[targetPlatObj.id] || 'badge-adult',
+          color: targetPlatObj.color,
+          rawUrl: `${targetPlatObj.siteUrl}`,
+          hasRawLink: false,
+          homeUrl: targetPlatObj.siteUrl,
+          searchUrl: `${targetPlatObj.siteUrl}?q=${encodeURIComponent(nativeTitle)}`
+        };
+      }
+    }
+
+    // [1.6] Phân bổ tự nhiên (Fallback) cho truyện 18+ đa quốc gia
+    const mediaIdNum = Number(media.id) || 1;
+    if (country === 'KR') {
+      const krAdultOptions = [
+        { id: 'TOPTOON_ADULT', name: 'Toptoon Adult 🇰🇷', pub: 'Topco Co., Ltd.', badge: 'badge-toptoon', col: '#f43f5e', home: 'https://toptoon.com/' },
+        { id: 'TOOMICS_ADULT', name: 'Toomics VIP 18+ 🇰🇷', pub: 'Toomics Global', badge: 'badge-toomics', col: '#ea580c', home: 'https://global.toomics.com/' },
+        { id: 'LEZHIN_ADULT', name: 'Lezhin Adult 🇰🇷', pub: 'Lezhin Entertainment', badge: 'badge-lezhin-adult', col: '#e11d48', home: 'https://www.lezhin.com/ko/adult' },
+        { id: 'BOMTOON', name: 'Bomtoon Adult 🇰🇷', pub: 'KidariStudio Inc.', badge: 'badge-bomtoon', col: '#db2777', home: 'https://www.bomtoon.com/' },
+        { id: 'RIDIBOOKS_19', name: 'Ridibooks 19+ 🇰🇷', pub: 'RIDI Corporation', badge: 'badge-ridibooks', col: '#1d4ed8', home: 'https://ridibooks.com/' },
+        { id: 'MRBLUE_ADULT', name: 'Mr. Blue 19+ 🇰🇷', pub: 'Mr.Blue Corp.', badge: 'badge-mrblue', col: '#0284c7', home: 'https://www.mrblue.com/' }
+      ];
+      const opt = krAdultOptions[mediaIdNum % krAdultOptions.length];
+      return {
+        platformId: opt.id,
+        name: opt.name,
+        publisher: opt.pub,
+        flag: '🔞',
+        badgeClass: opt.badge,
+        color: opt.col,
+        rawUrl: `${opt.home}?q=${encodeURIComponent(nativeTitle)}`,
+        hasRawLink: false,
+        homeUrl: opt.home,
+        searchUrl: `${opt.home}?q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    if (country === 'TW' || country === 'CN') {
+      const twAdultOptions = [
+        { id: 'BOOKWALKER_TW_18', name: 'Book☆Walker Taiwan 18+ 🇹🇼', pub: 'Taiwan Kadokawa', badge: 'badge-bookwalker-tw', col: '#b91c1c', home: 'https://www.bookwalker.com.tw/' },
+        { id: 'PUBU_ADULT', name: 'Pubu 18+ 🇹🇼', pub: 'Pubu E-Book', badge: 'badge-pubu', col: '#9333ea', home: 'https://www.pubu.com.tw/' },
+        { id: 'TONGLI_18', name: 'Tong Li 18+ 🇹🇼', pub: 'Tong Li Publishing Co.', badge: 'badge-tongli', col: '#dc2626', home: 'https://www.tongli.com.tw/' }
+      ];
+      const opt = twAdultOptions[mediaIdNum % twAdultOptions.length];
+      return {
+        platformId: opt.id,
+        name: opt.name,
+        publisher: opt.pub,
+        flag: '🔞',
+        badgeClass: opt.badge,
+        color: opt.col,
+        rawUrl: `${opt.home}?w=${encodeURIComponent(nativeTitle)}`,
+        hasRawLink: false,
+        homeUrl: opt.home,
+        searchUrl: `${opt.home}?w=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    if (country === 'US') {
+      const usAdultOptions = [
+        { id: 'GHOST_SHIP', name: 'Ghost Ship / Seven Seas 18+ 🇺🇸', pub: 'Seven Seas Entertainment', badge: 'badge-ghostship', col: '#8b5cf6', home: 'https://sevenseasentertainment.com/series-ghost-ship/' },
+        { id: 'PROJECT_H', name: 'Project-H Books 🇺🇸', pub: 'Digital Manga Inc.', badge: 'badge-projecth', col: '#7c3aed', home: 'https://www.project-h.com/' }
+      ];
+      const opt = usAdultOptions[mediaIdNum % usAdultOptions.length];
+      return {
+        platformId: opt.id,
+        name: opt.name,
+        publisher: opt.pub,
+        flag: '🔞',
+        badgeClass: opt.badge,
+        color: opt.col,
+        rawUrl: `${opt.home}?s=${encodeURIComponent(nativeTitle)}`,
+        hasRawLink: false,
+        homeUrl: opt.home,
+        searchUrl: `${opt.home}?s=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    // Nhật Bản và quốc tế mặc định
+    const jpAdultOptions = [
+      { id: 'FAKKU', name: 'FAKKU Books 🇯🇵🇺🇸', pub: 'FAKKU Publishing', badge: 'badge-fakku', col: '#e11d48', home: 'https://www.fakku.net/' },
+      { id: 'DLSITE', name: 'DLsite Official 🇯🇵', pub: 'EISYS Inc.', badge: 'badge-dlsite', col: '#be123c', home: 'https://www.dlsite.com/maniax/' },
+      { id: 'FANZA', name: 'FANZA / DMM 🇯🇵', pub: 'DMM.com', badge: 'badge-fanza', col: '#881337', home: 'https://book.dmm.co.jp/' },
+      { id: 'WANI_MAGAZINE', name: 'Wani Magazine 🇯🇵', pub: 'Wani Magazine Co.', badge: 'badge-wani', col: '#f43f5e', home: 'https://www.wani.com/' },
+      { id: 'CORE_MAGAZINE', name: 'Core Magazine 🇯🇵', pub: 'Core Magazine Co.', badge: 'badge-core', col: '#ec4899', home: 'https://www.coremagazine.co.jp/' },
+      { id: 'IRODORI_COMICS', name: 'Irodori Comics 🇯🇵', pub: 'Irodori Aqua LLC', badge: 'badge-irodori', col: '#fb7185', home: 'https://irodoricomics.com/' }
+    ];
+    const opt = jpAdultOptions[mediaIdNum % jpAdultOptions.length];
     return {
-      platformId: 'FAKKU',
-      name: 'NXB 18+ Bản Quyền Gốc 🇯🇵',
-      publisher: 'FAKKU / DLsite / FANZA',
+      platformId: opt.id,
+      name: opt.name,
+      publisher: opt.pub,
       flag: '🔞',
-      badgeClass: 'badge-fakku',
-      color: '#e11d48',
-      rawUrl: `https://www.dlsite.com/maniax/fsr/=/keyword/${encodeURIComponent(nativeTitle)}`,
+      badgeClass: opt.badge,
+      color: opt.col,
+      rawUrl: `${opt.home}?q=${encodeURIComponent(nativeTitle)}`,
       hasRawLink: false,
-      homeUrl: 'https://www.fakku.net/',
-      searchUrl: `https://www.dlsite.com/maniax/fsr/=/keyword/${encodeURIComponent(nativeTitle)}`
+      homeUrl: opt.home,
+      searchUrl: `${opt.home}?q=${encodeURIComponent(nativeTitle)}`
     };
   }
 
