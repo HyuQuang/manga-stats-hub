@@ -119,7 +119,9 @@ const elements = {
   resultsContainer: document.getElementById('resultsContainer'),
   resultsCount: document.getElementById('resultsCount'),
   activeFiltersList: document.getElementById('activeFiltersList'),
-  paginationContainer: document.getElementById('paginationContainer'),
+  paginationContainerTop: document.getElementById('paginationContainerTop'),
+  paginationContainerBottom: document.getElementById('paginationContainerBottom') || document.getElementById('paginationContainer'),
+  paginationContainer: document.getElementById('paginationContainerBottom') || document.getElementById('paginationContainer'),
   
   // Hero Stats
   heroTotalCount: document.getElementById('heroTotalCount'),
@@ -1385,50 +1387,171 @@ function updateActiveFilterBadges() {
 }
 
 /**
- * Render Pagination Controls
+ * Chuyển đến trang chỉ định và cuộn màn hình mượt mà
+ */
+function goToPage(targetPage) {
+  if (!targetPage || targetPage === state.page) return;
+  state.page = targetPage;
+  const targetElem = elements.paginationContainerTop || elements.resultsContainer;
+  if (targetElem) {
+    const topOffset = targetElem.getBoundingClientRect().top + window.pageYOffset - 110;
+    window.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
+  }
+  loadMangaData();
+}
+
+/**
+ * Render Pagination Controls (Dãy trang 1, 2, 3, 4, 5... ở cả trên và dưới)
  */
 function renderPagination() {
-  if (!state.pageInfo) {
-    elements.paginationContainer.innerHTML = '';
+  const containers = [
+    elements.paginationContainerTop,
+    elements.paginationContainerBottom
+  ].filter(Boolean);
+
+  if (!state.pageInfo || !containers.length) {
+    containers.forEach(c => { c.innerHTML = ''; });
     return;
   }
 
   const { currentPage, hasNextPage, lastPage } = state.pageInfo;
+  const totalPages = Math.max(1, lastPage || 1);
 
-  elements.paginationContainer.innerHTML = `
-    <button class="page-btn" id="prevPageBtn" ${currentPage <= 1 ? 'disabled' : ''}>
-      ← Trang trước
-    </button>
-    <span class="page-info">
-      Trang <strong>${currentPage}</strong> / ${lastPage || '?'}
-    </span>
-    <button class="page-btn" id="nextPageBtn" ${!hasNextPage ? 'disabled' : ''}>
-      Trang sau →
-    </button>
+  // Tính toán dãy số trang hiển thị (1, 2, 3, 4, 5, 6, 7, 8...)
+  const pages = [];
+  if (totalPages <= 10) {
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+  } else {
+    // Luôn hiển thị trang 1
+    pages.push(1);
+
+    const start = Math.max(2, currentPage - 2);
+    const end = Math.min(totalPages - 1, currentPage + 2);
+
+    if (start > 2) {
+      pages.push('...');
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (end < totalPages - 1) {
+      pages.push('...');
+    }
+
+    // Luôn hiển thị trang cuối cùng
+    pages.push(totalPages);
+  }
+
+  // HTML cho dãy số trang
+  const numbersHtml = pages.map(p => {
+    if (p === '...') {
+      return `<span class="page-ellipsis">…</span>`;
+    }
+    const isActive = p === currentPage;
+    return `
+      <button 
+        type="button" 
+        class="page-num-btn ${isActive ? 'active' : ''}" 
+        data-page-target="${p}" 
+        ${isActive ? 'aria-current="page"' : ''}
+        title="Đến trang ${p}"
+      >
+        ${p}
+      </button>
+    `;
+  }).join('');
+
+  const paginationHtml = `
+    <div class="pagination-sub-wrap">
+      <button type="button" class="page-btn" data-page-action="first" ${currentPage <= 1 ? 'disabled' : ''} title="Về trang đầu tiên (Trang 1)">
+        ⏮️ Đầu
+      </button>
+      <button type="button" class="page-btn" data-page-action="prev" ${currentPage <= 1 ? 'disabled' : ''} title="Trang trước">
+        ← Trước
+      </button>
+      
+      <div class="pagination-numbers-wrap">
+        ${numbersHtml}
+      </div>
+
+      <button type="button" class="page-btn" data-page-action="next" ${!hasNextPage || currentPage >= totalPages ? 'disabled' : ''} title="Trang tiếp theo">
+        Sau →
+      </button>
+      <button type="button" class="page-btn" data-page-action="last" ${currentPage >= totalPages ? 'disabled' : ''} title="Đến trang cuối (${totalPages})">
+        Cuối ⏭️
+      </button>
+    </div>
+
+    <div class="pagination-jump-wrap">
+      <span>Trang <strong>${currentPage}</strong> / ${totalPages}</span>
+      <span style="opacity: 0.35;">•</span>
+      <span>Đến:</span>
+      <input 
+        type="number" 
+        min="1" 
+        max="${totalPages}" 
+        value="${currentPage}" 
+        class="page-jump-input" 
+        data-page-jump-input
+        title="Nhập số trang muốn chuyển đến"
+      />
+      <button type="button" class="btn-outline" data-page-jump-btn style="padding: 0.3rem 0.65rem; font-size: 0.8rem; border-radius: var(--radius-sm);">
+        Đi ↵
+      </button>
+    </div>
   `;
 
-  const prevBtn = document.getElementById('prevPageBtn');
-  const nextBtn = document.getElementById('nextPageBtn');
+  containers.forEach(container => {
+    container.innerHTML = paginationHtml;
 
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      if (state.page > 1) {
-        state.page--;
-        window.scrollTo({ top: 400, behavior: 'smooth' });
-        loadMangaData();
-      }
+    // Gắn sự kiện dãy số trang
+    container.querySelectorAll('[data-page-target]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetPage = parseInt(btn.dataset.pageTarget, 10);
+        goToPage(targetPage);
+      });
     });
-  }
 
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      if (state.pageInfo.hasNextPage) {
-        state.page++;
-        window.scrollTo({ top: 400, behavior: 'smooth' });
-        loadMangaData();
-      }
+    // Gắn sự kiện các nút hành động (Đầu, Trước, Sau, Cuối)
+    container.querySelectorAll('[data-page-action]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.pageAction;
+        if (action === 'first') {
+          goToPage(1);
+        } else if (action === 'prev') {
+          goToPage(state.page - 1);
+        } else if (action === 'next') {
+          goToPage(state.page + 1);
+        } else if (action === 'last') {
+          goToPage(totalPages);
+        }
+      });
     });
-  }
+
+    // Gắn sự kiện chuyển trang trực tiếp qua ô nhập
+    const jumpInput = container.querySelector('[data-page-jump-input]');
+    const jumpBtn = container.querySelector('[data-page-jump-btn]');
+
+    const triggerJump = () => {
+      if (!jumpInput) return;
+      let val = parseInt(jumpInput.value, 10);
+      if (isNaN(val)) return;
+      if (val < 1) val = 1;
+      if (val > totalPages) val = totalPages;
+      goToPage(val);
+    };
+
+    if (jumpBtn) jumpBtn.addEventListener('click', triggerJump);
+    if (jumpInput) {
+      jumpInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') triggerJump();
+      });
+    }
+  });
 }
 
 /**
