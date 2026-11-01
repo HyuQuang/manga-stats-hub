@@ -1,31 +1,135 @@
 /**
- * MangaStats Hub - Multi-Country Official Origins & Smart Search Client
- * Hỗ trợ tra cứu tiếng Việt, tên gốc bản địa, và số chap thời gian thực
+ * MangaStats Hub - Multi-Country Official Origins & Extensive Genre/Tag System
  */
 
 const ANILIST_API_URL = 'https://graphql.anilist.co';
 
-export const POPULAR_GENRES = [
-  'Action',
-  'Adventure',
-  'Comedy',
-  'Drama',
-  'Fantasy',
-  'Horror',
-  'Mecha',
-  'Mystery',
-  'Psychological',
-  'Romance',
-  'Sci-Fi',
-  'Slice of Life',
-  'Sports',
-  'Supernatural',
-  'Thriller'
-];
+/**
+ * Danh sách Thể loại Chuẩn (Official Genres) của AniList
+ */
+export const OFFICIAL_GENRES = new Set([
+  'Action', 'Adventure', 'Comedy', 'Drama', 'Ecchi', 'Fantasy',
+  'Horror', 'Mahou Shoujo', 'Mecha', 'Music', 'Mystery',
+  'Psychological', 'Romance', 'Sci-Fi', 'Slice of Life',
+  'Sports', 'Supernatural', 'Thriller'
+]);
+
+/**
+ * Hệ thống Phân loại Thể loại & Tag phong phú theo từng chủ đề
+ * Bao gồm đầy đủ Chuyển sinh, Tu tiên, Trọng sinh, Harem, Võ thuật, Hầm ngục, v.v.
+ */
+export const GENRE_CATEGORIES = {
+  POPULAR: {
+    label: '🔥 Phổ biến nhất',
+    items: [
+      { id: 'Action', name: 'Action (Hành động)', type: 'genre' },
+      { id: 'Adventure', name: 'Adventure (Phiêu lưu)', type: 'genre' },
+      { id: 'Fantasy', name: 'Fantasy (Kỳ ảo)', type: 'genre' },
+      { id: 'Isekai', name: 'Isekai (Chuyển sinh / Xuyên không)', type: 'tag' },
+      { id: 'Reincarnation', name: 'Reincarnation (Trọng sinh / Tái sinh)', type: 'tag' },
+      { id: 'Cultivation', name: 'Cultivation (Tu tiên)', type: 'tag' },
+      { id: 'Martial Arts', name: 'Martial Arts (Võ thuật)', type: 'tag' },
+      { id: 'Comedy', name: 'Comedy (Hài hước)', type: 'genre' },
+      { id: 'Romance', name: 'Romance (Tình cảm)', type: 'genre' },
+      { id: 'Drama', name: 'Drama (Kịch tính)', type: 'genre' },
+      { id: 'Slice of Life', name: 'Slice of Life (Đời thường)', type: 'genre' },
+      { id: 'Sci-Fi', name: 'Sci-Fi (Khoa học viễn tưởng)', type: 'genre' },
+      { id: 'Supernatural', name: 'Supernatural (Siêu nhiên)', type: 'genre' },
+      { id: 'Mystery', name: 'Mystery (Bí ẩn)', type: 'genre' },
+      { id: 'Horror', name: 'Horror (Kinh dị)', type: 'genre' },
+      { id: 'Psychological', name: 'Psychological (Tâm lý)', type: 'genre' },
+      { id: 'Sports', name: 'Sports (Thể thao)', type: 'genre' }
+    ]
+  },
+  ISEKAI_CULTIVATION: {
+    label: '🌀 Chuyển sinh & Tu tiên',
+    items: [
+      { id: 'Isekai', name: 'Isekai (Xuyên không / Thế giới khác)', type: 'tag' },
+      { id: 'Reincarnation', name: 'Reincarnation (Trọng sinh / Tái sinh)', type: 'tag' },
+      { id: 'Cultivation', name: 'Cultivation (Tu tiên / Tu chân)', type: 'tag' },
+      { id: 'Wuxia', name: 'Wuxia (Võ hiệp cổ phong)', type: 'tag' },
+      { id: 'Martial Arts', name: 'Martial Arts (Võ thuật / Đấu khí)', type: 'tag' },
+      { id: 'Magic', name: 'Magic (Ma pháp / Phép thuật)', type: 'tag' },
+      { id: 'Dungeon', name: 'Dungeon (Hầm ngục / Phó bản)', type: 'tag' },
+      { id: 'Gods', name: 'Gods (Thần thánh / Tiên nhân)', type: 'tag' },
+      { id: 'Demons', name: 'Demons (Yêu ma / Ma tộc)', type: 'tag' },
+      { id: 'Monster Girls', name: 'Monster Girls (Quái vật nhân hình)', type: 'tag' },
+      { id: 'Mahou Shoujo', name: 'Mahou Shoujo (Thiếu nữ ma pháp)', type: 'genre' }
+    ]
+  },
+  ACTION_COMBAT: {
+    label: '⚔️ Hành động & Chiến đấu',
+    items: [
+      { id: 'Action', name: 'Action (Hành động)', type: 'genre' },
+      { id: 'Super Power', name: 'Super Power (Siêu năng lực)', type: 'tag' },
+      { id: 'Survival', name: 'Survival (Sinh tồn)', type: 'tag' },
+      { id: 'Revenge', name: 'Revenge (Báo thù / Trả thù)', type: 'tag' },
+      { id: 'Time Manipulation', name: 'Time Travel (Du hành thời gian)', type: 'tag' },
+      { id: 'Military', name: 'Military (Quân sự / Chiến tranh)', type: 'tag' },
+      { id: 'Crime', name: 'Crime (Tội phạm / Yakuza)', type: 'tag' },
+      { id: 'Thriller', name: 'Thriller (Hồi hộp / Giật gân)', type: 'genre' },
+      { id: 'Gore', name: 'Gore (Máu me / Tàn khốc)', type: 'tag' },
+      { id: 'Anti-Hero', name: 'Anti-Hero (Phản anh hùng)', type: 'tag' }
+    ]
+  },
+  ROMANCE_SCHOOL: {
+    label: '❤️ Tình cảm & Đời thường',
+    items: [
+      { id: 'Romance', name: 'Romance (Tình cảm / Lãng mạn)', type: 'genre' },
+      { id: 'School', name: 'School (Học đường)', type: 'tag' },
+      { id: 'Harem', name: 'Harem (Nhiều nữ chính)', type: 'tag' },
+      { id: 'Ecchi', name: 'Ecchi (Gợi cảm)', type: 'genre' },
+      { id: 'Villainess', name: 'Villainess (Nữ phụ phản diện)', type: 'tag' },
+      { id: 'Otome Game', name: 'Otome Game (Game hẹn hò)', type: 'tag' },
+      { id: 'Family Life', name: 'Family Life (Gia đình / Nuôi con)', type: 'tag' },
+      { id: 'Cooking', name: 'Cooking (Ẩm thực / Nấu ăn)', type: 'tag' },
+      { id: 'Comedy', name: 'Comedy (Hài hước / Bựa)', type: 'genre' },
+      { id: 'Tragedy', name: 'Tragedy (Bi kịch / Nước mắt)', type: 'tag' }
+    ]
+  },
+  DEMOGRAPHICS: {
+    label: '👥 Phân khúc độc giả',
+    items: [
+      { id: 'Shounen', name: 'Shounen (Thiếu niên nam)', type: 'tag' },
+      { id: 'Seinen', name: 'Seinen (Thanh niên / Trưởng thành)', type: 'tag' },
+      { id: 'Shoujo', name: 'Shoujo (Thiếu nữ)', type: 'tag' },
+      { id: 'Josei', name: 'Josei (Phụ nữ trưởng thành)', type: 'tag' },
+      { id: 'Historical', name: 'Historical (Cổ đại / Lịch sử)', type: 'tag' }
+    ]
+  },
+  SCIFI_GAME: {
+    label: '🚀 Viễn tưởng & Game thủ',
+    items: [
+      { id: 'Sci-Fi', name: 'Sci-Fi (Khoa học viễn tưởng)', type: 'genre' },
+      { id: 'Mecha', name: 'Mecha (Người máy / Robot)', type: 'genre' },
+      { id: 'Virtual World', name: 'Virtual World (Thế giới ảo / VR)', type: 'tag' },
+      { id: 'Video Games', name: 'Video Games (Hệ thống / Game thủ)', type: 'tag' },
+      { id: 'Cyberpunk', name: 'Cyberpunk (Công nghệ tương lai)', type: 'tag' },
+      { id: 'Post-Apocalyptic', name: 'Post-Apocalyptic (Hậu tận thế)', type: 'tag' },
+      { id: 'Zombies', name: 'Zombies (Xác sống)', type: 'tag' },
+      { id: 'Vampire', name: 'Vampire (Ma cà rồng)', type: 'tag' },
+      { id: 'Space', name: 'Space (Không gian vũ trụ)', type: 'tag' }
+    ]
+  }
+};
+
+/**
+ * Tổng hợp toàn bộ danh sách thể loại & tag để tìm kiếm nhanh
+ */
+export const ALL_GENRES_AND_TAGS = (() => {
+  const map = new Map();
+  Object.values(GENRE_CATEGORIES).forEach(category => {
+    category.items.forEach(item => {
+      if (!map.has(item.id)) {
+        map.set(item.id, item);
+      }
+    });
+  });
+  return Array.from(map.values());
+})();
 
 /**
  * Bảng ánh xạ tên truyện Tiếng Việt ➔ Tên Quốc tế / Romaji trên hệ thống
- * Giúp người dùng gõ bất kỳ tên tiếng Việt nào cũng tìm thấy ngay lập tức
  */
 export const VIETNAMESE_TITLE_MAP = {
   // Manhua Tu Tiên / Đô Thị (Trung Quốc)
@@ -67,7 +171,6 @@ export const VIETNAMESE_TITLE_MAP = {
   'kiem su hoa son': 'Return of the Mount Hua Sect',
   'login vao vo lam': 'Murim Login',
   'tay dua gio': 'Wind Breaker',
-  'bac thay thiet ke': 'The Greatest Estate Developer',
   'nanomachine': 'Nano Machine',
   'bac thay kiem ma': 'The Swordmaster’s Son',
 
@@ -83,11 +186,8 @@ export const VIETNAMESE_TITLE_MAP = {
   'dai chien titan': 'Attack on Titan',
   'tho san ti hon': 'Hunter x Hunter',
   'hoc vien sieu anh hung': 'My Hero Academia',
-  'anh hung cua toi': 'My Hero Academia',
   'gia dinh diep vien': 'Spy x Family',
-  'diep vien gia dinh': 'Spy x Family',
   'mot quyen sieu nhan': 'One Punch Man',
-  'thanh phong One Punch Man': 'One Punch Man',
   'bay vien ngoc rong': 'Dragon Ball',
   'songoku': 'Dragon Ball',
   'do re mon': 'Doraemon',
@@ -99,7 +199,6 @@ export const VIETNAMESE_TITLE_MAP = {
   'jindo': 'Kattobi Itto',
   'hiep khach giang ho': 'The Ruler of the Land',
   'cao thu bong ro': 'Slam Dunk',
-  'tieng set ái tinh': 'Blue Lock',
   'khoa blue': 'Blue Lock',
   'quai vat so 8': 'Kaiju No. 8',
   'phap su tien tri frieren': 'Sousou no Frieren'
@@ -107,7 +206,6 @@ export const VIETNAMESE_TITLE_MAP = {
 
 /**
  * Số chap thực tế thời gian thực cho các bộ truyện Ongoing siêu dài
- * (AniList mặc định để null đối với truyện đang phát hành)
  */
 export const ONGOING_CHAPTERS_MAP = {
   30013: 1135, // One Piece
@@ -134,9 +232,6 @@ export const ONGOING_CHAPTERS_MAP = {
   108345: 195,  // The Beginning After the End
 };
 
-/**
- * Xóa dấu tiếng Việt để đối chiếu chuỗi tìm kiếm
- */
 export function removeVietnameseTones(str) {
   if (!str) return '';
   str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a');
@@ -151,16 +246,12 @@ export function removeVietnameseTones(str) {
   return str.trim();
 }
 
-/**
- * Chuyển đổi từ khóa tìm kiếm sang tên chuẩn quốc tế nếu là tên tiếng Việt
- */
 export function resolveSearchTerm(keyword) {
   if (!keyword) return '';
   const clean = removeVietnameseTones(keyword).toLowerCase();
   if (VIETNAMESE_TITLE_MAP[clean]) {
     return VIETNAMESE_TITLE_MAP[clean];
   }
-  // Duyệt một phần nếu từ khóa dài
   for (const [key, value] of Object.entries(VIETNAMESE_TITLE_MAP)) {
     if (clean.includes(key) || key.includes(clean)) {
       return value;
@@ -169,9 +260,6 @@ export function resolveSearchTerm(keyword) {
   return keyword.trim();
 }
 
-/**
- * Danh sách NXB Gốc
- */
 export const OFFICIAL_PLATFORMS = [
   { id: 'ALL', name: 'Tất cả nền tảng gốc', country: 'ALL', flag: '🌐' },
   {
@@ -279,13 +367,13 @@ export const OFFICIAL_PLATFORMS = [
 const apiCache = new Map();
 
 /**
- * Fetch manga list with Smart Search & Accurate Ongoing Chapter Counts
+ * Fetch manga list combining standard Genres and granular Tags
  */
 export async function fetchMangaList({
   page = 1,
   perPage = 24,
   sort = 'CHAPTERS_DESC',
-  genres = [],
+  selectedFilters = [], // Mảng các thể loại hoặc tag đã chọn
   search = '',
   country = 'ALL',
   status = 'ALL',
@@ -294,7 +382,7 @@ export async function fetchMangaList({
   const isSearching = search && search.trim() !== '';
   const resolvedSearch = isSearching ? resolveSearchTerm(search) : '';
 
-  const cacheKey = JSON.stringify({ page, perPage, sort, genres, search: resolvedSearch, country, status, platform });
+  const cacheKey = JSON.stringify({ page, perPage, sort, selectedFilters: Array.from(selectedFilters).sort(), search: resolvedSearch, country, status, platform });
   if (apiCache.has(cacheKey)) {
     return apiCache.get(cacheKey);
   }
@@ -305,6 +393,7 @@ export async function fetchMangaList({
       $perPage: Int,
       $sort: [MediaSort],
       $genre_in: [String],
+      $tag_in: [String],
       $search: String,
       $countryOfOrigin: CountryCode,
       $status: MediaStatus
@@ -321,6 +410,7 @@ export async function fetchMangaList({
           type: MANGA,
           sort: $sort,
           genre_in: $genre_in,
+          tag_in: $tag_in,
           search: $search,
           countryOfOrigin: $countryOfOrigin,
           status: $status
@@ -337,6 +427,9 @@ export async function fetchMangaList({
           volumes
           status
           genres
+          tags {
+            name
+          }
           coverImage {
             large
             extraLarge
@@ -366,7 +459,6 @@ export async function fetchMangaList({
     }
   `;
 
-  // Auto-detect country if specific platform selected
   let targetCountry = country;
   if (platform !== 'ALL') {
     const platObj = OFFICIAL_PLATFORMS.find(p => p.id === platform);
@@ -375,8 +467,6 @@ export async function fetchMangaList({
     }
   }
 
-  // Khi người dùng đang tìm kiếm cụ thể 1 tên truyện, ưu tiên độ khớp (SEARCH_MATCH)
-  // để những bộ kinh điển Ongoing (như One Piece, Conan, Naruto, Martial Peak...) không bị đẩy ra sau!
   let targetSort = [sort];
   if (isSearching) {
     if (sort === 'CHAPTERS_DESC' || sort === 'CHAPTERS') {
@@ -390,12 +480,22 @@ export async function fetchMangaList({
     sort: targetSort
   };
 
-  if (genres && genres.length > 0) {
-    variables.genre_in = genres;
-  }
+  // Tách biệt giữa Thể loại chuẩn (genre) và Thẻ phân loại (tag)
+  const genreList = [];
+  const tagList = [];
+  (selectedFilters || []).forEach(f => {
+    if (OFFICIAL_GENRES.has(f)) {
+      genreList.push(f);
+    } else {
+      tagList.push(f);
+    }
+  });
+
+  if (genreList.length > 0) variables.genre_in = genreList;
+  if (tagList.length > 0) variables.tag_in = tagList;
+
   if (isSearching) {
     variables.search = resolvedSearch;
-    // Bỏ giới hạn country khi search để tìm ra tác phẩm trên toàn cầu
     targetCountry = 'ALL';
   }
   if (targetCountry && targetCountry !== 'ALL') {
@@ -426,7 +526,6 @@ export async function fetchMangaList({
 
     const result = data.data.Page;
 
-    // Cập nhật số chap thời gian thực cho các bộ Ongoing nổi tiếng (khắc phục điểm yếu null của AniList)
     if (result.media) {
       result.media.forEach(item => {
         if (ONGOING_CHAPTERS_MAP[item.id]) {
@@ -436,7 +535,6 @@ export async function fetchMangaList({
       });
     }
 
-    // Filter by official platform if specified
     if (platform !== 'ALL') {
       result.media = (result.media || []).filter(item => {
         const meta = getOfficialSourceMeta(item);
@@ -462,7 +560,6 @@ export function getOfficialSourceMeta(media) {
   const links = media.externalLinks || [];
   const nativeTitle = media.title?.native || media.title?.romaji || '';
 
-  // 1. Kiểm tra Hàn Quốc 🇰🇷
   if (country === 'KR') {
     const naverLink = links.find(l => 
       (l.url && (l.url.includes('comic.naver.com') || l.url.includes('series.naver.com'))) ||
@@ -532,7 +629,6 @@ export function getOfficialSourceMeta(media) {
     };
   }
 
-  // 2. Kiểm tra Nhật Bản 🇯🇵
   if (country === 'JP') {
     const jumpLink = links.find(l => 
       (l.url && (l.url.includes('shonenjump') || l.url.includes('mangaplus'))) ||
@@ -604,7 +700,6 @@ export function getOfficialSourceMeta(media) {
     };
   }
 
-  // 3. Kiểm tra Trung Quốc 🇨🇳
   if (country === 'CN') {
     const kuaikanLink = links.find(l => 
       (l.url && l.url.includes('kuaikanmanhua.com')) ||
@@ -685,9 +780,6 @@ export function getOfficialSourceMeta(media) {
   };
 }
 
-/**
- * Lấy danh sách Webtoon trực tiếp từ Naver Webtoon Hàn Quốc (Raw API)
- */
 export async function fetchNaverOfficialWebtoons() {
   const cacheKey = 'naver_webtoons_live';
   if (apiCache.has(cacheKey)) return apiCache.get(cacheKey);
@@ -705,9 +797,6 @@ export async function fetchNaverOfficialWebtoons() {
   }
 }
 
-/**
- * Format Title
- */
 export function getMangaTitle(media) {
   if (!media || !media.title) return 'Chưa có tên';
   return media.title.english || media.title.romaji || media.title.native || 'Không tên';
@@ -726,9 +815,6 @@ export function getMangaSubtitle(media) {
   return media.title.native || media.title.romaji || '';
 }
 
-/**
- * Format Chapter Count
- */
 export function formatChapters(chapters, status) {
   if (chapters !== null && chapters !== undefined) {
     return `${chapters.toLocaleString('vi-VN')} chap`;
@@ -739,9 +825,6 @@ export function formatChapters(chapters, status) {
   return 'Chưa rõ số chap';
 }
 
-/**
- * Vietnamese labels for origins
- */
 export function getOriginMeta(countryCode) {
   switch (countryCode) {
     case 'JP':
@@ -755,9 +838,6 @@ export function getOriginMeta(countryCode) {
   }
 }
 
-/**
- * Status translation & styling
- */
 export function getStatusMeta(status) {
   switch (status) {
     case 'FINISHED':

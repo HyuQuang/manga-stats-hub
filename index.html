@@ -219,12 +219,38 @@
         <div class="genre-filter-section">
           <div class="genre-header">
             <div class="genre-title">
-              <span>🏷️</span> Lọc theo thể loại:
+              <span>🏷️</span> Lọc theo thể loại & Chủ đề:
+              <span id="selectedGenresCountBadge" style="font-size: 0.75rem; background: rgba(99, 102, 241, 0.25); color: #a5b4fc; padding: 0.15rem 0.5rem; border-radius: var(--radius-full); margin-left: 0.5rem; display: none;">Đã chọn: 0</span>
             </div>
             <div class="genre-actions">
               <button class="btn-text-link" id="clearGenresBtn">Bỏ chọn thể loại</button>
             </div>
           </div>
+
+          <!-- Category Sub-tabs -->
+          <div class="genre-cat-nav" id="genreCatNav">
+            <button class="genre-cat-btn active" data-cat="POPULAR">🔥 Phổ biến</button>
+            <button class="genre-cat-btn" data-cat="ISEKAI_CULTIVATION">🌀 Chuyển sinh & Tu tiên</button>
+            <button class="genre-cat-btn" data-cat="ACTION_COMBAT">⚔️ Hành động & Chiến đấu</button>
+            <button class="genre-cat-btn" data-cat="ROMANCE_SCHOOL">❤️ Tình cảm & Đời thường</button>
+            <button class="genre-cat-btn" data-cat="DEMOGRAPHICS">👥 Phân khúc độc giả</button>
+            <button class="genre-cat-btn" data-cat="SCIFI_GAME">🚀 Viễn tưởng & Game thủ</button>
+            <button class="genre-cat-btn" data-cat="ALL_TAGS">✨ Tất cả thể loại</button>
+          </div>
+
+          <!-- Mini search for genres -->
+          <div class="genre-search-wrapper">
+            <span class="genre-search-icon">🔍</span>
+            <input 
+              type="text" 
+              class="genre-search-input" 
+              id="genreSearchInput" 
+              placeholder="Gõ nhanh thể loại cần tìm (VD: isekai, tu tiên, trọng sinh, harem, võ thuật, hầm ngục...)" 
+              autocomplete="off"
+            />
+          </div>
+
+          <!-- Genre Pill Badges -->
           <div class="genres-pill-container" id="genresContainer">
             <!-- Dynamically populated -->
           </div>

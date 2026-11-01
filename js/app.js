@@ -6,7 +6,8 @@ import {
   fetchMangaList,
   fetchNaverOfficialWebtoons,
   OFFICIAL_PLATFORMS,
-  POPULAR_GENRES,
+  GENRE_CATEGORIES,
+  ALL_GENRES_AND_TAGS,
   getMangaTitle,
   getMangaNativeTitle,
   getMangaSubtitle,
@@ -33,6 +34,8 @@ const state = {
   perPage: 24,
   sort: 'CHAPTERS_DESC',
   genres: new Set(),
+  currentGenreCategory: 'POPULAR',
+  genreSearchQuery: '',
   search: '',
   country: 'ALL',
   status: 'ALL',
@@ -65,6 +68,9 @@ const elements = {
   countrySelect: document.getElementById('countrySelect'),
   statusSelect: document.getElementById('statusSelect'),
   viewBtns: document.querySelectorAll('.view-btn'),
+  genreCatNav: document.getElementById('genreCatNav'),
+  genreSearchInput: document.getElementById('genreSearchInput'),
+  selectedGenresCountBadge: document.getElementById('selectedGenresCountBadge'),
   genresContainer: document.getElementById('genresContainer'),
   clearGenresBtn: document.getElementById('clearGenresBtn'),
   tierPills: document.querySelectorAll('.tier-pill'),
@@ -132,14 +138,45 @@ export function initApp() {
 }
 
 /**
- * Render Genre Filter Pill Badges
+ * Render Genre & Tag Filter Badges with Category Navigation and Live Search
  */
 function renderGenrePills() {
-  elements.genresContainer.innerHTML = POPULAR_GENRES.map(genre => `
-    <button class="genre-tag ${state.genres.has(genre) ? 'active' : ''}" data-genre="${genre}">
-      ${genre}
+  let list = [];
+  if (state.currentGenreCategory === 'ALL_TAGS') {
+    list = ALL_GENRES_AND_TAGS;
+  } else if (GENRE_CATEGORIES[state.currentGenreCategory]) {
+    list = GENRE_CATEGORIES[state.currentGenreCategory].items;
+  } else {
+    list = GENRE_CATEGORIES.POPULAR.items;
+  }
+
+  // Filter by local genre search query
+  if (state.genreSearchQuery) {
+    const q = state.genreSearchQuery.toLowerCase();
+    list = ALL_GENRES_AND_TAGS.filter(item => 
+      item.name.toLowerCase().includes(q) || item.id.toLowerCase().includes(q)
+    );
+  }
+
+  if (list.length === 0) {
+    elements.genresContainer.innerHTML = `<span style="font-size: 0.8rem; color: var(--text-muted); padding: 0.5rem;">Không tìm thấy thể loại khớp với "${state.genreSearchQuery}"</span>`;
+    return;
+  }
+
+  elements.genresContainer.innerHTML = list.map(item => `
+    <button class="genre-tag ${state.genres.has(item.id) ? 'active' : ''}" data-genre="${item.id}" title="${item.name}">
+      ${item.name}
     </button>
   `).join('');
+
+  if (elements.selectedGenresCountBadge) {
+    if (state.genres.size > 0) {
+      elements.selectedGenresCountBadge.style.display = 'inline-block';
+      elements.selectedGenresCountBadge.textContent = `Đã chọn: ${state.genres.size}`;
+    } else {
+      elements.selectedGenresCountBadge.style.display = 'none';
+    }
+  }
 }
 
 /**
@@ -203,7 +240,33 @@ function bindEvents() {
     loadMangaData();
   });
 
-  // Genre selection
+  // Genre Category Navigation Tab Switcher
+  if (elements.genreCatNav) {
+    elements.genreCatNav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.genre-cat-btn');
+      if (!btn) return;
+      elements.genreCatNav.querySelectorAll('.genre-cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.currentGenreCategory = btn.dataset.cat;
+      state.genreSearchQuery = '';
+      if (elements.genreSearchInput) elements.genreSearchInput.value = '';
+      renderGenrePills();
+    });
+  }
+
+  // Genre Live Search Input
+  if (elements.genreSearchInput) {
+    let genreSearchTimeout = null;
+    elements.genreSearchInput.addEventListener('input', (e) => {
+      clearTimeout(genreSearchTimeout);
+      genreSearchTimeout = setTimeout(() => {
+        state.genreSearchQuery = e.target.value.trim();
+        renderGenrePills();
+      }, 200);
+    });
+  }
+
+  // Genre selection toggle
   elements.genresContainer.addEventListener('click', (e) => {
     const tag = e.target.closest('.genre-tag');
     if (!tag) return;
@@ -215,6 +278,7 @@ function bindEvents() {
       state.genres.add(genre);
       tag.classList.add('active');
     }
+    renderGenrePills();
     state.page = 1;
     updateActiveFilterBadges();
     loadMangaData();
@@ -336,7 +400,7 @@ async function loadMangaData() {
       page: state.page,
       perPage: state.perPage,
       sort: state.sort,
-      genres: Array.from(state.genres),
+      selectedFilters: Array.from(state.genres),
       search: state.search,
       country: state.country,
       status: state.status,
@@ -686,7 +750,10 @@ function updateActiveFilterBadges() {
     const meta = getStatusMeta(state.status);
     badges.push(`${meta.label}`);
   }
-  state.genres.forEach(g => badges.push(`Thể loại: ${g}`));
+  state.genres.forEach(g => {
+    const item = ALL_GENRES_AND_TAGS.find(t => t.id === g);
+    badges.push(`Thể loại: ${item ? item.name : g}`);
+  });
 
   elements.activeFiltersList.innerHTML = badges.map(b => `
     <span class="filter-badge-item">
