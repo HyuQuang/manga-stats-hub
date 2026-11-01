@@ -4,129 +4,13 @@
 
 const ANILIST_API_URL = 'https://graphql.anilist.co';
 
-/**
- * Danh sách Thể loại Chuẩn (Official Genres) của AniList
- */
-export const OFFICIAL_GENRES = new Set([
-  'Action', 'Adventure', 'Comedy', 'Drama', 'Ecchi', 'Fantasy',
-  'Horror', 'Mahou Shoujo', 'Mecha', 'Music', 'Mystery',
-  'Psychological', 'Romance', 'Sci-Fi', 'Slice of Life',
-  'Sports', 'Supernatural', 'Thriller'
-]);
-
-/**
- * Hệ thống Phân loại Thể loại & Tag phong phú theo từng chủ đề
- * Bao gồm đầy đủ Chuyển sinh, Tu tiên, Trọng sinh, Harem, Võ thuật, Hầm ngục, v.v.
- */
-export const GENRE_CATEGORIES = {
-  POPULAR: {
-    label: '🔥 Phổ biến nhất',
-    items: [
-      { id: 'Action', name: 'Action (Hành động)', type: 'genre' },
-      { id: 'Adventure', name: 'Adventure (Phiêu lưu)', type: 'genre' },
-      { id: 'Fantasy', name: 'Fantasy (Kỳ ảo)', type: 'genre' },
-      { id: 'Isekai', name: 'Isekai (Chuyển sinh / Xuyên không)', type: 'tag' },
-      { id: 'Reincarnation', name: 'Reincarnation (Trọng sinh / Tái sinh)', type: 'tag' },
-      { id: 'Cultivation', name: 'Cultivation (Tu tiên)', type: 'tag' },
-      { id: 'Martial Arts', name: 'Martial Arts (Võ thuật)', type: 'tag' },
-      { id: 'Comedy', name: 'Comedy (Hài hước)', type: 'genre' },
-      { id: 'Romance', name: 'Romance (Tình cảm)', type: 'genre' },
-      { id: 'Drama', name: 'Drama (Kịch tính)', type: 'genre' },
-      { id: 'Slice of Life', name: 'Slice of Life (Đời thường)', type: 'genre' },
-      { id: 'Sci-Fi', name: 'Sci-Fi (Khoa học viễn tưởng)', type: 'genre' },
-      { id: 'Supernatural', name: 'Supernatural (Siêu nhiên)', type: 'genre' },
-      { id: 'Mystery', name: 'Mystery (Bí ẩn)', type: 'genre' },
-      { id: 'Horror', name: 'Horror (Kinh dị)', type: 'genre' },
-      { id: 'Psychological', name: 'Psychological (Tâm lý)', type: 'genre' },
-      { id: 'Sports', name: 'Sports (Thể thao)', type: 'genre' }
-    ]
-  },
-  ISEKAI_CULTIVATION: {
-    label: '🌀 Chuyển sinh & Tu tiên',
-    items: [
-      { id: 'Isekai', name: 'Isekai (Xuyên không / Thế giới khác)', type: 'tag' },
-      { id: 'Reincarnation', name: 'Reincarnation (Trọng sinh / Tái sinh)', type: 'tag' },
-      { id: 'Cultivation', name: 'Cultivation (Tu tiên / Tu chân)', type: 'tag' },
-      { id: 'Wuxia', name: 'Wuxia (Võ hiệp cổ phong)', type: 'tag' },
-      { id: 'Martial Arts', name: 'Martial Arts (Võ thuật / Đấu khí)', type: 'tag' },
-      { id: 'Magic', name: 'Magic (Ma pháp / Phép thuật)', type: 'tag' },
-      { id: 'Dungeon', name: 'Dungeon (Hầm ngục / Phó bản)', type: 'tag' },
-      { id: 'Gods', name: 'Gods (Thần thánh / Tiên nhân)', type: 'tag' },
-      { id: 'Demons', name: 'Demons (Yêu ma / Ma tộc)', type: 'tag' },
-      { id: 'Monster Girls', name: 'Monster Girls (Quái vật nhân hình)', type: 'tag' },
-      { id: 'Mahou Shoujo', name: 'Mahou Shoujo (Thiếu nữ ma pháp)', type: 'genre' }
-    ]
-  },
-  ACTION_COMBAT: {
-    label: '⚔️ Hành động & Chiến đấu',
-    items: [
-      { id: 'Action', name: 'Action (Hành động)', type: 'genre' },
-      { id: 'Super Power', name: 'Super Power (Siêu năng lực)', type: 'tag' },
-      { id: 'Survival', name: 'Survival (Sinh tồn)', type: 'tag' },
-      { id: 'Revenge', name: 'Revenge (Báo thù / Trả thù)', type: 'tag' },
-      { id: 'Time Manipulation', name: 'Time Travel (Du hành thời gian)', type: 'tag' },
-      { id: 'Military', name: 'Military (Quân sự / Chiến tranh)', type: 'tag' },
-      { id: 'Crime', name: 'Crime (Tội phạm / Yakuza)', type: 'tag' },
-      { id: 'Thriller', name: 'Thriller (Hồi hộp / Giật gân)', type: 'genre' },
-      { id: 'Gore', name: 'Gore (Máu me / Tàn khốc)', type: 'tag' },
-      { id: 'Anti-Hero', name: 'Anti-Hero (Phản anh hùng)', type: 'tag' }
-    ]
-  },
-  ROMANCE_SCHOOL: {
-    label: '❤️ Tình cảm & Đời thường',
-    items: [
-      { id: 'Romance', name: 'Romance (Tình cảm / Lãng mạn)', type: 'genre' },
-      { id: 'School', name: 'School (Học đường)', type: 'tag' },
-      { id: 'Harem', name: 'Harem (Nhiều nữ chính)', type: 'tag' },
-      { id: 'Ecchi', name: 'Ecchi (Gợi cảm)', type: 'genre' },
-      { id: 'Villainess', name: 'Villainess (Nữ phụ phản diện)', type: 'tag' },
-      { id: 'Otome Game', name: 'Otome Game (Game hẹn hò)', type: 'tag' },
-      { id: 'Family Life', name: 'Family Life (Gia đình / Nuôi con)', type: 'tag' },
-      { id: 'Cooking', name: 'Cooking (Ẩm thực / Nấu ăn)', type: 'tag' },
-      { id: 'Comedy', name: 'Comedy (Hài hước / Bựa)', type: 'genre' },
-      { id: 'Tragedy', name: 'Tragedy (Bi kịch / Nước mắt)', type: 'tag' }
-    ]
-  },
-  DEMOGRAPHICS: {
-    label: '👥 Phân khúc độc giả',
-    items: [
-      { id: 'Shounen', name: 'Shounen (Thiếu niên nam)', type: 'tag' },
-      { id: 'Seinen', name: 'Seinen (Thanh niên / Trưởng thành)', type: 'tag' },
-      { id: 'Shoujo', name: 'Shoujo (Thiếu nữ)', type: 'tag' },
-      { id: 'Josei', name: 'Josei (Phụ nữ trưởng thành)', type: 'tag' },
-      { id: 'Historical', name: 'Historical (Cổ đại / Lịch sử)', type: 'tag' }
-    ]
-  },
-  SCIFI_GAME: {
-    label: '🚀 Viễn tưởng & Game thủ',
-    items: [
-      { id: 'Sci-Fi', name: 'Sci-Fi (Khoa học viễn tưởng)', type: 'genre' },
-      { id: 'Mecha', name: 'Mecha (Người máy / Robot)', type: 'genre' },
-      { id: 'Virtual World', name: 'Virtual World (Thế giới ảo / VR)', type: 'tag' },
-      { id: 'Video Games', name: 'Video Games (Hệ thống / Game thủ)', type: 'tag' },
-      { id: 'Cyberpunk', name: 'Cyberpunk (Công nghệ tương lai)', type: 'tag' },
-      { id: 'Post-Apocalyptic', name: 'Post-Apocalyptic (Hậu tận thế)', type: 'tag' },
-      { id: 'Zombies', name: 'Zombies (Xác sống)', type: 'tag' },
-      { id: 'Vampire', name: 'Vampire (Ma cà rồng)', type: 'tag' },
-      { id: 'Space', name: 'Space (Không gian vũ trụ)', type: 'tag' }
-    ]
-  }
-};
-
-/**
- * Tổng hợp toàn bộ danh sách thể loại & tag để tìm kiếm nhanh
- */
-export const ALL_GENRES_AND_TAGS = (() => {
-  const map = new Map();
-  Object.values(GENRE_CATEGORIES).forEach(category => {
-    category.items.forEach(item => {
-      if (!map.has(item.id)) {
-        map.set(item.id, item);
-      }
-    });
-  });
-  return Array.from(map.values());
-})();
+export {
+  OFFICIAL_GENRES,
+  GENRE_CATEGORIES,
+  ALL_GENRES_AND_TAGS,
+  GENRE_ICONS,
+  GENRE_KEYWORDS
+} from './genres_data.js';
 
 /**
  * Bảng ánh xạ tên truyện Tiếng Việt ➔ Tên Quốc tế / Romaji trên hệ thống
