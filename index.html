@@ -69,10 +69,10 @@
         <div>
           <h2 class="hero-title">
             Thống kê từ <span class="highlight">Nguồn Truyện Gốc</span> <br>
-            Nhật Bản 🇯🇵 • Hàn Quốc 🇰🇷 • Trung Quốc 🇨🇳
+            Truyện Tranh 📖 • Tiểu Thuyết Chữ 📝 • 18+ Adult 🔞
           </h2>
           <p class="hero-subtitle">
-            Truy cập trực tiếp tới dữ liệu chuẩn từ các nhà xuất bản và nền tảng gốc: <strong>Shonen Jump+, Kodansha, Naver Webtoon, KakaoPage, Kuaikan Manhua</strong>. Xem chính xác số chap raw, tên bản địa gốc và đường dẫn về web mẹ.
+            Cơ sở dữ liệu trực tiếp từ các nhà xuất bản và nền tảng gốc: <strong>Shonen Jump+, Kodansha, Syosetu, Munpia, Qidian, FAKKU, DLsite, Naver, Kakao</strong>. Cập nhật tự động thời gian thực số chap raw, volume xuất bản và liên kết về web mẹ.
           </p>
         </div>
 
@@ -83,7 +83,7 @@
               <span>📚</span> Tác phẩm theo dõi
             </div>
             <div class="chip-value" id="heroTotalCount">---</div>
-            <div class="chip-sub">Cơ sở dữ liệu toàn cầu</div>
+            <div class="chip-sub">Manga, Novel, 18+ Adult</div>
           </div>
           <div class="stat-chip">
             <div class="chip-label">
@@ -96,8 +96,8 @@
             <div class="chip-label">
               <span>🏢</span> Nền tảng gốc
             </div>
-            <div class="chip-value" id="heroAvgChapters">10+ NXB</div>
-            <div class="chip-sub">Jump, Naver, Kakao...</div>
+            <div class="chip-value" id="heroAvgChapters">25+ NXB</div>
+            <div class="chip-sub">Jump, Syosetu, Qidian, FAKKU...</div>
           </div>
         </div>
       </div>
@@ -113,6 +113,14 @@
       <!-- Filter & Controls Panel -->
       <section class="controls-card" id="filterControlsCard" aria-label="Bộ lọc và tìm kiếm">
         
+        <!-- Format Filter Pills (Manga vs Novel vs 18+ Hentai) -->
+        <div class="format-filter-bar" id="formatFilterBar">
+          <button class="format-pill active" data-format="ALL">🌟 Tất cả định dạng</button>
+          <button class="format-pill" data-format="MANGA">📖 Truyện tranh (Manga / Manhwa / Manhua)</button>
+          <button class="format-pill" data-format="NOVEL">📝 Tiểu thuyết chữ (Light Novel & Web Novel)</button>
+          <button class="format-pill" data-format="HENTAI">🔞 Truyện 18+ / Hentai (NXB Bản Quyền Gốc)</button>
+        </div>
+
         <!-- Primary Search & Sort Bar -->
         <div class="search-and-sort-row">
           
@@ -126,7 +134,7 @@
               type="text" 
               class="search-input" 
               id="searchInput" 
-              placeholder="Tìm theo tên tiếng Việt hoặc tên gốc (VD: Võ luyện đỉnh phong, One Piece, Đại quản gia, Conan, Solo Leveling...)" 
+              placeholder="Tìm theo tên tiếng Việt hoặc tên gốc (VD: Võ luyện đỉnh phong, One Piece, Mushoku Tensei, Solo Leveling, Metamorphosis...)" 
               autocomplete="off"
             />
             <button class="clear-search-btn" id="clearSearchBtn" title="Xóa tìm kiếm">✕</button>
@@ -141,7 +149,7 @@
               <option value="SCORE_DESC">⭐ Điểm đánh giá cao nhất</option>
               <option value="POPULARITY_DESC">🔥 Độ phổ biến cao nhất</option>
               <option value="TRENDING_DESC">⚡ Thịnh hành nhất</option>
-              <option value="UPDATED_AT_DESC">🕒 Mới cập nhật</option>
+              <option value="UPDATED_AT_DESC">🕒 Mới cập nhật từ NXB</option>
             </select>
           </div>
 
@@ -150,21 +158,37 @@
             <label for="platformSelect" class="select-label">Nền tảng gốc:</label>
             <select id="platformSelect" class="custom-select">
               <option value="ALL">🌐 Tất cả nền tảng gốc</option>
-              <optgroup label="Nhật Bản 🇯🇵">
-                <option value="SHUEISHA_JUMP">Shueisha / Shonen Jump+ (集英社)</option>
-                <option value="KODANSHA">Kodansha / Magazine Pocket (講談社)</option>
-                <option value="SHOGAKUKAN">Shogakukan / Sunday Webry (小学館)</option>
-                <option value="KADOKAWA">Kadokawa / ComicWalker (角川)</option>
+              <optgroup label="📖 Truyện Tranh Gốc (Manga / Manhwa / Manhua)">
+                <option value="SHUEISHA_JUMP">Shueisha / Shonen Jump+ 🇯🇵</option>
+                <option value="KODANSHA">Kodansha / Magazine Pocket 🇯🇵</option>
+                <option value="SHOGAKUKAN">Shogakukan / Sunday Webry 🇯🇵</option>
+                <option value="KADOKAWA">Kadokawa / ComicWalker 🇯🇵</option>
+                <option value="SQUARE_ENIX">Square Enix / Gangan Online 🇯🇵</option>
+                <option value="NAVER_WEBTOON">Naver Webtoon (네이버 웹툰) 🇰🇷</option>
+                <option value="KAKAO_PAGE">KakaoPage / Webtoon (카카오) 🇰🇷</option>
+                <option value="LEZHIN">Lezhin Comics (레진) 🇰🇷</option>
+                <option value="KUAIKAN">Kuaikan Manhua (快看漫画) 🇨🇳</option>
+                <option value="BILIBILI_MANHUA">Bilibili Manhua (哔哩哔哩) 🇨🇳</option>
+                <option value="TENCENT_DONGMAN">Tencent Dongman (腾讯动漫) 🇨🇳</option>
               </optgroup>
-              <optgroup label="Hàn Quốc 🇰🇷">
-                <option value="NAVER_WEBTOON">Naver Webtoon (네이버 웹툰)</option>
-                <option value="KAKAO_PAGE">KakaoPage / Webtoon (카카오)</option>
-                <option value="LEZHIN">Lezhin Comics (레진)</option>
+              <optgroup label="📝 Tiểu Thuyết Chữ Gốc (Light Novel & Web Novel)">
+                <option value="SYOSETU">Shousetsuka ni Narou (小説家になろう) 🇯🇵</option>
+                <option value="KAKUYOMU">Kakuyomu (カクヨム - Kadokawa) 🇯🇵</option>
+                <option value="BOOKWALKER_NOVEL">BookWalker / Dengeki Bunko 🇯🇵</option>
+                <option value="OVERLAP_NOVEL">Overlap Bunko (オーバーラップ) 🇯🇵</option>
+                <option value="MUNPIA">Munpia (문피아 - Webnovel) 🇰🇷</option>
+                <option value="NAVER_SERIES_NOVEL">Naver Series Novel (네이버 시리즈) 🇰🇷</option>
+                <option value="KAKAOPAGE_NOVEL">KakaoPage Novel (카카오 소설) 🇰🇷</option>
+                <option value="QIDIAN">Qidian Tu Tiên (起点中文网) 🇨🇳</option>
+                <option value="ZONGHENG">Zongheng (纵横中文网) 🇨🇳</option>
+                <option value="JJWXC">Tấn Giang - Jinjiang (晋江文学城) 🇨🇳</option>
               </optgroup>
-              <optgroup label="Trung Quốc 🇨🇳">
-                <option value="KUAIKAN">Kuaikan Manhua (快看漫画)</option>
-                <option value="BILIBILI_MANHUA">Bilibili Manhua (哔哩哔哩)</option>
-                <option value="TENCENT_DONGMAN">Tencent Dongman (腾讯动漫)</option>
+              <optgroup label="🔞 Hentai & 18+ Adult Bản Quyền Gốc">
+                <option value="FAKKU">FAKKU Books (Bản quyền chính thức) 🇯🇵🇺🇸</option>
+                <option value="DLSITE">DLsite Official (18+ Gốc) 🇯🇵</option>
+                <option value="FANZA">FANZA / DMM Books (18+ Bản quyền) 🇯🇵</option>
+                <option value="TOPTOON_ADULT">Toptoon Adult (탑툰 성인 18+) 🇰🇷</option>
+                <option value="LEZHIN_ADULT">Lezhin Adult (레진 18+) 🇰🇷</option>
               </optgroup>
             </select>
           </div>
@@ -174,9 +198,9 @@
             <label for="countrySelect" class="select-label">Quốc gia:</label>
             <select id="countrySelect" class="custom-select">
               <option value="ALL">Tất cả quốc gia</option>
-              <option value="JP">🇯🇵 Nhật Bản (Manga)</option>
-              <option value="KR">🇰🇷 Hàn Quốc (Manhwa)</option>
-              <option value="CN">🇨🇳 Trung Quốc (Manhua)</option>
+              <option value="JP">🇯🇵 Nhật Bản (Manga / Novel)</option>
+              <option value="KR">🇰🇷 Hàn Quốc (Manhwa / Webnovel)</option>
+              <option value="CN">🇨🇳 Trung Quốc (Manhua / Tu Tiên)</option>
             </select>
           </div>
 
@@ -265,10 +289,38 @@
       <!-- Active Filters & Result Header -->
       <div class="results-header-bar">
         <div class="results-count" id="resultsCount">
-          Đang tải dữ liệu truyện tranh...
+          Đang tải dữ liệu truyện...
         </div>
         <div class="active-filters-badges" id="activeFiltersList">
           <!-- Active filter pills will appear here -->
+        </div>
+      </div>
+
+      <!-- Live Auto-Update Status & Control Bar (USER REQUIREMENT: TỰ ĐỘNG CẬP NHẬT) -->
+      <div class="live-sync-bar" id="liveSyncBar">
+        <div class="live-sync-left">
+          <span class="live-radar-dot"></span>
+          <div class="live-sync-info">
+            <span class="live-sync-status">Tự động cập nhật: <strong id="liveSyncStatusText" style="color: #4ade80;">BẬT</strong></span>
+            <span class="live-sync-meta">
+              <span id="liveSyncCountdownText">Đồng bộ sau: <strong>30s</strong></span> • 
+              <span id="liveSyncLastTime">Lần cuối: Vừa xong</span>
+            </span>
+          </div>
+        </div>
+        <div class="live-sync-actions">
+          <button class="btn-sync-now" id="btnSyncNow" title="Cập nhật dữ liệu từ nguồn gốc ngay lập tức">
+            <span class="sync-icon">⚡</span> Đồng bộ ngay
+          </button>
+          <div class="sync-interval-select-wrap">
+            <label for="syncIntervalSelect">Tần suất:</label>
+            <select id="syncIntervalSelect" class="sync-interval-select">
+              <option value="30" selected>Mỗi 30s</option>
+              <option value="60">Mỗi 1 phút</option>
+              <option value="120">Mỗi 2 phút</option>
+              <option value="0">Tắt tự động</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -322,8 +374,16 @@
           🏢 Danh Bạ Các Nền Tảng & Nhà Xuất Bản Gốc Hàng Đầu
         </h2>
         <p style="font-size: 0.9rem; color: var(--text-muted);">
-          Đây là các trang web gốc nguyên bản từ từng quốc gia — nơi tác giả trực tiếp phát hành các chương truyện (Raw) trước khi các trang trung gian lấy lại.
+          Đây là các trang web gốc nguyên bản từ từng quốc gia — nơi tác giả trực tiếp phát hành tác phẩm (Manga, Tiểu thuyết chữ, 18+ Adult) trước khi các trang trung gian lấy lại.
         </p>
+
+        <!-- Directory Category Tabs -->
+        <div class="directory-cat-nav" id="directoryCatNav" style="display: flex; gap: 0.5rem; margin-top: 1.2rem; flex-wrap: wrap;">
+          <button class="directory-cat-btn active" data-cat="ALL">🌐 Tất cả 25+ Nền tảng gốc</button>
+          <button class="directory-cat-btn" data-cat="MANGA">📖 NXB Manga & Webtoon</button>
+          <button class="directory-cat-btn" data-cat="NOVEL">📝 Nền tảng Tiểu thuyết & Web Novel</button>
+          <button class="directory-cat-btn" data-cat="HENTAI">🔞 Nền tảng 18+ Adult & Hentai Bản Quyền</button>
+        </div>
       </div>
 
       <div class="platform-grid" id="platformGridContainer">

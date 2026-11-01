@@ -153,113 +153,331 @@ export function resolveSearchTerm(keyword) {
 }
 
 export const OFFICIAL_PLATFORMS = [
-  { id: 'ALL', name: 'Tất cả nền tảng gốc', country: 'ALL', flag: '🌐' },
+  { id: 'ALL', name: '🌐 Tất cả nền tảng gốc', country: 'ALL', flag: '🌐', type: 'ALL', category: 'Tất cả' },
+  
+  // --- Manga / Truyện tranh NXB Gốc ---
   {
     id: 'SHUEISHA_JUMP',
     name: 'Shueisha / Shonen Jump+ 🇯🇵',
     country: 'JP',
     flag: '🇯🇵',
-    publisher: 'Shueisha',
+    type: 'MANGA',
+    category: 'Manga Gốc',
+    publisher: 'Shueisha (集英社)',
     siteUrl: 'https://shonenjumpplus.com/',
     color: '#ff3e24',
-    desc: 'Nhà xuất bản số 1 Nhật Bản (One Piece, Chainsaw Man, Jujutsu Kaisen, Spy x Family)'
+    desc: 'Nhà xuất bản manga số 1 Nhật Bản (One Piece, Chainsaw Man, Jujutsu Kaisen, Spy x Family, Dragon Ball, Naruto)'
   },
   {
     id: 'KODANSHA',
     name: 'Kodansha / Magazine Pocket 🇯🇵',
     country: 'JP',
     flag: '🇯🇵',
-    publisher: 'Kodansha',
+    type: 'MANGA',
+    category: 'Manga Gốc',
+    publisher: 'Kodansha (講談社)',
     siteUrl: 'https://pocket.shonenmagazine.com/',
     color: '#005bac',
-    desc: 'Nhà xuất bản Kodansha (Attack on Titan, Blue Lock, Fairy Tail, Tokyo Revengers)'
+    desc: 'Nhà xuất bản Kodansha (Attack on Titan, Blue Lock, Fairy Tail, Tokyo Revengers, Rent-a-Girlfriend)'
   },
   {
     id: 'SHOGAKUKAN',
     name: 'Shogakukan / Sunday Webry 🇯🇵',
     country: 'JP',
     flag: '🇯🇵',
-    publisher: 'Shogakukan',
+    type: 'MANGA',
+    category: 'Manga Gốc',
+    publisher: 'Shogakukan (小学館)',
     siteUrl: 'https://www.sunday-webry.com/',
     color: '#e50012',
-    desc: 'Nhà xuất bản Shogakukan (Thám tử Conan, Frieren, Inuyasha, Komi-san)'
+    desc: 'Nhà xuất bản Shogakukan (Thám tử Conan, Frieren, Inuyasha, Komi-san, Magi)'
   },
   {
     id: 'KADOKAWA',
     name: 'Kadokawa / ComicWalker 🇯🇵',
     country: 'JP',
     flag: '🇯🇵',
-    publisher: 'Kadokawa',
+    type: 'MANGA',
+    category: 'Manga Gốc',
+    publisher: 'Kadokawa (KADOKAWA / 角川)',
     siteUrl: 'https://comic-walker.com/',
     color: '#003e7e',
-    desc: 'Đế chế Isekai & Light Novel (Sword Art Online, Re:Zero, Mushoku Tensei)'
+    desc: 'Đế chế Isekai & Manga chuyển thể (Sword Art Online, Re:Zero, Mushoku Tensei, Kage no Jitsuryokusha)'
+  },
+  {
+    id: 'SQUARE_ENIX',
+    name: 'Square Enix / Gangan Online 🇯🇵',
+    country: 'JP',
+    flag: '🇯🇵',
+    type: 'MANGA',
+    category: 'Manga Gốc',
+    publisher: 'Square Enix (スクウェア・エニックス)',
+    siteUrl: 'https://www.ganganonline.com/',
+    color: '#a855f7',
+    desc: 'NXB Manga Square Enix (Fullmetal Alchemist, Soul Eater, Horimiya, My Dress-Up Darling)'
   },
   {
     id: 'NAVER_WEBTOON',
     name: 'Naver Webtoon (네이버 웹툰) 🇰🇷',
     country: 'KR',
     flag: '🇰🇷',
-    publisher: 'Naver',
+    type: 'MANGA',
+    category: 'Manhwa Gốc',
+    publisher: 'Naver Webtoon Corp',
     siteUrl: 'https://comic.naver.com/',
     color: '#03c75a',
-    desc: 'Nền tảng Webtoon số 1 Hàn Quốc (Tower of God, Lookism, Nano Machine, True Beauty)'
+    desc: 'Nền tảng Webtoon số 1 Hàn Quốc (Tower of God, Lookism, Nano Machine, True Beauty, Omniscient Reader)'
   },
   {
     id: 'KAKAO_PAGE',
     name: 'KakaoPage / Kakao Webtoon 🇰🇷',
     country: 'KR',
     flag: '🇰🇷',
-    publisher: 'Kakao',
+    type: 'MANGA',
+    category: 'Manhwa Gốc',
+    publisher: 'Kakao Entertainment',
     siteUrl: 'https://page.kakao.com/',
     color: '#ffcd00',
-    desc: 'Nơi khai sinh Solo Leveling, Overgeared, SSS-Class Revival Hunter, A Returner\'s Magic'
+    desc: 'Nơi khai sinh Solo Leveling, Overgeared, SSS-Class Revival Hunter, Return of Mount Hua Sect'
   },
   {
     id: 'LEZHIN',
     name: 'Lezhin Comics (레진) 🇰🇷',
     country: 'KR',
     flag: '🇰🇷',
-    publisher: 'Lezhin',
+    type: 'MANGA',
+    category: 'Manhwa Gốc',
+    publisher: 'Lezhin Entertainment',
     siteUrl: 'https://www.lezhin.com/',
     color: '#e52528',
-    desc: 'Nền tảng Webtoon tâm lý & 18+ hàng đầu Hàn Quốc'
+    desc: 'Nền tảng Webtoon chính kịch, lãng mạn & phong cách độc đáo hàng đầu Hàn Quốc'
   },
   {
     id: 'KUAIKAN',
     name: 'Kuaikan Manhua (快看漫画) 🇨🇳',
     country: 'CN',
     flag: '🇨🇳',
-    publisher: 'Kuaikan',
+    type: 'MANGA',
+    category: 'Manhua Gốc',
+    publisher: 'Kuaikan World Beijing Technology',
     siteUrl: 'https://www.kuaikanmanhua.com/',
     color: '#ffdd00',
-    desc: 'App truyện tranh số 1 Trung Quốc, sở hữu hàng triệu tác phẩm tu tiên & đô thị'
+    desc: 'App truyện tranh số 1 Trung Quốc, sở hữu hàng triệu tác phẩm tu tiên, ngôn tình & đô thị'
   },
   {
     id: 'BILIBILI_MANHUA',
     name: 'Bilibili Manhua (哔哩哔哩漫画) 🇨🇳',
     country: 'CN',
     flag: '🇨🇳',
-    publisher: 'Bilibili',
+    type: 'MANGA',
+    category: 'Manhua Gốc',
+    publisher: 'Bilibili Inc.',
     siteUrl: 'https://manga.bilibili.com/',
     color: '#00a1d6',
-    desc: 'Cổng truyện tranh chính thức của đế chế Bilibili Trung Quốc'
+    desc: 'Cổng truyện tranh chính thức có bản quyền gốc của đế chế Bilibili Trung Quốc'
   },
   {
     id: 'TENCENT_DONGMAN',
     name: 'Tencent Dongman (腾讯动漫) 🇨🇳',
     country: 'CN',
     flag: '🇨🇳',
-    publisher: 'Tencent',
+    type: 'MANGA',
+    category: 'Manhua Gốc',
+    publisher: 'Tencent Animation & Comics',
     siteUrl: 'https://ac.qq.com/',
     color: '#12b7f5',
-    desc: 'Nền tảng truyện của Tencent (Đại Quản Gia Là Ma Hoàng, Toàn Chức Pháp Sư)'
+    desc: 'Nền tảng truyện của Tencent (Đại Quản Gia Là Ma Hoàng, Toàn Chức Pháp Sư, Hồ Yêu Tiểu Hồng Nương)'
+  },
+
+  // --- Tiểu thuyết chữ / Light Novel & Web Novel Gốc ---
+  {
+    id: 'SYOSETU',
+    name: 'Shousetsuka ni Narou (小説家になろう) 🇯🇵',
+    country: 'JP',
+    flag: '🇯🇵',
+    type: 'NOVEL',
+    category: 'Tiểu thuyết chữ',
+    publisher: 'HinaProject Inc. (Syosetu)',
+    siteUrl: 'https://syosetu.com/',
+    color: '#10b981',
+    desc: 'Cái nôi tiểu thuyết Web Novel lớn nhất thế giới, nguồn gốc của hơn 90% siêu phẩm Isekai (Mushoku Tensei, Slime, Re:Zero, Overlord, Kumo desu ga)'
+  },
+  {
+    id: 'KAKUYOMU',
+    name: 'Kakuyomu (カクヨム - Kadokawa) 🇯🇵',
+    country: 'JP',
+    flag: '🇯🇵',
+    type: 'NOVEL',
+    category: 'Tiểu thuyết chữ',
+    publisher: 'KADOKAWA / Hatena',
+    siteUrl: 'https://kakuyomu.jp/',
+    color: '#3b82f6',
+    desc: 'Nền tảng tiểu thuyết mạng web novel chính thức của tập đoàn Kadokawa (Kage no Jitsuryokusha, Higehiro)'
+  },
+  {
+    id: 'BOOKWALKER_NOVEL',
+    name: 'BookWalker / Dengeki Bunko (電撃文庫) 🇯🇵',
+    country: 'JP',
+    flag: '🇯🇵',
+    type: 'NOVEL',
+    category: 'Tiểu thuyết chữ',
+    publisher: 'Kadokawa / ASCII Media Works',
+    siteUrl: 'https://dengekibunko.jp/',
+    color: '#f97316',
+    desc: 'Nhãn Light Novel huyền thoại Nhật Bản (Sword Art Online, Mahouka Koukou no Rettousei, 86 Eighty-Six, Toradora)'
+  },
+  {
+    id: 'OVERLAP_NOVEL',
+    name: 'Overlap Bunko (オーバーラップ文庫) 🇯🇵',
+    country: 'JP',
+    flag: '🇯🇵',
+    type: 'NOVEL',
+    category: 'Tiểu thuyết chữ',
+    publisher: 'Overlap Inc.',
+    siteUrl: 'https://over-lap.co.jp/bunko/',
+    color: '#06b6d4',
+    desc: 'NXB Light Novel chuyển sinh danh tiếng (Arifureta Shokugyou de Sekai Saikyou, Skeleton Knight in Another World)'
+  },
+  {
+    id: 'MUNPIA',
+    name: 'Munpia (문피아 - Webnovel) 🇰🇷',
+    country: 'KR',
+    flag: '🇰🇷',
+    type: 'NOVEL',
+    category: 'Tiểu thuyết chữ',
+    publisher: 'Munpia Inc. (Naver Affiliate)',
+    siteUrl: 'https://www.munpia.com/',
+    color: '#2563eb',
+    desc: 'Thánh địa Webnovel chữ số 1 Hàn Quốc, nơi khởi nguồn của thể loại Hunter/Tháp/Hệ thống (Toàn Trí Độc Giả - ORV, The Novel\'s Extra)'
+  },
+  {
+    id: 'NAVER_SERIES_NOVEL',
+    name: 'Naver Series Novel (네이버 시리즈) 🇰🇷',
+    country: 'KR',
+    flag: '🇰🇷',
+    type: 'NOVEL',
+    category: 'Tiểu thuyết chữ',
+    publisher: 'Naver Corp.',
+    siteUrl: 'https://series.naver.com/novel/home.series',
+    color: '#059669',
+    desc: 'Kho tiểu thuyết chữ gốc chính thức của Naver (Hoa Sơn Tái Xuất novel, Nano Machine novel, Remarried Empress)'
+  },
+  {
+    id: 'KAKAOPAGE_NOVEL',
+    name: 'KakaoPage Novel (카카오페이지 소설) 🇰🇷',
+    country: 'KR',
+    flag: '🇰🇷',
+    type: 'NOVEL',
+    category: 'Tiểu thuyết chữ',
+    publisher: 'Kakao Entertainment',
+    siteUrl: 'https://page.kakao.com/menu/11',
+    color: '#eab308',
+    desc: 'Kho tiểu thuyết chữ độc quyền gốc bản quyền (Solo Leveling Novel gốc của tác giả Chugong, Overgeared novel)'
+  },
+  {
+    id: 'QIDIAN',
+    name: 'Qidian (起点中文网 - China Literature) 🇨🇳',
+    country: 'CN',
+    flag: '🇨🇳',
+    type: 'NOVEL',
+    category: 'Tiểu thuyết chữ',
+    publisher: 'China Literature / Tencent (阅文集团)',
+    siteUrl: 'https://www.qidian.com/',
+    color: '#dc2626',
+    desc: 'Nền tảng tiểu thuyết chữ Tu Tiên & Huyền Huyễn lớn nhất hành tinh (Võ Luyện Đỉnh Phong novel, Toàn Chức Cao Thủ, Đấu La Đại Lục, Phàm Nhân Tu Tiên)'
+  },
+  {
+    id: 'ZONGHENG',
+    name: 'Zongheng (纵横中文网) 🇨🇳',
+    country: 'CN',
+    flag: '🇨🇳',
+    type: 'NOVEL',
+    category: 'Tiểu thuyết chữ',
+    publisher: 'Baidu / Zongheng Literature',
+    siteUrl: 'https://www.zongheng.com/',
+    color: '#b91c1c',
+    desc: 'Nền tảng tiểu thuyết mạng danh tiếng Trung Quốc (Kiếm Lai novel của Phong Hỏa Hí Chư Hầu, Tuyết Trung Hãn Đao Hành)'
+  },
+  {
+    id: 'JJWXC',
+    name: 'Jinjiang Literature (晋江文学城 - Tấn Giang) 🇨🇳',
+    country: 'CN',
+    flag: '🇨🇳',
+    type: 'NOVEL',
+    category: 'Tiểu thuyết chữ',
+    publisher: 'Jinjiang Literature City',
+    siteUrl: 'https://www.jjwxc.net/',
+    color: '#ec4899',
+    desc: 'Cái nôi tiểu thuyết ngôn tình, tình cảm, xuyên không & đam mỹ số 1 Trung Quốc (Ma Đạo Tổ Sư, Thiên Quan Tứ Phúc)'
+  },
+
+  // --- Hentai & 18+ Adult (NXB & Nền tảng Bản quyền Gốc) ---
+  {
+    id: 'FAKKU',
+    name: 'FAKKU Books (Bản quyền chính thức) 🇯🇵🇺🇸',
+    country: 'JP',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'FAKKU Publishing LLC',
+    siteUrl: 'https://www.fakku.net/',
+    color: '#e11d48',
+    desc: 'Nhà xuất bản Manga 18+ / Hentai bản quyền hợp pháp chính ngạch lớn nhất thế giới, đối tác chính thức của Wani Magazine, Core Magazine, Kuma'
+  },
+  {
+    id: 'DLSITE',
+    name: 'DLsite Official (ディーエルサイト) 🇯🇵',
+    country: 'JP',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'EISYS, Inc. / Geo Holdings',
+    siteUrl: 'https://www.dlsite.com/maniax/',
+    color: '#be123c',
+    desc: 'Chợ truyện tranh 18+, Doujinshi và tác phẩm độc lập có bản quyền lớn nhất thế giới của Nhật Bản với hàng triệu tác phẩm'
+  },
+  {
+    id: 'FANZA',
+    name: 'FANZA / DMM Books (ファンザ) 🇯🇵',
+    country: 'JP',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'DMM.com / Digital Media Mart',
+    siteUrl: 'https://book.dmm.co.jp/',
+    color: '#881337',
+    desc: 'Đế chế truyện tranh, tạp chí & Doujinshi 18+ bản quyền số 1 Nhật Bản, phân phối trực tiếp từ các NXB truyện người lớn uy tín'
+  },
+  {
+    id: 'TOPTOON_ADULT',
+    name: 'Toptoon Adult (탑툰 성인 18+) 🇰🇷',
+    country: 'KR',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'Topco Co., Ltd.',
+    siteUrl: 'https://toptoon.com/',
+    color: '#f43f5e',
+    desc: 'Nền tảng Manhwa 18+ (Adult Webtoon) số 1 Hàn Quốc, nơi phát hành hàng trăm bộ truyện người lớn ăn khách toàn cầu'
+  },
+  {
+    id: 'LEZHIN_ADULT',
+    name: 'Lezhin Adult (레진 18+) 🇰🇷',
+    country: 'KR',
+    flag: '🔞',
+    type: 'HENTAI',
+    category: '18+ Adult Bản Quyền',
+    publisher: 'KidariStudio / Lezhin',
+    siteUrl: 'https://www.lezhin.com/ko/adult',
+    color: '#e11d48',
+    desc: 'Kênh truyện tranh 18+ bản quyền chất lượng cao của Lezhin Comics dành cho độc giả trưởng thành'
   }
 ];
 
 const apiCache = new Map();
 
 /**
- * Fetch manga list combining standard Genres and granular Tags
+ * Fetch manga list combining standard Genres, granular Tags, Formats (Manga/Novel/Hentai), and Live Sync
  */
 export async function fetchMangaList({
   page = 1,
@@ -269,13 +487,28 @@ export async function fetchMangaList({
   search = '',
   country = 'ALL',
   status = 'ALL',
-  platform = 'ALL'
+  platform = 'ALL',
+  format = 'ALL', // 'ALL' | 'MANGA' | 'NOVEL' | 'HENTAI'
+  isAdult = null, // boolean | null
+  bypassCache = false // Tự động làm mới khi Auto-sync
 }) {
   const isSearching = search && search.trim() !== '';
   const resolvedSearch = isSearching ? resolveSearchTerm(search) : '';
 
-  const cacheKey = JSON.stringify({ page, perPage, sort, selectedFilters: Array.from(selectedFilters).sort(), search: resolvedSearch, country, status, platform });
-  if (apiCache.has(cacheKey)) {
+  const cacheKey = JSON.stringify({
+    page,
+    perPage,
+    sort,
+    selectedFilters: Array.from(selectedFilters).sort(),
+    search: resolvedSearch,
+    country,
+    status,
+    platform,
+    format,
+    isAdult
+  });
+
+  if (!bypassCache && apiCache.has(cacheKey)) {
     return apiCache.get(cacheKey);
   }
 
@@ -288,7 +521,9 @@ export async function fetchMangaList({
       $tag_in: [String],
       $search: String,
       $countryOfOrigin: CountryCode,
-      $status: MediaStatus
+      $status: MediaStatus,
+      $format: MediaFormat,
+      $isAdult: Boolean
     ) {
       Page(page: $page, perPage: $perPage) {
         pageInfo {
@@ -305,7 +540,9 @@ export async function fetchMangaList({
           tag_in: $tag_in,
           search: $search,
           countryOfOrigin: $countryOfOrigin,
-          status: $status
+          status: $status,
+          format: $format,
+          isAdult: $isAdult
         ) {
           id
           title {
@@ -318,6 +555,8 @@ export async function fetchMangaList({
           chapters
           volumes
           status
+          isAdult
+          updatedAt
           genres
           tags {
             name
@@ -352,11 +591,28 @@ export async function fetchMangaList({
   `;
 
   let targetCountry = country;
+  let targetFormat = null;
+  let targetIsAdult = isAdult;
+
+  // Lọc theo Nền tảng gốc nếu được chọn
   if (platform !== 'ALL') {
     const platObj = OFFICIAL_PLATFORMS.find(p => p.id === platform);
-    if (platObj && platObj.country !== 'ALL') {
-      targetCountry = platObj.country;
+    if (platObj) {
+      if (platObj.country !== 'ALL') targetCountry = platObj.country;
+      if (platObj.type === 'NOVEL') targetFormat = 'NOVEL';
+      if (platObj.type === 'HENTAI') targetIsAdult = true;
     }
+  }
+
+  // Xử lý bộ lọc định dạng Format (Manga vs Novel vs Hentai)
+  if (format === 'NOVEL') {
+    targetFormat = 'NOVEL';
+    if (targetIsAdult === null) targetIsAdult = false;
+  } else if (format === 'MANGA') {
+    targetFormat = 'MANGA';
+    if (targetIsAdult === null) targetIsAdult = false;
+  } else if (format === 'HENTAI') {
+    targetIsAdult = true;
   }
 
   let targetSort = [sort];
@@ -372,12 +628,22 @@ export async function fetchMangaList({
     sort: targetSort
   };
 
+  if (targetFormat) {
+    variables.format = targetFormat;
+  }
+  if (targetIsAdult !== null && targetIsAdult !== undefined) {
+    variables.isAdult = targetIsAdult;
+  }
+
   // Tách biệt giữa Thể loại chuẩn (genre) và Thẻ phân loại (tag)
   const genreList = [];
   const tagList = [];
   (selectedFilters || []).forEach(f => {
     if (OFFICIAL_GENRES.has(f)) {
       genreList.push(f);
+      if (f === 'Hentai') {
+        variables.isAdult = true;
+      }
     } else {
       tagList.push(f);
     }
@@ -445,13 +711,300 @@ export async function fetchMangaList({
 /**
  * Phân tích & Trích xuất Nhà Xuất Bản / Nền Tảng Gốc Chính Thức
  */
+/**
+ * Phân tích & Trích xuất Nhà Xuất Bản / Nền Tảng Gốc Chính Thức
+ */
 export function getOfficialSourceMeta(media) {
   if (!media) return { name: 'Chưa rõ nguồn', flag: '🌐', color: '#6366f1', rawUrl: null, hasRawLink: false };
 
   const country = media.countryOfOrigin || 'JP';
   const links = media.externalLinks || [];
   const nativeTitle = media.title?.native || media.title?.romaji || '';
+  const isAdult = media.isAdult || (media.genres && media.genres.includes('Hentai'));
+  const isNovel = media.format === 'NOVEL';
 
+  // 1. XỬ LÝ NỀN TẢNG 18+ / HENTAI BẢN QUYỀN GỐC
+  if (isAdult) {
+    const fakkuLink = links.find(l => 
+      (l.url && l.url.includes('fakku.net')) ||
+      (l.site && l.site.toLowerCase().includes('fakku'))
+    );
+    if (fakkuLink) {
+      return {
+        platformId: 'FAKKU',
+        name: 'FAKKU (Bản quyền 18+)',
+        publisher: 'FAKKU Publishing',
+        flag: '🔞',
+        badgeClass: 'badge-fakku',
+        color: '#e11d48',
+        rawUrl: fakkuLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.fakku.net/',
+        searchUrl: `https://www.fakku.net/search/${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const dlsiteLink = links.find(l => 
+      (l.url && l.url.includes('dlsite.com')) ||
+      (l.site && l.site.toLowerCase().includes('dlsite'))
+    );
+    if (dlsiteLink) {
+      return {
+        platformId: 'DLSITE',
+        name: 'DLsite Official (18+ Gốc)',
+        publisher: 'EISYS Inc.',
+        flag: '🔞',
+        badgeClass: 'badge-dlsite',
+        color: '#be123c',
+        rawUrl: dlsiteLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.dlsite.com/maniax/',
+        searchUrl: `https://www.dlsite.com/maniax/fsr/=/keyword/${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const fanzaLink = links.find(l => 
+      (l.url && (l.url.includes('dmm.co.jp') || l.url.includes('fanza'))) ||
+      (l.site && (l.site.toLowerCase().includes('dmm') || l.site.toLowerCase().includes('fanza')))
+    );
+    if (fanzaLink) {
+      return {
+        platformId: 'FANZA',
+        name: 'FANZA / DMM Books (18+)',
+        publisher: 'DMM.com',
+        flag: '🔞',
+        badgeClass: 'badge-fanza',
+        color: '#881337',
+        rawUrl: fanzaLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://book.dmm.co.jp/',
+        searchUrl: `https://book.dmm.co.jp/search/?searchstr=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const toptoonLink = links.find(l => 
+      (l.url && l.url.includes('toptoon.com')) ||
+      (l.site && l.site.toLowerCase().includes('toptoon'))
+    );
+    if (toptoonLink) {
+      return {
+        platformId: 'TOPTOON_ADULT',
+        name: 'Toptoon Adult (탑툰 18+)',
+        publisher: 'Topco Co., Ltd.',
+        flag: '🔞',
+        badgeClass: 'badge-toptoon',
+        color: '#f43f5e',
+        rawUrl: toptoonLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://toptoon.com/',
+        searchUrl: `https://toptoon.com/search?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const lezhinAdultLink = links.find(l => l.site && l.site.toLowerCase().includes('lezhin'));
+    if (lezhinAdultLink) {
+      return {
+        platformId: 'LEZHIN_ADULT',
+        name: 'Lezhin Adult (레진 18+)',
+        publisher: 'Lezhin Entertainment',
+        flag: '🔞',
+        badgeClass: 'badge-lezhin-adult',
+        color: '#e11d48',
+        rawUrl: lezhinAdultLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.lezhin.com/ko/adult',
+        searchUrl: `https://www.lezhin.com/ko/search?q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    // Fallback cho truyện 18+ dựa trên quốc gia
+    if (country === 'KR') {
+      return {
+        platformId: 'TOPTOON_ADULT',
+        name: 'Toptoon / Lezhin 18+ 🇰🇷',
+        publisher: 'Topco / Lezhin',
+        flag: '🔞',
+        badgeClass: 'badge-toptoon',
+        color: '#f43f5e',
+        rawUrl: `https://toptoon.com/search?keyword=${encodeURIComponent(nativeTitle)}`,
+        hasRawLink: false,
+        homeUrl: 'https://toptoon.com/',
+        searchUrl: `https://toptoon.com/search?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    return {
+      platformId: 'FAKKU',
+      name: 'NXB 18+ Bản Quyền Gốc 🇯🇵',
+      publisher: 'FAKKU / DLsite / FANZA',
+      flag: '🔞',
+      badgeClass: 'badge-fakku',
+      color: '#e11d48',
+      rawUrl: `https://www.dlsite.com/maniax/fsr/=/keyword/${encodeURIComponent(nativeTitle)}`,
+      hasRawLink: false,
+      homeUrl: 'https://www.fakku.net/',
+      searchUrl: `https://www.dlsite.com/maniax/fsr/=/keyword/${encodeURIComponent(nativeTitle)}`
+    };
+  }
+
+  // 2. XỬ LÝ NỀN TẢNG TIỂU THUYẾT CHỮ / LIGHT NOVEL & WEB NOVEL GỐC
+  if (isNovel) {
+    const syosetuLink = links.find(l => 
+      (l.url && (l.url.includes('syosetu.com') || l.url.includes('ncode.syosetu.com'))) ||
+      (l.site && l.site.toLowerCase().includes('syosetu'))
+    );
+    if (syosetuLink) {
+      return {
+        platformId: 'SYOSETU',
+        name: 'Syosetu (小説家になろう)',
+        publisher: 'HinaProject Inc.',
+        flag: '📝',
+        badgeClass: 'badge-syosetu',
+        color: '#10b981',
+        rawUrl: syosetuLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://syosetu.com/',
+        searchUrl: `https://yomou.syosetu.com/search.php?word=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const kakuyomuLink = links.find(l => 
+      (l.url && l.url.includes('kakuyomu.jp')) ||
+      (l.site && l.site.toLowerCase().includes('kakuyomu'))
+    );
+    if (kakuyomuLink) {
+      return {
+        platformId: 'KAKUYOMU',
+        name: 'Kakuyomu (カクヨム)',
+        publisher: 'KADOKAWA / Hatena',
+        flag: '📝',
+        badgeClass: 'badge-kakuyomu',
+        color: '#3b82f6',
+        rawUrl: kakuyomuLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://kakuyomu.jp/',
+        searchUrl: `https://kakuyomu.jp/search?q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const dengekiLink = links.find(l => 
+      l.url && (l.url.includes('dengekibunko.jp') || l.url.includes('sneakerbunko') || l.url.includes('mfbunkoj.jp'))
+    );
+    if (dengekiLink) {
+      return {
+        platformId: 'BOOKWALKER_NOVEL',
+        name: 'Dengeki / MF Bunko (電撃文庫)',
+        publisher: 'Kadokawa Media Works',
+        flag: '📝',
+        badgeClass: 'badge-dengeki',
+        color: '#f97316',
+        rawUrl: dengekiLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://dengekibunko.jp/',
+        searchUrl: `https://dengekibunko.jp/product/search/?word=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const munpiaLink = links.find(l => 
+      (l.url && l.url.includes('munpia.com')) ||
+      (l.site && l.site.toLowerCase().includes('munpia'))
+    );
+    if (munpiaLink) {
+      return {
+        platformId: 'MUNPIA',
+        name: 'Munpia Webnovel (문피아)',
+        publisher: 'Munpia Inc.',
+        flag: '📝',
+        badgeClass: 'badge-munpia',
+        color: '#2563eb',
+        rawUrl: munpiaLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.munpia.com/',
+        searchUrl: `https://www.munpia.com/page/search?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const naverSeriesNovelLink = links.find(l => 
+      l.url && l.url.includes('series.naver.com/novel')
+    );
+    if (naverSeriesNovelLink) {
+      return {
+        platformId: 'NAVER_SERIES_NOVEL',
+        name: 'Naver Series Novel (네이버)',
+        publisher: 'Naver Corp.',
+        flag: '📝',
+        badgeClass: 'badge-naver-series',
+        color: '#059669',
+        rawUrl: naverSeriesNovelLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://series.naver.com/novel/home.series',
+        searchUrl: `https://series.naver.com/search/search.series?t=novel&q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const qidianLink = links.find(l => 
+      (l.url && (l.url.includes('qidian.com') || l.url.includes('webnovel.com'))) ||
+      (l.site && (l.site.toLowerCase().includes('qidian') || l.site.toLowerCase().includes('webnovel')))
+    );
+    if (qidianLink) {
+      return {
+        platformId: 'QIDIAN',
+        name: 'Qidian Tu Tiên (起点中文网)',
+        publisher: 'China Literature / Tencent',
+        flag: '📝',
+        badgeClass: 'badge-qidian',
+        color: '#dc2626',
+        rawUrl: qidianLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.qidian.com/',
+        searchUrl: `https://www.qidian.com/so/${encodeURIComponent(nativeTitle)}.html`
+      };
+    }
+
+    // Fallback cho Novel theo quốc gia
+    if (country === 'KR') {
+      return {
+        platformId: 'MUNPIA',
+        name: 'Munpia / Naver Novel 🇰🇷',
+        publisher: 'Munpia / Naver Series',
+        flag: '📝',
+        badgeClass: 'badge-munpia',
+        color: '#2563eb',
+        rawUrl: `https://series.naver.com/search/search.series?t=novel&q=${encodeURIComponent(nativeTitle)}`,
+        hasRawLink: false,
+        homeUrl: 'https://www.munpia.com/',
+        searchUrl: `https://series.naver.com/search/search.series?t=novel&q=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+    if (country === 'CN') {
+      return {
+        platformId: 'QIDIAN',
+        name: 'Qidian Tu Tiên Gốc 🇨🇳',
+        publisher: 'Qidian / China Literature',
+        flag: '📝',
+        badgeClass: 'badge-qidian',
+        color: '#dc2626',
+        rawUrl: `https://www.qidian.com/so/${encodeURIComponent(nativeTitle)}.html`,
+        hasRawLink: false,
+        homeUrl: 'https://www.qidian.com/',
+        searchUrl: `https://www.qidian.com/so/${encodeURIComponent(nativeTitle)}.html`
+      };
+    }
+    return {
+      platformId: 'SYOSETU',
+      name: 'Syosetu / Kadokawa Bunko 🇯🇵',
+      publisher: 'Shousetsuka ni Narou / Kadokawa',
+      flag: '📝',
+      badgeClass: 'badge-syosetu',
+      color: '#10b981',
+      rawUrl: `https://yomou.syosetu.com/search.php?word=${encodeURIComponent(nativeTitle)}`,
+      hasRawLink: false,
+      homeUrl: 'https://syosetu.com/',
+      searchUrl: `https://yomou.syosetu.com/search.php?word=${encodeURIComponent(nativeTitle)}`
+    };
+  }
+
+  // 3. XỬ LÝ NỀN TẢNG TRUYỆN TRANH (MANGA / MANHWA / MANHUA)
   if (country === 'KR') {
     const naverLink = links.find(l => 
       (l.url && (l.url.includes('comic.naver.com') || l.url.includes('series.naver.com'))) ||
@@ -575,6 +1128,24 @@ export function getOfficialSourceMeta(media) {
         hasRawLink: true,
         homeUrl: 'https://pocket.shonenmagazine.com/',
         searchUrl: `https://pocket.shonenmagazine.com/search?keyword=${encodeURIComponent(nativeTitle)}`
+      };
+    }
+
+    const squareLink = links.find(l => 
+      l.url && (l.url.includes('ganganonline') || l.url.includes('square-enix'))
+    );
+    if (squareLink) {
+      return {
+        platformId: 'SQUARE_ENIX',
+        name: 'Square Enix (スクエニ)',
+        publisher: 'Square Enix',
+        flag: '🇯🇵',
+        badgeClass: 'badge-kadokawa',
+        color: '#a855f7',
+        rawUrl: squareLink.url,
+        hasRawLink: true,
+        homeUrl: 'https://www.ganganonline.com/',
+        searchUrl: `https://www.ganganonline.com/`
       };
     }
 
@@ -707,7 +1278,17 @@ export function getMangaSubtitle(media) {
   return media.title.native || media.title.romaji || '';
 }
 
-export function formatChapters(chapters, status) {
+export function formatChapters(chapters, status, format, volumes) {
+  if (format === 'NOVEL') {
+    if (volumes) {
+      return `${volumes} Tập (${chapters ? chapters + ' chương' : 'Vol'})`;
+    }
+    if (chapters !== null && chapters !== undefined) {
+      return `${chapters.toLocaleString('vi-VN')} chương chữ`;
+    }
+    return 'Tiểu thuyết đang ra';
+  }
+
   if (chapters !== null && chapters !== undefined) {
     return `${chapters.toLocaleString('vi-VN')} chap`;
   }
@@ -717,7 +1298,24 @@ export function formatChapters(chapters, status) {
   return 'Chưa rõ số chap';
 }
 
-export function getOriginMeta(countryCode) {
+export function getOriginMeta(countryCode, format, isAdult) {
+  if (isAdult) {
+    return { label: '18+ Adult', flag: '🔞', full: 'Bản quyền 18+ Adult Gốc' };
+  }
+
+  if (format === 'NOVEL') {
+    switch (countryCode) {
+      case 'JP':
+        return { label: 'Light Novel', flag: '📝', full: 'Nhật Bản (Light Novel Gốc)' };
+      case 'KR':
+        return { label: 'Webnovel', flag: '📝', full: 'Hàn Quốc (Web Novel Chữ)' };
+      case 'CN':
+        return { label: 'Tiểu thuyết chữ', flag: '📝', full: 'Trung Quốc (Tu Tiên / Đô Thị Chữ)' };
+      default:
+        return { label: 'Tiểu thuyết chữ', flag: '📝', full: 'Tiểu thuyết chữ Quốc tế' };
+    }
+  }
+
   switch (countryCode) {
     case 'JP':
       return { label: 'Manga Gốc', flag: '🇯🇵', full: 'Nhật Bản (Manga Raw)' };

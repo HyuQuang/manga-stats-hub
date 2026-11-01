@@ -43,6 +43,7 @@ const state = {
   country: 'ALL',
   status: 'ALL',
   platform: 'ALL',
+  format: 'ALL', // 'ALL' | 'MANGA' | 'NOVEL' | 'HENTAI'
   chapterTier: 'ALL',
   viewMode: 'grid', // 'grid' | 'table'
   activeTab: 'explore', // 'explore' | 'naverLive' | 'directory' | 'analytics' | 'library'
@@ -53,7 +54,15 @@ const state = {
   naverData: null,
   naverCurrentDay: 'MON',
   currentGenreSuggestions: [],
-  activeSuggestionIndex: -1
+  activeSuggestionIndex: -1,
+  
+  // Auto-Update Engine State
+  autoSyncEnabled: true,
+  autoSyncInterval: 30, // seconds
+  secondsLeft: 30,
+  lastSyncTime: Date.now(),
+  countdownInterval: null,
+  directoryCategory: 'ALL'
 };
 
 // DOM Elements
@@ -66,6 +75,20 @@ const elements = {
     analytics: document.getElementById('analyticsView'),
     library: document.getElementById('libraryView')
   },
+  
+  // Format Filter Bar
+  formatFilterBar: document.getElementById('formatFilterBar'),
+  formatPills: document.querySelectorAll('.format-pill'),
+
+  // Live Auto-Sync Bar
+  liveSyncBar: document.getElementById('liveSyncBar'),
+  liveSyncStatusText: document.getElementById('liveSyncStatusText'),
+  liveSyncCountdownText: document.getElementById('liveSyncCountdownText'),
+  liveSyncLastTime: document.getElementById('liveSyncLastTime'),
+  btnSyncNow: document.getElementById('btnSyncNow'),
+  syncIntervalSelect: document.getElementById('syncIntervalSelect'),
+
+  // Search & Filter Selectors
   searchInput: document.getElementById('searchInput'),
   clearSearchBtn: document.getElementById('clearSearchBtn'),
   sortSelect: document.getElementById('sortSelect'),
@@ -112,6 +135,7 @@ const elements = {
 
   // Directory View
   platformGridContainer: document.getElementById('platformGridContainer'),
+  directoryCatNav: document.getElementById('directoryCatNav'),
 
   // Analytics View Elements
   analyticsTotalManga: document.getElementById('analyticsTotalManga'),
@@ -142,6 +166,7 @@ export function initApp() {
   bindEvents();
   updateLibraryBadge();
   loadMangaData();
+  initAutoSync();
 }
 
 /**
@@ -392,6 +417,53 @@ function bindEvents() {
       switchTab(target);
     });
   });
+
+  // Format Selection (Manga / Novel / Hentai 18+)
+  if (elements.formatFilterBar) {
+    elements.formatFilterBar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.format-pill');
+      if (!btn) return;
+      elements.formatFilterBar.querySelectorAll('.format-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.format = btn.dataset.format;
+      state.page = 1;
+      loadMangaData();
+    });
+  }
+
+  // Live Auto-Update Controls (USER REQUIREMENT)
+  if (elements.btnSyncNow) {
+    elements.btnSyncNow.addEventListener('click', () => {
+      performAutoSync(true);
+    });
+  }
+
+  if (elements.syncIntervalSelect) {
+    elements.syncIntervalSelect.addEventListener('change', (e) => {
+      const val = parseInt(e.target.value, 10);
+      state.autoSyncInterval = val;
+      state.autoSyncEnabled = val > 0;
+      state.secondsLeft = val;
+      updateLiveSyncDisplay();
+      if (state.autoSyncEnabled) {
+        showToast(`⏱️ Đã đặt tự động cập nhật mỗi ${val} giây`);
+      } else {
+        showToast('⏹️ Đã tắt tự động cập nhật');
+      }
+    });
+  }
+
+  // Directory Category Navigation
+  if (elements.directoryCatNav) {
+    elements.directoryCatNav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.directory-cat-btn');
+      if (!btn) return;
+      elements.directoryCatNav.querySelectorAll('.directory-cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.directoryCategory = btn.dataset.cat;
+      renderDirectory();
+    });
+  }
 
   // Search with debounce
   let searchTimeout = null;
@@ -696,9 +768,101 @@ function switchTab(tabId) {
 }
 
 /**
+ * Quản lý cơ chế Tự Động Cập Nhật Thời Gian Thực (Live Auto-Sync Engine)
+ */
+function initAutoSync() {
+  state.secondsLeft = state.autoSyncInterval;
+  updateLiveSyncDisplay();
+
+  if (state.countdownInterval) clearInterval(state.countdownInterval);
+  state.countdownInterval = setInterval(() => {
+    if (!state.autoSyncEnabled || state.autoSyncInterval <= 0) return;
+
+    state.secondsLeft -= 1;
+    if (state.secondsLeft <= 0) {
+      state.secondsLeft = state.autoSyncInterval;
+      performAutoSync(false);
+    }
+    updateLiveSyncDisplay();
+  }, 1000);
+}
+
+async function performAutoSync(isManual = false) {
+  if (state.isLoading) return;
+
+  if (elements.btnSyncNow) {
+    elements.btnSyncNow.classList.add('spinning');
+  }
+
+  try {
+    const data = await fetchMangaList({
+      page: state.page,
+      perPage: state.perPage,
+      sort: state.sort,
+      selectedFilters: Array.from(state.genres),
+      search: state.search,
+      country: state.country,
+      status: state.status,
+      platform: state.platform,
+      format: state.format,
+      bypassCache: true
+    });
+
+    state.items = data.media || [];
+    state.pageInfo = data.pageInfo || null;
+    state.lastSyncTime = Date.now();
+    state.secondsLeft = state.autoSyncInterval;
+
+    state.items.forEach(item => state.detailCache.set(item.id, item));
+
+    updateHeroStats();
+    renderCurrentView();
+
+    if (isManual) {
+      showToast('⚡ Đã đồng bộ trực tiếp từ các NXB gốc!');
+    } else {
+      showToast('🟢 Vừa tự động làm mới dữ liệu từ NXB gốc!');
+    }
+  } catch (err) {
+    console.warn('Lỗi khi tự động đồng bộ:', err);
+  } finally {
+    if (elements.btnSyncNow) {
+      elements.btnSyncNow.classList.remove('spinning');
+    }
+    updateLiveSyncDisplay();
+  }
+}
+
+function updateLiveSyncDisplay() {
+  if (!elements.liveSyncStatusText || !elements.liveSyncCountdownText) return;
+
+  if (state.autoSyncInterval <= 0) {
+    elements.liveSyncStatusText.textContent = 'ĐÃ TẮT';
+    elements.liveSyncStatusText.style.color = '#94a3b8';
+    elements.liveSyncCountdownText.innerHTML = 'Tự động cập nhật: <strong>Tắt</strong>';
+  } else {
+    elements.liveSyncStatusText.textContent = 'BẬT';
+    elements.liveSyncStatusText.style.color = '#4ade80';
+    elements.liveSyncCountdownText.innerHTML = `Đồng bộ sau: <strong>${state.secondsLeft}s</strong>`;
+  }
+
+  if (elements.liveSyncLastTime) {
+    const diffSec = Math.floor((Date.now() - state.lastSyncTime) / 1000);
+    if (diffSec < 5) {
+      elements.liveSyncLastTime.textContent = 'Lần cuối: Vừa xong';
+    } else if (diffSec < 60) {
+      elements.liveSyncLastTime.textContent = `Lần cuối: ${diffSec}s trước`;
+    } else {
+      const min = Math.floor(diffSec / 60);
+      elements.liveSyncLastTime.textContent = `Lần cuối: ${min}m trước`;
+    }
+  }
+}
+
+/**
  * Fetch and Load Manga Data from AniList with Raw Publisher Data
  */
-async function loadMangaData() {
+async function loadMangaData(bypassCache = false) {
   if (state.isLoading) return;
   state.isLoading = true;
   renderLoadingSkeleton();
@@ -712,11 +876,15 @@ async function loadMangaData() {
       search: state.search,
       country: state.country,
       status: state.status,
-      platform: state.platform
+      platform: state.platform,
+      format: state.format,
+      bypassCache
     });
 
     state.items = data.media || [];
     state.pageInfo = data.pageInfo || null;
+    state.lastSyncTime = Date.now();
+    state.secondsLeft = state.autoSyncInterval;
 
     // Cache items for detail view
     state.items.forEach(item => state.detailCache.set(item.id, item));
@@ -725,6 +893,7 @@ async function loadMangaData() {
     updateActiveFilterBadges();
     renderCurrentView();
     renderPagination();
+    updateLiveSyncDisplay();
   } catch (error) {
     elements.resultsContainer.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: var(--bg-card); border-radius: var(--radius-xl);">
@@ -830,7 +999,9 @@ function renderGrid(items) {
     const title = getMangaTitle(manga);
     const nativeTitle = getMangaNativeTitle(manga);
     const chaps = manga.chapters;
-    const origin = getOriginMeta(manga.countryOfOrigin);
+    const isNovel = manga.format === 'NOVEL';
+    const isAdult = manga.isAdult || (manga.genres && manga.genres.includes('Hentai'));
+    const origin = getOriginMeta(manga.countryOfOrigin, manga.format, manga.isAdult);
     const status = getStatusMeta(manga.status);
     const sourceMeta = getOfficialSourceMeta(manga);
     const isSaved = isInLibrary(manga.id);
@@ -838,13 +1009,16 @@ function renderGrid(items) {
     let chapBadgeClass = 'badge-chapters';
     if (chaps >= 1000) chapBadgeClass += ' highlight-huge';
     else if (chaps >= 500) chapBadgeClass += ' highlight-high';
+    if (isAdult) chapBadgeClass += ' badge-adult';
+
+    const iconPrefix = isAdult ? '🔞' : (isNovel ? '📝' : '📖');
 
     return `
       <div class="manga-card" data-id="${manga.id}">
         <div class="card-poster-wrap">
           <img class="card-poster" src="${manga.coverImage?.large || ''}" alt="${title}" loading="lazy" />
           <div class="${chapBadgeClass}">
-            📖 ${formatChapters(chaps, manga.status)}
+            ${iconPrefix} ${formatChapters(chaps, manga.status, manga.format, manga.volumes)}
           </div>
           <div class="badge-origin">
             ${origin.flag} ${origin.label}
@@ -901,7 +1075,7 @@ function renderTable(items) {
           <th>Tác phẩm & Tên gốc</th>
           <th>Nền tảng xuất bản gốc</th>
           <th class="sortable ${isSortedByChapDesc || isSortedByChapAsc ? 'sorted' : ''}" id="tableSortChapBtn" title="Bấm để đảo chiều sắp xếp số chap">
-            Số chương ${isSortedByChapDesc ? '▼ (Cao -> Thấp)' : isSortedByChapAsc ? '▲ (Thấp -> Cao)' : '↕'}
+            Số chương / Vol ${isSortedByChapDesc ? '▼ (Cao -> Thấp)' : isSortedByChapAsc ? '▲ (Thấp -> Cao)' : '↕'}
           </th>
           <th>Số tập</th>
           <th>Đánh giá</th>
@@ -915,6 +1089,9 @@ function renderTable(items) {
           const title = getMangaTitle(manga);
           const nativeTitle = getMangaNativeTitle(manga);
           const chaps = manga.chapters;
+          const isNovel = manga.format === 'NOVEL';
+          const isAdult = manga.isAdult || (manga.genres && manga.genres.includes('Hentai'));
+          const origin = getOriginMeta(manga.countryOfOrigin, manga.format, manga.isAdult);
           const status = getStatusMeta(manga.status);
           const sourceMeta = getOfficialSourceMeta(manga);
 
@@ -940,10 +1117,10 @@ function renderTable(items) {
               </td>
               <td>
                 <span class="table-chapters-badge ${chaps >= 500 ? 'high' : ''}">
-                  ${chaps !== null && chaps !== undefined ? chaps.toLocaleString('vi-VN') + ' chap' : 'Đang cập nhật'}
+                  ${formatChapters(chaps, manga.status, manga.format, manga.volumes)}
                 </span>
               </td>
-              <td>${manga.volumes ? `${manga.volumes} vol` : '-'}</td>
+              <td>${manga.volumes ? `${manga.volumes} vol` : (isNovel ? 'Bản web' : '-')}</td>
               <td>
                 ${manga.averageScore ? `
                   <span style="color: #fbbf24; font-weight: 700;">
@@ -958,8 +1135,8 @@ function renderTable(items) {
                 </span>
               </td>
               <td>
-                <a href="${sourceMeta.rawUrl || sourceMeta.searchUrl}" target="_blank" rel="noopener noreferrer" class="btn-text-link" style="color: #22c55e; font-weight: 700;">
-                  Đọc Raw ↗
+                <a href="${sourceMeta.rawUrl || sourceMeta.searchUrl}" target="_blank" rel="noopener noreferrer" class="btn-text-link" style="color: ${sourceMeta.color || '#22c55e'}; font-weight: 700;">
+                  ${isNovel ? 'Đọc Novel ↗' : 'Web Gốc ↗'}
                 </a>
               </td>
             </tr>
@@ -1051,6 +1228,15 @@ function updateHeroStats() {
 function updateActiveFilterBadges() {
   const badges = [];
 
+  if (state.format !== 'ALL') {
+    const formatLabels = {
+      'MANGA': '📖 Truyện tranh',
+      'NOVEL': '📝 Tiểu thuyết chữ (Novel)',
+      'HENTAI': '🔞 18+ Adult / Hentai'
+    };
+    badges.push({ text: formatLabels[state.format] || state.format });
+  }
+
   if (state.search) {
     badges.push({ text: `🔍 Tìm: "${state.search}"` });
   }
@@ -1059,7 +1245,7 @@ function updateActiveFilterBadges() {
     if (plat) badges.push({ text: `🏢 NXB: ${plat.name}` });
   }
   if (state.country !== 'ALL') {
-    const meta = getOriginMeta(state.country);
+    const meta = getOriginMeta(state.country, state.format, state.format === 'HENTAI');
     badges.push({ text: `${meta.flag} ${meta.label}` });
   }
   if (state.status !== 'ALL') {
@@ -1148,10 +1334,11 @@ function openModal(mangaId) {
 
   const title = getMangaTitle(manga);
   const nativeTitle = getMangaNativeTitle(manga);
-  const origin = getOriginMeta(manga.countryOfOrigin);
+  const origin = getOriginMeta(manga.countryOfOrigin, manga.format, manga.isAdult);
   const status = getStatusMeta(manga.status);
   const sourceMeta = getOfficialSourceMeta(manga);
   const isSaved = isInLibrary(manga.id);
+  const isNovel = manga.format === 'NOVEL';
 
   elements.modalBannerImg.src = manga.bannerImage || manga.coverImage?.extraLarge || manga.coverImage?.large || '';
   elements.modalCoverImg.src = manga.coverImage?.large || manga.coverImage?.extraLarge || '';
@@ -1166,16 +1353,16 @@ function openModal(mangaId) {
 
   elements.modalStatsStrip.innerHTML = `
     <div class="modal-stat-badge">
-      <strong>${formatChapters(manga.chapters, manga.status)}</strong>
-      <span>Tổng số chương</span>
+      <strong>${formatChapters(manga.chapters, manga.status, manga.format, manga.volumes)}</strong>
+      <span>${isNovel ? 'Độ dài tiểu thuyết' : 'Tổng số chương'}</span>
     </div>
     <div class="modal-stat-badge">
-      <strong>${manga.volumes ? `${manga.volumes} tập` : 'Chưa rõ'}</strong>
+      <strong>${manga.volumes ? `${manga.volumes} tập` : (isNovel ? 'Bản Webnovel' : 'Chưa rõ')}</strong>
       <span>Số tập (Vol)</span>
     </div>
     <div class="modal-stat-badge">
       <strong>${origin.flag} ${origin.label}</strong>
-      <span>Quốc gia</span>
+      <span>Loại hình & Nguồn</span>
     </div>
     <div class="modal-stat-badge">
       <strong>${status.label}</strong>
@@ -1205,7 +1392,7 @@ function openModal(mangaId) {
 
   // Direct Raw link button
   elements.modalRawLink.href = sourceMeta.rawUrl || sourceMeta.searchUrl;
-  elements.modalRawLink.innerHTML = `📖 Đọc tại ${sourceMeta.publisher || 'Web Gốc'} ↗`;
+  elements.modalRawLink.innerHTML = `${isNovel ? '📝 Đọc Novel tại' : '📖 Đọc tại'} ${sourceMeta.publisher || 'Web Gốc'} ↗`;
 
   elements.modalAniListLink.href = `https://anilist.co/manga/${manga.id}`;
 
@@ -1298,7 +1485,11 @@ function renderNaverLiveView() {
 function renderDirectory() {
   if (!elements.platformGridContainer) return;
 
-  const platforms = OFFICIAL_PLATFORMS.filter(p => p.id !== 'ALL');
+  let platforms = OFFICIAL_PLATFORMS.filter(p => p.id !== 'ALL');
+  if (state.directoryCategory && state.directoryCategory !== 'ALL') {
+    platforms = platforms.filter(p => p.type === state.directoryCategory);
+  }
+
   elements.platformGridContainer.innerHTML = platforms.map(plat => `
     <div class="platform-card">
       <div class="platform-card-header">
@@ -1306,7 +1497,10 @@ function renderDirectory() {
           ${plat.flag}
         </div>
         <div>
-          <h3 style="font-size: 1.1rem; color: var(--text-main); font-weight: 800;">${plat.name}</h3>
+          <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+            <h3 style="font-size: 1.05rem; color: var(--text-main); font-weight: 800;">${plat.name}</h3>
+            <span style="font-size: 0.68rem; background: ${plat.color}22; color: ${plat.color}; padding: 0.15rem 0.45rem; border-radius: var(--radius-sm); font-weight: 700; border: 1px solid ${plat.color}44;">${plat.category}</span>
+          </div>
           <span style="font-size: 0.78rem; color: var(--text-muted);">${plat.publisher}</span>
         </div>
       </div>
@@ -1314,11 +1508,11 @@ function renderDirectory() {
         <p>${plat.desc}</p>
       </div>
       <div class="platform-card-footer">
-        <button class="btn-primary" data-filter-platform="${plat.id}" style="font-size: 0.82rem; padding: 0.45rem 1rem;">
-          🔍 Lọc truyện NXB này
+        <button class="btn-primary" data-filter-platform="${plat.id}" data-platform-type="${plat.type}" style="font-size: 0.82rem; padding: 0.45rem 1rem;">
+          🔍 Lọc tác phẩm NXB này
         </button>
         <a href="${plat.siteUrl}" target="_blank" rel="noopener noreferrer" class="btn-outline" style="font-size: 0.82rem; padding: 0.45rem 0.9rem;">
-          Web Gốc ↗
+          Web Mẹ ↗
         </a>
       </div>
     </div>
@@ -1327,8 +1521,15 @@ function renderDirectory() {
   elements.platformGridContainer.querySelectorAll('[data-filter-platform]').forEach(btn => {
     btn.addEventListener('click', () => {
       const platId = btn.dataset.filterPlatform;
+      const platType = btn.dataset.platformType;
       state.platform = platId;
       elements.platformSelect.value = platId;
+      if (platType && platType !== 'ALL') {
+        state.format = platType;
+        if (elements.formatPills) {
+          elements.formatPills.forEach(p => p.classList.toggle('active', p.dataset.format === platType));
+        }
+      }
       switchTab('explore');
       state.page = 1;
       loadMangaData();
