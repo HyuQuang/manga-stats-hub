@@ -403,11 +403,32 @@ function renderCurrentView() {
   elements.resultsCount.innerHTML = `Hiển thị <strong>${filtered.length}</strong> / ${state.pageInfo ? state.pageInfo.total.toLocaleString('vi-VN') : filtered.length} tác phẩm`;
 
   if (filtered.length === 0) {
+    const rawSearchUrlJP = `https://shonenjumpplus.com/search?q=${encodeURIComponent(state.search)}`;
+    const rawSearchUrlKR = `https://comic.naver.com/search?keyword=${encodeURIComponent(state.search)}`;
+    const rawSearchUrlCN = `https://www.kuaikanmanhua.com/s/result/${encodeURIComponent(state.search)}`;
+
     elements.resultsContainer.innerHTML = `
-      <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1.5rem; background: var(--bg-card); border-radius: var(--radius-xl);">
-        <p style="font-size: 1.5rem; margin-bottom: 0.5rem;">🔍</p>
-        <h3 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 0.25rem;">Không tìm thấy truyện phù hợp</h3>
-        <p style="color: var(--text-muted); font-size: 0.88rem;">Hãy thử nới lỏng bộ lọc nền tảng gốc hoặc khoảng số chap nhé.</p>
+      <div style="grid-column: 1/-1; text-align: center; padding: 3rem 1.5rem; background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border-color);">
+        <p style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</p>
+        <h3 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 0.5rem;">
+          ${state.search ? `Không tìm thấy kết quả cho "${state.search}"` : 'Không có tác phẩm nào phù hợp'}
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 600px; margin: 0 auto 1.5rem; line-height: 1.5;">
+          ${state.search ? 'Hệ thống đã tự động dịch tên tiếng Việt và tra cứu. Nếu truyện quá mới hoặc chưa cập nhật, bạn có thể bấm thẳng vào các nút bên dưới để tra cứu trực tiếp trên các web mẹ của từng nước:' : 'Hãy thử nới lỏng bộ lọc thể loại, nền tảng gốc hoặc khoảng số chap nhé.'}
+        </p>
+        ${state.search ? `
+          <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+            <a href="${rawSearchUrlJP}" target="_blank" rel="noopener noreferrer" class="btn-outline" style="border-color: #ef4444; color: #f87171; font-weight: 600;">
+              🇯🇵 Tìm trên Shonen Jump+ (Nhật) ↗
+            </a>
+            <a href="${rawSearchUrlKR}" target="_blank" rel="noopener noreferrer" class="btn-outline" style="border-color: #22c55e; color: #86efac; font-weight: 600;">
+              🇰🇷 Tìm trên Naver Webtoon (Hàn) ↗
+            </a>
+            <a href="${rawSearchUrlCN}" target="_blank" rel="noopener noreferrer" class="btn-outline" style="border-color: #eab308; color: #fde047; font-weight: 600;">
+              🇨🇳 Tìm trên Kuaikan Manhua (Trung) ↗
+            </a>
+          </div>
+        ` : ''}
       </div>
     `;
     return;

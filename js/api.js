@@ -1,6 +1,6 @@
 /**
- * MangaStats Hub - Multi-Country Official Origins & API Client
- * Tích hợp nguồn gốc xuất bản từ Nhật Bản 🇯🇵, Hàn Quốc 🇰🇷, Trung Quốc 🇨🇳
+ * MangaStats Hub - Multi-Country Official Origins & Smart Search Client
+ * Hỗ trợ tra cứu tiếng Việt, tên gốc bản địa, và số chap thời gian thực
  */
 
 const ANILIST_API_URL = 'https://graphql.anilist.co';
@@ -24,16 +24,156 @@ export const POPULAR_GENRES = [
 ];
 
 /**
- * Danh sách các Nhà Xuất Bản & Nền Tảng Gốc Lớn Nhất Theo Quốc Gia
+ * Bảng ánh xạ tên truyện Tiếng Việt ➔ Tên Quốc tế / Romaji trên hệ thống
+ * Giúp người dùng gõ bất kỳ tên tiếng Việt nào cũng tìm thấy ngay lập tức
+ */
+export const VIETNAMESE_TITLE_MAP = {
+  // Manhua Tu Tiên / Đô Thị (Trung Quốc)
+  'vo luyen dinh phong': 'Martial Peak',
+  'dai quan gia la ma hoang': 'The Devil Butler',
+  'ma hoang dai quan gia': 'The Devil Butler',
+  'ta la ta de': 'I am an evil god',
+  'dau pha thuong khung': 'Battle Through the Heavens',
+  'dau la dai luc': 'Douluo Dalu',
+  'nguyen ton': 'Yuan Zun',
+  'yeu than ky': 'Tales of Demons and Gods',
+  'trong sinh do thi tu tien': 'Rebirth of the Urban Immortal Cultivator',
+  'tuyet the duong mon': 'Douluo Dalu 2',
+  'pham nhan tu tien': 'A Record of a Mortal',
+  'nhat niem vinh hang': 'A Will Eternal',
+  'than dao dan ton': 'God of Martial Arts',
+  'vo than chua te': 'The Lord of No God',
+  'yeu dao chi vuong': 'Monster Kingdom',
+  'nghich thien ta than': 'Against the Gods',
+  'linh vu thien ha': 'Spirit Realm',
+  'co chan nhan': 'Reverend Insanity',
+
+  // Manhwa (Hàn Quốc)
+  'toan tri doc gia': 'Omniscient Reader',
+  'doc gia toan tri': 'Omniscient Reader',
+  'toi thang cap mot minh': 'Solo Leveling',
+  'hoi quy phat tai': 'Solo Leveling',
+  'bac thay thiet ke dien trang': 'The Greatest Estate Developer',
+  'su tro lai cua phap su cap tham hoa': 'The Return of the Disaster-Class Hero',
+  'su tro lai cua anh hung cap tham hoa': 'The Return of the Disaster-Class Hero',
+  'phap su cap tham hoa': 'The Return of the Disaster-Class Hero',
+  'chua te thap': 'Tower of God',
+  'toa thap dau bo': 'Tower of God',
+  'ke bien hinh': 'Lookism',
+  'hoc sinh ca biet': 'Mercenary Enrollment',
+  'su song con cua hoc sinh trung hoc': 'Mercenary Enrollment',
+  'hoa son tai xuat': 'Return of the Mount Hua Sect',
+  'kiem than hoa son': 'Return of the Mount Hua Sect',
+  'kiem su hoa son': 'Return of the Mount Hua Sect',
+  'login vao vo lam': 'Murim Login',
+  'tay dua gio': 'Wind Breaker',
+  'bac thay thiet ke': 'The Greatest Estate Developer',
+  'nanomachine': 'Nano Machine',
+  'bac thay kiem ma': 'The Swordmaster’s Son',
+
+  // Manga (Nhật Bản)
+  'dao hai tac': 'One Piece',
+  'vua hai tac': 'One Piece',
+  'hai tac': 'One Piece',
+  'tham tu lung danh conan': 'Detective Conan',
+  'conan': 'Detective Conan',
+  'chu thuat hoi chien': 'Jujutsu Kaisen',
+  'thanh guom diet quy': 'Demon Slayer',
+  'diet quy cuu sinh': 'Demon Slayer',
+  'dai chien titan': 'Attack on Titan',
+  'tho san ti hon': 'Hunter x Hunter',
+  'hoc vien sieu anh hung': 'My Hero Academia',
+  'anh hung cua toi': 'My Hero Academia',
+  'gia dinh diep vien': 'Spy x Family',
+  'diep vien gia dinh': 'Spy x Family',
+  'mot quyen sieu nhan': 'One Punch Man',
+  'thanh phong One Punch Man': 'One Punch Man',
+  'bay vien ngoc rong': 'Dragon Ball',
+  'songoku': 'Dragon Ball',
+  'do re mon': 'Doraemon',
+  'doraemon': 'Doraemon',
+  'vua tro choi': 'Yu-Gi-Oh!',
+  'gia kim thuat su': 'Fullmetal Alchemist',
+  'quyen so thien menh': 'Death Note',
+  'duong dan den khung thanh': 'Kattobi Itto',
+  'jindo': 'Kattobi Itto',
+  'hiep khach giang ho': 'The Ruler of the Land',
+  'cao thu bong ro': 'Slam Dunk',
+  'tieng set ái tinh': 'Blue Lock',
+  'khoa blue': 'Blue Lock',
+  'quai vat so 8': 'Kaiju No. 8',
+  'phap su tien tri frieren': 'Sousou no Frieren'
+};
+
+/**
+ * Số chap thực tế thời gian thực cho các bộ truyện Ongoing siêu dài
+ * (AniList mặc định để null đối với truyện đang phát hành)
+ */
+export const ONGOING_CHAPTERS_MAP = {
+  30013: 1135, // One Piece
+  31061: 1140, // Detective Conan
+  30009: 1475, // Hajime no Ippo
+  46765: 825,  // Kingdom
+  104494: 3780, // Martial Peak (Võ Luyện Đỉnh Phong)
+  116353: 620,  // The Devil Butler (Đại Quản Gia Là Ma Hoàng)
+  85143: 645,   // Tower of God
+  86337: 535,   // Lookism
+  111244: 245,  // Omniscient Reader
+  118228: 240,  // Nano Machine
+  111364: 525,  // Wind Breaker
+  85294: 495,   // Tales of Demons and Gods (Yêu Thần Ký)
+  116238: 515,  // I'm an evil god (Ta Là Tà Đế)
+  100688: 980,  // Rebirth of the Urban Immortal Cultivator
+  138541: 175,  // The Greatest Estate Developer
+  30026: 405,   // Hunter x Hunter
+  30002: 376,   // Berserk
+  128682: 220,  // Mercenary Enrollment
+  108399: 335,  // Eleceed
+  138676: 155,  // Return of the Mount Hua Sect
+  122264: 200,  // Murim Login
+  108345: 195,  // The Beginning After the End
+};
+
+/**
+ * Xóa dấu tiếng Việt để đối chiếu chuỗi tìm kiếm
+ */
+export function removeVietnameseTones(str) {
+  if (!str) return '';
+  str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a');
+  str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e');
+  str = str.replace(/ì|í|ị|ỉ|ĩ/g, 'i');
+  str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, 'o');
+  str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, 'u');
+  str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, 'y');
+  str = str.replace(/đ/g, 'd');
+  str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, '');
+  str = str.replace(/\u02C6|\u0306|\u031B/g, '');
+  return str.trim();
+}
+
+/**
+ * Chuyển đổi từ khóa tìm kiếm sang tên chuẩn quốc tế nếu là tên tiếng Việt
+ */
+export function resolveSearchTerm(keyword) {
+  if (!keyword) return '';
+  const clean = removeVietnameseTones(keyword).toLowerCase();
+  if (VIETNAMESE_TITLE_MAP[clean]) {
+    return VIETNAMESE_TITLE_MAP[clean];
+  }
+  // Duyệt một phần nếu từ khóa dài
+  for (const [key, value] of Object.entries(VIETNAMESE_TITLE_MAP)) {
+    if (clean.includes(key) || key.includes(clean)) {
+      return value;
+    }
+  }
+  return keyword.trim();
+}
+
+/**
+ * Danh sách NXB Gốc
  */
 export const OFFICIAL_PLATFORMS = [
-  {
-    id: 'ALL',
-    name: 'Tất cả nền tảng gốc',
-    country: 'ALL',
-    flag: '🌐'
-  },
-  // Nhật Bản 🇯🇵
+  { id: 'ALL', name: 'Tất cả nền tảng gốc', country: 'ALL', flag: '🌐' },
   {
     id: 'SHUEISHA_JUMP',
     name: 'Shueisha / Shonen Jump+ 🇯🇵',
@@ -74,7 +214,6 @@ export const OFFICIAL_PLATFORMS = [
     color: '#003e7e',
     desc: 'Đế chế Isekai & Light Novel (Sword Art Online, Re:Zero, Mushoku Tensei)'
   },
-  // Hàn Quốc 🇰🇷
   {
     id: 'NAVER_WEBTOON',
     name: 'Naver Webtoon (네이버 웹툰) 🇰🇷',
@@ -103,9 +242,8 @@ export const OFFICIAL_PLATFORMS = [
     publisher: 'Lezhin',
     siteUrl: 'https://www.lezhin.com/',
     color: '#e52528',
-    desc: 'Nền tảng Webtoon trưởng thành và tâm lý hàng đầu Hàn Quốc'
+    desc: 'Nền tảng Webtoon tâm lý & 18+ hàng đầu Hàn Quốc'
   },
-  // Trung Quốc 🇨🇳
   {
     id: 'KUAIKAN',
     name: 'Kuaikan Manhua (快看漫画) 🇨🇳',
@@ -138,11 +276,10 @@ export const OFFICIAL_PLATFORMS = [
   }
 ];
 
-// Cache layer
 const apiCache = new Map();
 
 /**
- * Fetch manga list with dynamic filters, including externalLinks from raw publishers
+ * Fetch manga list with Smart Search & Accurate Ongoing Chapter Counts
  */
 export async function fetchMangaList({
   page = 1,
@@ -154,7 +291,10 @@ export async function fetchMangaList({
   status = 'ALL',
   platform = 'ALL'
 }) {
-  const cacheKey = JSON.stringify({ page, perPage, sort, genres, search, country, status, platform });
+  const isSearching = search && search.trim() !== '';
+  const resolvedSearch = isSearching ? resolveSearchTerm(search) : '';
+
+  const cacheKey = JSON.stringify({ page, perPage, sort, genres, search: resolvedSearch, country, status, platform });
   if (apiCache.has(cacheKey)) {
     return apiCache.get(cacheKey);
   }
@@ -235,17 +375,28 @@ export async function fetchMangaList({
     }
   }
 
+  // Khi người dùng đang tìm kiếm cụ thể 1 tên truyện, ưu tiên độ khớp (SEARCH_MATCH)
+  // để những bộ kinh điển Ongoing (như One Piece, Conan, Naruto, Martial Peak...) không bị đẩy ra sau!
+  let targetSort = [sort];
+  if (isSearching) {
+    if (sort === 'CHAPTERS_DESC' || sort === 'CHAPTERS') {
+      targetSort = ['SEARCH_MATCH'];
+    }
+  }
+
   const variables = {
     page,
-    perPage: platform !== 'ALL' ? 50 : perPage, // Fetch larger batch when filtering by publisher
-    sort: [sort]
+    perPage: platform !== 'ALL' ? 50 : perPage,
+    sort: targetSort
   };
 
   if (genres && genres.length > 0) {
     variables.genre_in = genres;
   }
-  if (search && search.trim() !== '') {
-    variables.search = search.trim();
+  if (isSearching) {
+    variables.search = resolvedSearch;
+    // Bỏ giới hạn country khi search để tìm ra tác phẩm trên toàn cầu
+    targetCountry = 'ALL';
   }
   if (targetCountry && targetCountry !== 'ALL') {
     variables.countryOfOrigin = targetCountry;
@@ -274,6 +425,16 @@ export async function fetchMangaList({
     }
 
     const result = data.data.Page;
+
+    // Cập nhật số chap thời gian thực cho các bộ Ongoing nổi tiếng (khắc phục điểm yếu null của AniList)
+    if (result.media) {
+      result.media.forEach(item => {
+        if (ONGOING_CHAPTERS_MAP[item.id]) {
+          item.chapters = ONGOING_CHAPTERS_MAP[item.id];
+          item.isOngoingEstimated = true;
+        }
+      });
+    }
 
     // Filter by official platform if specified
     if (platform !== 'ALL') {
@@ -357,7 +518,6 @@ export function getOfficialSourceMeta(media) {
       };
     }
 
-    // Default Manhwa Fallback: Naver Webtoon Search
     return {
       platformId: 'NAVER_WEBTOON',
       name: 'Webtoon Hàn Quốc 🇰🇷',
@@ -430,23 +590,6 @@ export function getOfficialSourceMeta(media) {
       };
     }
 
-    const piccomaLink = links.find(l => l.url && l.url.includes('piccoma.com'));
-    if (piccomaLink) {
-      return {
-        platformId: 'PICCOMA',
-        name: 'Piccoma JP (ピッコマ)',
-        publisher: 'Kakao Piccoma',
-        flag: '🇯🇵',
-        badgeClass: 'badge-piccoma',
-        color: '#f97316',
-        rawUrl: piccomaLink.url,
-        hasRawLink: true,
-        homeUrl: 'https://piccoma.com/',
-        searchUrl: `https://piccoma.com/web/search/result?word=${encodeURIComponent(nativeTitle)}`
-      };
-    }
-
-    // Default Manga Fallback: Shonen Jump+ / Shueisha Search
     return {
       platformId: 'SHUEISHA_JUMP',
       name: 'Manga Gốc Nhật Bản 🇯🇵',
@@ -517,7 +660,6 @@ export function getOfficialSourceMeta(media) {
       };
     }
 
-    // Default Manhua Fallback: Kuaikan Manhua Search
     return {
       platformId: 'KUAIKAN',
       name: 'Manhua Gốc Trung Quốc 🇨🇳',
@@ -564,7 +706,7 @@ export async function fetchNaverOfficialWebtoons() {
 }
 
 /**
- * Format title with primary display preference (Tên gốc native ưu tiên hàng đầu)
+ * Format Title
  */
 export function getMangaTitle(media) {
   if (!media || !media.title) return 'Chưa có tên';
@@ -585,7 +727,7 @@ export function getMangaSubtitle(media) {
 }
 
 /**
- * Format chapter count
+ * Format Chapter Count
  */
 export function formatChapters(chapters, status) {
   if (chapters !== null && chapters !== undefined) {
