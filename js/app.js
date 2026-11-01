@@ -73,6 +73,7 @@ const elements = {
   viewBtns: document.querySelectorAll('.view-btn'),
   genreCatNav: document.getElementById('genreCatNav'),
   genreSearchInput: document.getElementById('genreSearchInput'),
+  clearGenreSearchBtn: document.getElementById('clearGenreSearchBtn'),
   genreSuggestionsDropdown: document.getElementById('genreSuggestionsDropdown'),
   selectedGenresCountBadge: document.getElementById('selectedGenresCountBadge'),
   genresContainer: document.getElementById('genresContainer'),
@@ -348,20 +349,23 @@ function renderGenreSuggestions(suggestions, query) {
   }
 
   state.currentGenreSuggestions = suggestions;
-  state.activeSuggestionIndex = -1;
+  state.activeSuggestionIndex = 0; // Tự động chọn mục đầu tiên
 
   elements.genreSuggestionsDropdown.innerHTML = suggestions.map((item, idx) => {
     const isSelected = state.genres.has(item.id);
     const icon = getGenreIcon(item.id);
     return `
-      <div class="genre-suggestion-item ${isSelected ? 'is-selected' : ''}" data-genre-id="${item.id}" data-index="${idx}">
+      <div class="genre-suggestion-item ${idx === 0 ? 'active-item' : ''} ${isSelected ? 'is-selected' : ''}" data-genre-id="${item.id}" data-index="${idx}">
         <div class="genre-suggestion-left">
           <span class="genre-suggestion-icon">${icon}</span>
-          <span class="genre-suggestion-name">${escapeHtml(item.name)}</span>
+          <div>
+            <div class="genre-suggestion-name">${escapeHtml(item.name)}</div>
+            <div class="genre-suggestion-sub">👉 Hiện các truyện thể loại này (Bấm hoặc Enter)</div>
+          </div>
         </div>
         <div class="genre-suggestion-right" style="display: flex; align-items: center; gap: 0.45rem;">
           ${isSelected ? '<span class="genre-suggestion-badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); font-weight: 700;">Đang lọc ✓</span>' : ''}
-          <span class="genre-suggestion-badge">${item.type === 'genre' ? 'Thể loại' : 'Tag'}</span>
+          <span class="genre-suggestion-btn">Xem truyện ➔</span>
         </div>
       </div>
     `;
@@ -388,18 +392,22 @@ function updateSuggestionHighlight() {
 
 /**
  * Khi người dùng chọn một thể loại từ dropdown hoặc bấm Enter
- * -> Thêm thể loại vào bộ lọc và gọi ngay loadMangaData để lọc danh sách truyện
+ * -> Lọc ngay các truyện thuộc thể loại đó
  */
 function selectGenreSuggestion(genreId) {
   const item = ALL_GENRES_AND_TAGS.find(t => t.id === genreId);
   if (!item) return;
 
-  // Thêm thể loại vào bộ lọc active
+  // Lọc duy nhất theo thể loại vừa chọn
+  state.genres.clear();
   state.genres.add(genreId);
 
-  // Xóa trắng thanh tìm kiếm và ẩn dropdown gợi ý
+  // Hiển thị tên thể loại trong ô tìm kiếm để người dùng biết đang lọc gì
   if (elements.genreSearchInput) {
-    elements.genreSearchInput.value = '';
+    elements.genreSearchInput.value = item.name;
+  }
+  if (elements.clearGenreSearchBtn) {
+    elements.clearGenreSearchBtn.style.display = 'block';
   }
   state.genreSearchQuery = '';
   hideGenreSuggestions();
@@ -413,7 +421,7 @@ function selectGenreSuggestion(genreId) {
   loadMangaData();
 
   // Thông báo phản hồi cho người dùng
-  showToast(`🏷️ Đã lọc theo thể loại: ${item.name}`);
+  showToast(`📚 Đang hiển thị các truyện thể loại: ${item.name}`);
 }
 
 /**
@@ -562,13 +570,58 @@ function bindEvents() {
 
   // Genre Autocomplete & Live Search Input with Suggestion Dropdown
   if (elements.genreSearchInput && elements.genreSuggestionsDropdown) {
+    let genreAutoFilterTimeout = null;
+
     elements.genreSearchInput.addEventListener('input', (e) => {
-      const val = e.target.value.trim();
-      state.genreSearchQuery = val;
-      const suggestions = filterGenreSuggestions(val);
-      renderGenreSuggestions(suggestions, val);
+      const val = e.target.value;
+      const trimmed = val.trim();
+      state.genreSearchQuery = trimmed;
+
+      if (elements.clearGenreSearchBtn) {
+        elements.clearGenreSearchBtn.style.display = trimmed ? 'block' : 'none';
+      }
+
+      const suggestions = filterGenreSuggestions(trimmed);
+      renderGenreSuggestions(suggestions, trimmed);
       renderGenrePills();
+
+      // Khi người dùng dừng gõ 450ms ("ghi xong") -> Tự động nạp truyện thể loại khớp nhất!
+      clearTimeout(genreAutoFilterTimeout);
+      genreAutoFilterTimeout = setTimeout(() => {
+        if (trimmed) {
+          const matches = filterGenreSuggestions(trimmed);
+          if (matches.length > 0) {
+            const topMatch = matches[0];
+            if (!state.genres.has(topMatch.id) || state.genres.size !== 1) {
+              state.genres.clear();
+              state.genres.add(topMatch.id);
+              renderGenrePills();
+              updateActiveFilterBadges();
+              state.page = 1;
+              loadMangaData();
+              showToast(`🏷️ Tự động lọc các truyện: ${topMatch.name}`);
+            }
+          }
+        }
+      }, 450);
     });
+
+    // Nút Xóa nhanh thể loại đã tìm (✕)
+    if (elements.clearGenreSearchBtn) {
+      elements.clearGenreSearchBtn.addEventListener('click', () => {
+        clearTimeout(genreAutoFilterTimeout);
+        elements.genreSearchInput.value = '';
+        elements.clearGenreSearchBtn.style.display = 'none';
+        state.genreSearchQuery = '';
+        hideGenreSuggestions();
+        state.genres.clear();
+        renderGenrePills();
+        updateActiveFilterBadges();
+        state.page = 1;
+        loadMangaData();
+        showToast('Đã xóa bộ lọc thể loại');
+      });
+    }
 
     elements.genreSearchInput.addEventListener('keydown', (e) => {
       const dropdownOpen = elements.genreSuggestionsDropdown.style.display === 'block';
@@ -586,12 +639,17 @@ function bindEvents() {
           updateSuggestionHighlight();
         }
       } else if (e.key === 'Enter') {
-        if (dropdownOpen) {
-          e.preventDefault();
-          if (state.activeSuggestionIndex >= 0 && state.activeSuggestionIndex < state.currentGenreSuggestions.length) {
-            selectGenreSuggestion(state.currentGenreSuggestions[state.activeSuggestionIndex].id);
-          } else if (state.currentGenreSuggestions.length > 0) {
-            selectGenreSuggestion(state.currentGenreSuggestions[0].id);
+        e.preventDefault();
+        clearTimeout(genreAutoFilterTimeout);
+        const val = elements.genreSearchInput.value.trim();
+        if (dropdownOpen && state.activeSuggestionIndex >= 0 && state.activeSuggestionIndex < state.currentGenreSuggestions.length) {
+          selectGenreSuggestion(state.currentGenreSuggestions[state.activeSuggestionIndex].id);
+        } else if (state.currentGenreSuggestions.length > 0) {
+          selectGenreSuggestion(state.currentGenreSuggestions[0].id);
+        } else if (val) {
+          const matches = filterGenreSuggestions(val);
+          if (matches.length > 0) {
+            selectGenreSuggestion(matches[0].id);
           }
         }
       } else if (e.key === 'Escape') {
@@ -613,6 +671,7 @@ function bindEvents() {
       if (!itemEl) return;
       const genreId = itemEl.dataset.genreId;
       if (genreId) {
+        clearTimeout(genreAutoFilterTimeout);
         selectGenreSuggestion(genreId);
       }
     });
@@ -824,7 +883,15 @@ function getFilteredItems() {
  */
 function renderCurrentView() {
   const filtered = getFilteredItems();
-  elements.resultsCount.innerHTML = `Hiển thị <strong>${filtered.length}</strong> / ${state.pageInfo ? state.pageInfo.total.toLocaleString('vi-VN') : filtered.length} tác phẩm`;
+  let genreInfo = '';
+  if (state.genres.size > 0) {
+    const genreNames = Array.from(state.genres).map(g => {
+      const match = ALL_GENRES_AND_TAGS.find(i => i.id === g);
+      return match ? match.name : g;
+    }).join(', ');
+    genreInfo = ` — Đang lọc theo: <span style="color: #a5b4fc; font-weight: 700;">🏷️ ${genreNames}</span>`;
+  }
+  elements.resultsCount.innerHTML = `Hiển thị <strong>${filtered.length}</strong> / ${state.pageInfo ? state.pageInfo.total.toLocaleString('vi-VN') : filtered.length} tác phẩm${genreInfo}`;
 
   if (filtered.length === 0) {
     const rawSearchUrlJP = `https://shonenjumpplus.com/search?q=${encodeURIComponent(state.search)}`;
@@ -1096,30 +1163,44 @@ function updateActiveFilterBadges() {
   const badges = [];
 
   if (state.search) {
-    badges.push(`Tìm: "${state.search}"`);
+    badges.push({ text: `🔍 Tìm: "${state.search}"` });
   }
   if (state.platform !== 'ALL') {
     const plat = OFFICIAL_PLATFORMS.find(p => p.id === state.platform);
-    if (plat) badges.push(`NXB: ${plat.name}`);
+    if (plat) badges.push({ text: `🏢 NXB: ${plat.name}` });
   }
   if (state.country !== 'ALL') {
     const meta = getOriginMeta(state.country);
-    badges.push(`${meta.flag} ${meta.label}`);
+    badges.push({ text: `${meta.flag} ${meta.label}` });
   }
   if (state.status !== 'ALL') {
     const meta = getStatusMeta(state.status);
-    badges.push(`${meta.label}`);
+    badges.push({ text: `${meta.label}` });
   }
   state.genres.forEach(g => {
     const item = ALL_GENRES_AND_TAGS.find(t => t.id === g);
-    badges.push(`Thể loại: ${item ? item.name : g}`);
+    badges.push({ text: `🏷️ ${item ? item.name : g}`, genreId: g });
   });
 
   elements.activeFiltersList.innerHTML = badges.map(b => `
-    <span class="filter-badge-item">
-      ${b}
+    <span class="filter-badge-item ${b.genreId ? 'clickable' : ''}" ${b.genreId ? `data-remove-genre="${b.genreId}" title="Bấm để bỏ thể loại này" style="cursor: pointer;"` : ''}>
+      ${b.text} ${b.genreId ? '<span style="opacity: 0.8; margin-left: 5px; font-weight: 700;">✕</span>' : ''}
     </span>
   `).join('');
+
+  // Gắn sự kiện click để xóa nhanh từng thể loại
+  elements.activeFiltersList.querySelectorAll('[data-remove-genre]').forEach(el => {
+    el.addEventListener('click', () => {
+      const gId = el.dataset.removeGenre;
+      state.genres.delete(gId);
+      if (elements.genreSearchInput) elements.genreSearchInput.value = '';
+      if (elements.clearGenreSearchBtn) elements.clearGenreSearchBtn.style.display = 'none';
+      renderGenrePills();
+      updateActiveFilterBadges();
+      state.page = 1;
+      loadMangaData();
+    });
+  });
 }
 
 /**

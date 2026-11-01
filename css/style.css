@@ -677,12 +677,42 @@ body {
   color: #a5b4fc;
 }
 
+.genre-suggestion-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.genre-suggestion-item:hover .genre-suggestion-sub,
+.genre-suggestion-item.active-item .genre-suggestion-sub {
+  color: #c7d2fe;
+}
+
 .genre-suggestion-badge {
   font-size: 0.68rem;
   background: rgba(255, 255, 255, 0.06);
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-full);
   color: var(--text-muted);
+}
+
+.genre-suggestion-btn {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.genre-suggestion-item:hover .genre-suggestion-btn,
+.genre-suggestion-item.active-item .genre-suggestion-btn {
+  background: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
 }
 
 .genre-suggestion-empty {
