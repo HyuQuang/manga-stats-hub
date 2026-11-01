@@ -4,13 +4,21 @@
 
 const ANILIST_API_URL = 'https://graphql.anilist.co';
 
-export {
+import {
   OFFICIAL_GENRES,
   GENRE_CATEGORIES,
   ALL_GENRES_AND_TAGS,
   GENRE_ICONS,
   GENRE_KEYWORDS
 } from './genres_data.js';
+
+export {
+  OFFICIAL_GENRES,
+  GENRE_CATEGORIES,
+  ALL_GENRES_AND_TAGS,
+  GENRE_ICONS,
+  GENRE_KEYWORDS
+};
 
 /**
  * Bảng ánh xạ tên truyện Tiếng Việt ➔ Tên Quốc tế / Romaji trên hệ thống
